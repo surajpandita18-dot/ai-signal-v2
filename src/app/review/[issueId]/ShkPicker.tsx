@@ -117,26 +117,7 @@ export default function ShkPicker({
 
   if (result) {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="rounded border border-line bg-accent-soft p-6"
-      >
-        <h2 className="font-heading text-xl font-semibold text-ink">Drafted.</h2>
-        <p className="mt-3 text-sm leading-relaxed text-ink">
-          Issue #{String(result.issueNumber).padStart(3, '0')} saved as{' '}
-          <code className="font-mono text-[12px]">{result.markdownPath}</code>{' '}
-          ({result.wordCount} words).
-        </p>
-        <p className="mt-3 text-sm">
-          <a
-            href={`/issue/${issueId}`}
-            className="text-accent underline decoration-2 underline-offset-2"
-          >
-            View the reader page →
-          </a>
-        </p>
-      </div>
+      <DraftedPanel issueId={issueId} result={result} />
     )
   }
 
@@ -288,6 +269,142 @@ export default function ShkPicker({
           {error}
         </div>
       ) : null}
+    </div>
+  )
+}
+
+function DraftedPanel({
+  issueId,
+  result,
+}: {
+  issueId: string
+  result: { markdownPath: string; issueNumber: number; wordCount: number }
+}) {
+  const [sending, setSending] = useState<null | 'test' | 'all'>(null)
+  const [sendResult, setSendResult] = useState<{
+    kind: 'test' | 'all'
+    info: string
+  } | null>(null)
+  const [sendError, setSendError] = useState<string | null>(null)
+
+  async function send(testOnly: boolean) {
+    setSending(testOnly ? 'test' : 'all')
+    setSendResult(null)
+    setSendError(null)
+    try {
+      const res = await fetch('/api/send-issue', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ issueId, testOnly }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setSendError(data.error ?? `HTTP ${res.status}`)
+        return
+      }
+      if (testOnly) {
+        setSendResult({ kind: 'test', info: `Test sent to ${data.to ?? 'owner'} (id ${String(data.id ?? '').slice(0, 12)}…)` })
+      } else {
+        setSendResult({
+          kind: 'all',
+          info: `${data.sent ?? 0}/${data.attempted ?? 0} subscribers · ${data.failed ?? 0} failed`,
+        })
+      }
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setSending(null)
+    }
+  }
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="space-y-6"
+    >
+      <div className="rounded border border-line bg-accent-soft p-6">
+        <h2 className="font-heading text-xl font-semibold text-ink">Drafted.</h2>
+        <p className="mt-3 text-sm leading-relaxed text-ink">
+          Issue #{String(result.issueNumber).padStart(3, '0')} saved as{' '}
+          <code className="font-mono text-[12px]">{result.markdownPath}</code>{' '}
+          ({result.wordCount} words).
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a
+            href={`/issue/${issueId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded border border-ink px-4 py-2 font-heading text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
+          >
+            View reader page
+          </a>
+          <a
+            href={`/preview/email/${issueId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded border border-line px-4 py-2 font-heading text-sm font-semibold text-ink hover:border-ink"
+          >
+            Preview email HTML
+          </a>
+        </div>
+      </div>
+
+      <div className="rounded border border-line bg-paper p-6">
+        <h3 className="font-heading text-lg font-semibold text-ink">Send</h3>
+        <p className="mt-2 text-sm text-muted">
+          Step 1: send a test to your own inbox to verify rendering.<br />
+          Step 2: send to all active subscribers when you’re happy.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            type="button"
+            disabled={sending !== null}
+            onClick={() => send(true)}
+            className={`rounded px-5 py-2 text-sm font-medium transition ${
+              sending === null
+                ? 'border border-ink text-ink hover:bg-ink hover:text-paper'
+                : 'cursor-not-allowed border border-line text-muted'
+            }`}
+          >
+            {sending === 'test' ? 'Sending test…' : 'Send test to me'}
+          </button>
+          <button
+            type="button"
+            disabled={sending !== null}
+            onClick={() => {
+              if (confirm('Send this issue to ALL active subscribers? This is the real thing.')) {
+                send(false)
+              }
+            }}
+            className={`rounded px-5 py-2 text-sm font-medium transition ${
+              sending === null
+                ? 'bg-accent text-paper hover:bg-ink'
+                : 'cursor-not-allowed border border-line text-muted'
+            }`}
+          >
+            {sending === 'all' ? 'Sending to subscribers…' : 'Send to all subscribers'}
+          </button>
+        </div>
+        {sendResult ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className="mt-4 rounded border border-line bg-accent-soft px-4 py-3 text-sm text-ink"
+          >
+            ✓ {sendResult.kind === 'test' ? 'Test send' : 'Mass send'} ok — {sendResult.info}
+          </p>
+        ) : null}
+        {sendError ? (
+          <p
+            role="alert"
+            aria-live="polite"
+            className="mt-4 rounded border border-clay/40 bg-clay/10 px-4 py-3 text-sm text-ink"
+          >
+            {sendError}
+          </p>
+        ) : null}
+      </div>
     </div>
   )
 }

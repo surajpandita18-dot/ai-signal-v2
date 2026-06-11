@@ -19,3 +19,4 @@ next-env.d.ts
 
 output/issues/*.md
 !output/issues/.gitkeep
+.vercel
