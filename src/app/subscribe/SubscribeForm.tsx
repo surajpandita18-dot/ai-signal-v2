@@ -40,7 +40,7 @@ export default function SubscribeForm() {
         aria-live="polite"
         className="rounded border border-line bg-accent-soft p-5"
       >
-        <p className="font-heading text-[17px] font-semibold text-ink">
+        <p className="font-display text-[17px] font-semibold text-ink">
           You’re on the list.
         </p>
         <p className="mt-2 font-body text-[15px] leading-relaxed text-ink/85">
@@ -72,7 +72,7 @@ export default function SubscribeForm() {
       <button
         type="submit"
         disabled={submitting}
-        className={`rounded px-5 py-3 font-heading text-[15px] font-semibold transition ${
+        className={`rounded px-5 py-3 font-display text-[15px] font-semibold transition ${
           submitting
             ? 'cursor-not-allowed border border-line text-muted'
             : 'bg-ink text-paper hover:bg-accent'
@@ -85,7 +85,7 @@ export default function SubscribeForm() {
         <p
           role="alert"
           aria-live="polite"
-          className="sm:col-span-2 rounded border border-clay/40 bg-clay/10 px-3 py-2 text-sm text-ink"
+          className="sm:col-span-2 rounded border border-accent-2/40 bg-accent-2/10 px-3 py-2 text-sm text-ink"
         >
           {error}
         </p>

@@ -25,7 +25,7 @@ export default function AboutPage() {
               Subscribe
             </Link>
           </nav>
-          <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-heading text-[12px] font-semibold text-ink sm:hidden">
+          <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
             Subscribe
           </Link>
         </div>
@@ -34,7 +34,7 @@ export default function AboutPage() {
       <main id="main">
         <article className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-20">
           <p className="eyebrow">About</p>
-          <h1 className="mt-4 font-heading text-[40px] font-bold leading-tight tracking-tight text-ink sm:text-[52px]">
+          <h1 className="mt-4 font-display text-[40px] font-bold leading-tight tracking-tight text-ink sm:text-[52px]">
             For someone shipping AI from India.
           </h1>
 
@@ -97,7 +97,7 @@ export default function AboutPage() {
           <div className="mt-16">
             <Link
               href="/subscribe"
-              className="inline-flex items-center rounded bg-ink px-6 py-3 font-heading text-[15px] font-semibold text-paper transition hover:bg-accent"
+              className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[15px] font-semibold text-paper transition hover:bg-accent"
             >
               Subscribe for free
             </Link>

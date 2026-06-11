@@ -32,7 +32,7 @@ export default function SubscribePage() {
       <main id="main">
         <section className="mx-auto max-w-[640px] px-5 py-16 sm:px-6 sm:py-24">
           <p className="eyebrow">Subscribe</p>
-          <h1 className="mt-4 font-heading text-[40px] font-bold leading-tight tracking-tight text-ink sm:text-[52px]">
+          <h1 className="mt-4 font-display text-[40px] font-bold leading-tight tracking-tight text-ink sm:text-[52px]">
             Mondays. One shift.
           </h1>
           <p className="mt-6 font-body text-[18px] leading-relaxed text-ink/85 sm:text-[20px]">

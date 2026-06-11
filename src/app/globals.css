@@ -2,76 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Locked design system tokens — see memory project_design_system_locked.md.
- * Do not modify without re-running design research. */
+/* DESIGN SYSTEM v2 — Indian Editorial palette + Fraunces/Inter.
+ * RGB triplets so Tailwind's /<alpha-value> opacity modifier works. */
 
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Palette — locked 4 tokens + 1 muted. Designed for India editorial. */
-  --paper: #f5f1e8;       /* warm off-white. NEVER pure white — dark-mode inversion trap */
-  --ink: #1a1a1a;         /* near-black. ~16:1 AAA on paper */
-  --accent: #1e3a8a;      /* indigo — links, eyebrows, the single moment of color */
-  --clay: #9a3412;        /* terracotta — pull quote left border only */
-  --muted: #6b6b6b;       /* meta, captions */
-  --line: #e6e0d2;        /* subtle dividers, picked from paper */
-  --accent-soft: #eae4f4; /* for picker selection state */
+  /* RGB triplets (used by Tailwind with `rgb(var(--paper) / <alpha-value>)`) */
+  --paper: 244 239 230;       /* #f4efe6 warm paper */
+  --paper-elev: 239 232 218;  /* #efe8da slight tint */
+  --ink: 18 18 18;            /* #121212 sophisticated black */
+  --body: 42 41 38;           /* #2a2926 warm dark for body */
+  --accent: 15 76 58;         /* #0f4c3a peacock / deep forest green */
+  --accent-2: 212 98 42;      /* #d4622a restrained terracotta */
+  --muted: 138 121 104;       /* #8a7968 warm taupe */
+  --line: 227 220 204;        /* #e3dccc hairline */
+  --accent-soft: 226 239 233; /* #e2efe9 peacock tint */
 
   /* Typography */
-  --font-body: 'Merriweather', Georgia, 'Iowan Old Style', 'Times New Roman', serif;
-  --font-heading: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: 'Fraunces', Georgia, 'New York', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif-body: 'Fraunces', Georgia, serif;
 
-  /* Make scrollbars + inputs honour theme */
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #1a1a1a;
-    --ink: #f5f1e8;
-    --accent: #93c5fd;
-    --clay: #fdba74;
-    --muted: #a0a0a0;
-    --line: #2a2a2a;
-    --accent-soft: #2a2440;
+    --paper: 22 20 15;
+    --paper-elev: 31 28 22;
+    --ink: 244 239 230;
+    --body: 232 226 212;
+    --accent: 79 166 133;
+    --accent-2: 232 155 90;
+    --muted: 159 148 131;
+    --line: 42 38 32;
+    --accent-soft: 31 46 38;
     color-scheme: dark;
   }
 }
 
 html, body {
-  background: var(--paper);
-  color: var(--ink);
+  background: rgb(var(--paper));
+  color: rgb(var(--body));
   font-family: var(--font-body);
   font-size: 17px;
-  line-height: 1.65;
-  font-feature-settings: 'kern', 'liga', 'calt';
+  line-height: 1.55;
+  font-feature-settings: 'kern', 'liga', 'calt', 'ss01';
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * {
-  border-color: var(--line);
+  border-color: rgb(var(--line));
 }
 
-/* Headings — prevent widows + scroll-margin for anchor links */
+/* Display headings — Fraunces, magazine-feel */
 h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: rgb(var(--ink));
   text-wrap: balance;
   scroll-margin-top: 80px;
+  letter-spacing: -0.01em;
 }
 
-/* Long-form prose — pretty wrap to avoid awkward line breaks */
 p, li {
   text-wrap: pretty;
 }
 
-/* Interactive elements — kill double-tap zoom delay on mobile */
 button, a, input, select, textarea, label {
   touch-action: manipulation;
 }
 
-/* Honour reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -81,50 +85,82 @@ button, a, input, select, textarea, label {
   }
 }
 
-/* Long-form prose helpers */
-.prose-body p {
-  margin: 0 0 1em 0;
-}
-.prose-body p + p {
-  text-indent: 0;
-}
-
-/* Eyebrow — uppercase mono small caps */
+/* Eyebrow — Air Mail / Atlantic style ALL CAPS mono */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: rgb(var(--accent));
+  font-weight: 600;
 }
 
-/* Meta — muted small mono */
+.eyebrow-muted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--muted));
+  font-weight: 500;
+}
+
 .meta {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--muted);
+  color: rgb(var(--muted));
 }
 
-/* Numerics in tables / comparisons / INR math */
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* Pull-quote — the one screenshot moment */
-.pullquote {
-  font-family: var(--font-body);
+/* Editorial body — serif for special / lede prose */
+.lede {
+  font-family: var(--font-serif-body);
+  font-size: 19px;
+  line-height: 1.55;
+  color: rgb(var(--ink));
   font-style: italic;
-  font-size: 1.35em;
-  line-height: 1.4;
-  border-left: 3px solid var(--clay);
-  padding-left: 18px;
-  margin: 1.5em 0;
-  color: var(--ink);
+  font-weight: 400;
 }
 
-/* Focus-visible — always a visible ring */
+.body-prose {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgb(var(--body));
+}
+
+/* Magazine pull-quote */
+.pullquote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.25;
+  color: rgb(var(--accent));
+  border-left: 3px solid rgb(var(--accent-2));
+  padding: 4px 0 4px 18px;
+  margin: 1.75em 0;
+}
+
+/* Editorial link — replaces filled CTA buttons in body */
+.editorial-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--ink));
+  border-bottom: 1px solid rgb(var(--accent));
+  padding-bottom: 2px;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.editorial-link:hover {
+  color: rgb(var(--accent));
+  border-bottom-color: rgb(var(--ink));
+}
+
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid rgb(var(--accent));
   outline-offset: 2px;
   border-radius: 2px;
 }

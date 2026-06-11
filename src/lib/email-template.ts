@@ -35,18 +35,22 @@ const BEAT_ORDER: readonly Beat[] = [
   'enterprise-deals',
 ] as const
 
-// Locked design tokens (inlined — email clients ignore CSS variables).
-const PAPER = '#f5f1e8'
-const INK = '#1a1a1a'
-const ACCENT = '#1e3a8a'
-const CLAY = '#9a3412'
-const MUTED = '#6b6b6b'
-const LINE = '#e6e0d2'
+// v2 design tokens — Indian Editorial palette (inlined: email clients ignore vars)
+const PAPER = '#f4efe6'        // warm paper
+const PAPER_ELEV = '#efe8da'   // tinted panel
+const INK = '#121212'           // sophisticated black
+const BODY = '#2a2926'          // warm dark body
+const ACCENT = '#0f4c3a'        // peacock green
+const ACCENT2 = '#d4622a'       // restrained terracotta
+const MUTED = '#8a7968'         // warm taupe
+const LINE = '#e3dccc'          // hairline
 
+// System fonts only — Outlook/Apple Mail strip @font-face. The display feel
+// comes from typography hierarchy + voice, not loaded custom fonts.
+const FONT_DISPLAY =
+  'Georgia, "Iowan Old Style", "Times New Roman", serif'      // for headlines
 const FONT_BODY =
-  'Georgia, "Iowan Old Style", "Times New Roman", serif'
-const FONT_HEAD =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' // for body (Inter-like)
 const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 
 function esc(s: string | null | undefined): string {
@@ -171,12 +175,12 @@ function buildHtml(
   const personaHtml = payload.persona
     ? `
 <tr><td class="pad" style="padding:40px 24px 0 24px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};border:1px solid ${LINE};border-radius:6px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border:1px solid ${LINE};border-radius:6px;">
     <tr><td class="card" style="padding:24px;">
       <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
         What this means for you
       </p>
-      <p style="margin:8px 0 0 0;font-family:${FONT_HEAD};font-size:14px;font-weight:600;color:${INK};">
+      <p style="margin:8px 0 0 0;font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;color:${INK};">
         ${esc(payload.persona.archetype)}
       </p>
       <p class="body-prose" style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};white-space:pre-line;">
@@ -206,7 +210,7 @@ function buildHtml(
       return `
   <div style="border-left:3px solid ${ACCENT};padding-left:16px;margin-bottom:22px;">
     <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${MUTED};font-weight:600;">${kind.toUpperCase()}</p>
-    <p class="shk-label" style="margin:6px 0 0 0;font-family:${FONT_HEAD};font-size:17px;font-weight:600;line-height:1.35;color:${INK};">${esc(c.label)}</p>
+    <p class="shk-label" style="margin:6px 0 0 0;font-family:${FONT_DISPLAY};font-size:17px;font-weight:600;line-height:1.35;color:${INK};">${esc(c.label)}</p>
     <p class="shk-body" style="margin:8px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};">${esc(c.rationale)}</p>
   </div>`
     })
@@ -222,7 +226,7 @@ function buildHtml(
     Keep / Skip
   </p>
   ${payload.keep_skip?.keep?.length
-    ? `<p style="margin:0 0 10px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Keep</p>
+    ? `<p style="margin:0 0 10px 0;font-family:${FONT_DISPLAY};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Keep</p>
        <ul style="margin:0 0 20px 0;padding:0 0 0 4px;list-style:none;">
          ${payload.keep_skip.keep
            .map(
@@ -233,12 +237,12 @@ function buildHtml(
        </ul>`
     : ''}
   ${payload.keep_skip?.skip?.length
-    ? `<p style="margin:0 0 10px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Skip</p>
+    ? `<p style="margin:0 0 10px 0;font-family:${FONT_DISPLAY};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Skip</p>
        <ul style="margin:0;padding:0 0 0 4px;list-style:none;">
          ${payload.keep_skip.skip
            .map(
              (s) =>
-               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${CLAY};font-weight:600;">− </span>${esc(s)}</li>`
+               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT2};font-weight:600;">− </span>${esc(s)}</li>`
            )
            .join('')}
        </ul>`
@@ -249,7 +253,7 @@ function buildHtml(
   const skimHtml = skimBullets.length
     ? `
 <tr><td class="pad" style="padding:0 24px 0 24px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};border:1px solid ${LINE};border-radius:6px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border:1px solid ${LINE};border-radius:6px;">
     <tr><td class="card" style="padding:18px 20px;">
       <p class="meta-row" style="margin:0 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
         What changed this week
@@ -279,10 +283,10 @@ function buildHtml(
 <style>
   /* Dark mode override — Gmail/Apple Mail honor this */
   @media (prefers-color-scheme: dark) {
-    body, .paper { background:#1a1a1a !important; color:#f5f1e8 !important; }
-    .ink-text { color:#f5f1e8 !important; }
-    .panel { background:#1a1a1a !important; border-color:#2a2a2a !important; }
-    .accent { color:#93c5fd !important; }
+    body, .paper { background:#16140f !important; color:#e8e2d4 !important; }
+    .ink-text { color:#f4efe6 !important; }
+    .panel { background:#1f1c16 !important; border-color:#2a2620 !important; }
+    .accent { color:#4fa685 !important; }
   }
   /* Mobile (≤480px iPhone/Android) — tighter padding, smaller heads, narrower
      number column. Outlook ignores; Gmail/Apple Mail honor. */
@@ -326,7 +330,7 @@ function buildHtml(
 
   <!-- Headline — the catchy 5-word title -->
   <tr><td class="pad" style="padding:24px 24px 16px 24px;">
-    <h1 class="ink-text hed" style="margin:0;font-family:${FONT_HEAD};font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
+    <h1 class="ink-text hed" style="margin:0;font-family:${FONT_DISPLAY};font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
       ${esc(headline(payload))}
     </h1>
   </td></tr>
@@ -379,8 +383,8 @@ function buildHtml(
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td>
-          <a href="${waHref}" target="_blank" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-right:8px;margin-bottom:8px;background:${INK};color:${PAPER};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Share on WhatsApp</a>
-          <a href="${issueUrl}" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-bottom:8px;border:1px solid ${INK};color:${INK};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Copy link</a>
+          <a href="${waHref}" target="_blank" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-right:8px;margin-bottom:8px;background:${INK};color:${PAPER};font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Share on WhatsApp</a>
+          <a href="${issueUrl}" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-bottom:8px;border:1px solid ${INK};color:${INK};font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Copy link</a>
         </td>
       </tr>
     </table>

@@ -55,7 +55,7 @@ export default async function HomePage() {
           </nav>
           <Link
             href="/subscribe"
-            className="rounded bg-paper px-3 py-1.5 font-heading text-[12px] font-semibold text-ink sm:hidden"
+            className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
           >
             Subscribe
           </Link>
@@ -67,7 +67,7 @@ export default async function HomePage() {
         <section className="border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-16 sm:px-6 sm:py-24">
             <p className="eyebrow">The India AI Builder’s Brief</p>
-            <h1 className="mt-4 font-heading text-[40px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]">
+            <h1 className="mt-4 font-display text-[40px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]">
               Mondays. <span className="text-accent">One shift.</span> Indian
               builders only.
             </h1>
@@ -80,7 +80,7 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/subscribe"
-                className="inline-flex items-center rounded bg-ink px-6 py-3 font-heading text-[15px] font-semibold text-paper transition hover:bg-accent"
+                className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[15px] font-semibold text-paper transition hover:bg-accent"
               >
                 Subscribe for free
               </Link>
@@ -98,8 +98,8 @@ export default async function HomePage() {
         <section>
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-heading text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
+              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
                 Recent issues
               </h2>
             </div>
@@ -124,7 +124,7 @@ export default async function HomePage() {
                           {it.date}
                         </span>
                       </div>
-                      <p className="mt-2 font-heading text-[22px] font-semibold leading-snug text-ink group-hover:text-accent">
+                      <p className="mt-2 font-display text-[22px] font-semibold leading-snug text-ink group-hover:text-accent">
                         {it.headline}
                       </p>
                       {it.throughline ? (

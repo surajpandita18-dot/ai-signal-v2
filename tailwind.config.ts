@@ -8,17 +8,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: 'var(--paper)',
-        ink: 'var(--ink)',
-        accent: 'var(--accent)',
-        clay: 'var(--clay)',
-        muted: 'var(--muted)',
-        line: 'var(--line)',
-        'accent-soft': 'var(--accent-soft)',
+        paper: 'rgb(var(--paper) / <alpha-value>)',
+        'paper-elev': 'rgb(var(--paper-elev) / <alpha-value>)',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        body: 'rgb(var(--body) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        'accent-2': 'rgb(var(--accent-2) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        'accent-soft': 'rgb(var(--accent-soft) / <alpha-value>)',
       },
       fontFamily: {
+        display: 'var(--font-display)',
         body: 'var(--font-body)',
-        heading: 'var(--font-heading)',
+        serif: 'var(--font-serif-body)',
         mono: 'var(--font-mono)',
       },
       maxWidth: {

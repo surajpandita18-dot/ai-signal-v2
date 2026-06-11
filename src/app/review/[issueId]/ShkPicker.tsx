@@ -134,7 +134,7 @@ export default function ShkPicker({
             className="rounded border border-line bg-paper/40 p-6"
           >
             <div className="flex items-baseline justify-between gap-4">
-              <h3 className="font-heading text-[15px] font-semibold tracking-[0.12em] text-ink">
+              <h3 className="font-display text-[15px] font-semibold tracking-[0.12em] text-ink">
                 {KIND_LABEL[kind]}
               </h3>
               <p className="text-xs italic text-muted">{KIND_HELP[kind]}</p>
@@ -172,7 +172,7 @@ export default function ShkPicker({
                             }
                           />
                           <div>
-                            <p className="font-heading font-medium text-ink">
+                            <p className="font-display font-medium text-ink">
                               {c.label}
                             </p>
                             <p className="mt-1 text-sm leading-relaxed text-ink/85">
@@ -212,7 +212,7 @@ export default function ShkPicker({
           <p className="eyebrow">Keep / Skip preview · auto</p>
           {keepSkip.keep?.length ? (
             <>
-              <p className="mt-3 font-heading text-sm font-medium text-ink">Keep</p>
+              <p className="mt-3 font-display text-sm font-medium text-ink">Keep</p>
               <ul className="mt-1 list-disc pl-5 text-sm leading-relaxed text-ink/90">
                 {keepSkip.keep.map((k, i) => (
                   <li key={i}>{k}</li>
@@ -222,7 +222,7 @@ export default function ShkPicker({
           ) : null}
           {keepSkip.skip?.length ? (
             <>
-              <p className="mt-4 font-heading text-sm font-medium text-ink">Skip</p>
+              <p className="mt-4 font-display text-sm font-medium text-ink">Skip</p>
               <ul className="mt-1 list-disc pl-5 text-sm leading-relaxed text-ink/90">
                 {keepSkip.skip.map((s, i) => (
                   <li key={i}>{s}</li>
@@ -264,7 +264,7 @@ export default function ShkPicker({
         <div
           role="alert"
           aria-live="polite"
-          className="rounded border border-clay/40 bg-clay/10 px-4 py-3 text-sm text-ink"
+          className="rounded border border-accent-2/40 bg-accent-2/10 px-4 py-3 text-sm text-ink"
         >
           {error}
         </div>
@@ -324,7 +324,7 @@ function DraftedPanel({
       className="space-y-6"
     >
       <div className="rounded border border-line bg-accent-soft p-6">
-        <h2 className="font-heading text-xl font-semibold text-ink">Drafted.</h2>
+        <h2 className="font-display text-xl font-semibold text-ink">Drafted.</h2>
         <p className="mt-3 text-sm leading-relaxed text-ink">
           Issue #{String(result.issueNumber).padStart(3, '0')} saved as{' '}
           <code className="font-mono text-[12px]">{result.markdownPath}</code>{' '}
@@ -335,7 +335,7 @@ function DraftedPanel({
             href={`/issue/${issueId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded border border-ink px-4 py-2 font-heading text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
+            className="inline-flex items-center rounded border border-ink px-4 py-2 font-display text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
           >
             View reader page
           </a>
@@ -343,7 +343,7 @@ function DraftedPanel({
             href={`/preview/email/${issueId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded border border-line px-4 py-2 font-heading text-sm font-semibold text-ink hover:border-ink"
+            className="inline-flex items-center rounded border border-line px-4 py-2 font-display text-sm font-semibold text-ink hover:border-ink"
           >
             Preview email HTML
           </a>
@@ -351,7 +351,7 @@ function DraftedPanel({
       </div>
 
       <div className="rounded border border-line bg-paper p-6">
-        <h3 className="font-heading text-lg font-semibold text-ink">Send</h3>
+        <h3 className="font-display text-lg font-semibold text-ink">Send</h3>
         <p className="mt-2 text-sm text-muted">
           Step 1: send a test to your own inbox to verify rendering.<br />
           Step 2: send to all active subscribers when you’re happy.
@@ -399,7 +399,7 @@ function DraftedPanel({
           <p
             role="alert"
             aria-live="polite"
-            className="mt-4 rounded border border-clay/40 bg-clay/10 px-4 py-3 text-sm text-ink"
+            className="mt-4 rounded border border-accent-2/40 bg-accent-2/10 px-4 py-3 text-sm text-ink"
           >
             {sendError}
           </p>

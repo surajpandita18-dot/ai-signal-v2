@@ -31,7 +31,7 @@ const KIND_LABEL = { ship: 'SHIP', hold: 'HOLD', kill: 'KILL' } as const
 const KIND_ACCENT = {
   ship: 'border-accent',
   hold: 'border-muted',
-  kill: 'border-clay',
+  kill: 'border-accent-2',
 } as const
 
 function formatIssueDate(iso: string | null): string {
@@ -140,7 +140,7 @@ export default async function IssuePage({
           </div>
 
           {/* Catchy headline — scales 28 → 40 → 56 */}
-          <h1 className="mt-5 font-heading text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px] sm:leading-[1.05] lg:text-[56px] lg:leading-[1.02]">
+          <h1 className="mt-5 font-display text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px] sm:leading-[1.05] lg:text-[56px] lg:leading-[1.02]">
             {headline}
           </h1>
 
@@ -182,8 +182,8 @@ export default async function IssuePage({
         <section className="border-b border-line">
           <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16">
             <div className="mb-8 flex items-baseline gap-3 sm:mb-10 sm:gap-4">
-              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-heading text-[20px] font-semibold tracking-tight text-ink sm:text-[26px]">
+              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
+              <h2 className="font-display text-[20px] font-semibold tracking-tight text-ink sm:text-[26px]">
                 The 6-layer diff
               </h2>
             </div>
@@ -226,7 +226,7 @@ export default async function IssuePage({
         <section id="for-you" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <p className="eyebrow">For the…</p>
-            <h2 className="mt-2 font-heading text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
+            <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
               {payload.persona.archetype}
             </h2>
             <p className="mt-6 max-w-[680px] whitespace-pre-line font-body text-[17px] leading-relaxed text-ink sm:text-[18px]">
@@ -249,8 +249,8 @@ export default async function IssuePage({
         <section id="shk" className="border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-heading text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
+              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
                 Ship · Hold · Kill
               </h2>
               <p className="ml-2 hidden text-xs italic text-muted sm:inline">this week</p>
@@ -268,7 +268,7 @@ export default async function IssuePage({
                     <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-muted">
                       {KIND_LABEL[kind]}
                     </p>
-                    <p className="mt-3 font-heading text-[17px] font-semibold leading-snug text-ink">
+                    <p className="mt-3 font-display text-[17px] font-semibold leading-snug text-ink">
                       {c.label}
                     </p>
                     <p className="mt-3 font-body text-[15px] leading-relaxed text-ink/85">
@@ -287,8 +287,8 @@ export default async function IssuePage({
         <section id="keep-skip" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-heading text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
+              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
                 Keep · Skip
               </h2>
             </div>
@@ -310,13 +310,13 @@ export default async function IssuePage({
               ) : null}
               {payload.keep_skip?.skip?.length ? (
                 <div>
-                  <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-clay">
+                  <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-accent-2">
                     SKIP
                   </p>
                   <ul className="mt-4 space-y-3">
                     {payload.keep_skip.skip.map((s, i) => (
                       <li key={i} className="flex gap-3 font-body text-[16px] leading-relaxed text-ink/90">
-                        <span className="font-mono text-clay">−</span>
+                        <span className="font-mono text-accent-2">−</span>
                         <span>{s}</span>
                       </li>
                     ))}
@@ -352,14 +352,14 @@ export default async function IssuePage({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share this issue on WhatsApp"
-                className="inline-flex items-center rounded bg-paper px-5 py-3 font-heading text-sm font-semibold text-ink transition hover:bg-accent hover:text-paper"
+                className="inline-flex items-center rounded bg-paper px-5 py-3 font-display text-sm font-semibold text-ink transition hover:bg-accent hover:text-paper"
               >
                 WhatsApp
               </a>
               <a
                 href={`/issue/${issueId}`}
                 aria-label="Open this issue’s canonical URL"
-                className="inline-flex items-center rounded border border-paper/40 px-5 py-3 font-heading text-sm font-semibold text-paper transition hover:bg-paper/10"
+                className="inline-flex items-center rounded border border-paper/40 px-5 py-3 font-display text-sm font-semibold text-paper transition hover:bg-paper/10"
               >
                 Copy link
               </a>
@@ -393,7 +393,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           </nav>
           <Link
             href="/subscribe"
-            className="rounded bg-paper px-3 py-1.5 font-heading text-[12px] font-semibold text-ink sm:hidden"
+            className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
           >
             Subscribe
           </Link>

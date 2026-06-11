@@ -70,7 +70,7 @@ function Panel({
   return (
     <section>
       <div className="mb-4 flex items-baseline justify-between gap-4">
-        <h2 className="font-heading text-[18px] font-semibold text-ink">
+        <h2 className="font-display text-[18px] font-semibold text-ink">
           {title}
         </h2>
         <a

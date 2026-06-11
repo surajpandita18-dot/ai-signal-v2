@@ -55,7 +55,7 @@ export default async function ReviewPage({
     <>
       <header className="bg-ink text-paper">
         <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
-          <a href="/" className="font-heading text-[15px] font-semibold tracking-tight text-paper">
+          <a href="/" className="font-display text-[15px] font-semibold tracking-tight text-paper">
             AI SIGNAL <span className="font-mono text-[12px] text-paper/60">· REVIEW</span>
           </a>
           <a
@@ -72,7 +72,7 @@ export default async function ReviewPage({
             ISSUE {issue.id.slice(0, 8)} · STATUS {issue.status.toUpperCase()}
             {issue.set_aside_count != null ? <> · SET-ASIDE {issue.set_aside_count}</> : null}
           </p>
-          <h1 className="mt-3 font-heading text-[28px] font-bold leading-tight text-ink sm:text-[36px]">
+          <h1 className="mt-3 font-display text-[28px] font-bold leading-tight text-ink sm:text-[36px]">
             Pick this week&rsquo;s Ship / Hold / Kill.
           </h1>
           {payload ? (
@@ -87,7 +87,7 @@ export default async function ReviewPage({
       ) : null}
 
       {isFailed ? (
-        <div className="mb-8 rounded border border-clay/40 bg-clay/10 px-4 py-3 text-sm text-ink">
+        <div className="mb-8 rounded border border-accent-2/40 bg-accent-2/10 px-4 py-3 text-sm text-ink">
           Draft failed: {issue.failure_reason ?? 'unknown error'}
         </div>
       ) : null}
@@ -107,7 +107,7 @@ export default async function ReviewPage({
           {/* Auto-generated content — read-only preview */}
           <section className="mb-12">
             <p className="eyebrow">The throughline · auto</p>
-            <h2 className="mt-3 font-heading text-[26px] font-semibold leading-snug text-ink sm:text-[30px]">
+            <h2 className="mt-3 font-display text-[26px] font-semibold leading-snug text-ink sm:text-[30px]">
               {payload.throughline}
             </h2>
             {payload.throughline_lead ? (
