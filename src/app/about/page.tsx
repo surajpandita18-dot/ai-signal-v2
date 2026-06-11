@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { isSubscribed } from '@/lib/subscription'
 
 export const metadata = {
   title: 'About',
   description: 'What AI Signal is, who it’s for, and how each issue is built.',
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const subscribed = await isSubscribed()
   return (
     <>
       <header className="bg-ink text-paper">
@@ -21,13 +23,21 @@ export default function AboutPage() {
             <Link href="/about" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
               About
             </Link>
-            <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+            {subscribed ? (
+              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                Subscribed ✓
+              </span>
+            ) : (
+              <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                Subscribe
+              </Link>
+            )}
+          </nav>
+          {subscribed ? null : (
+            <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
               Subscribe
             </Link>
-          </nav>
-          <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
-            Subscribe
-          </Link>
+          )}
         </div>
       </header>
 
@@ -94,14 +104,28 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-16">
-            <Link
-              href="/subscribe"
-              className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[15px] font-semibold text-paper transition hover:bg-accent"
-            >
-              Subscribe for free
-            </Link>
-          </div>
+          {subscribed ? (
+            <div className="mt-16 rounded-md border-l-4 border-accent bg-paper-elev px-6 py-5 sm:py-6">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                You&rsquo;re on the list ✓
+              </p>
+              <p className="mt-2 font-body text-[16px] leading-relaxed text-ink">
+                Next brief lands Monday 7:30 AM IST. Read the latest issue on the{' '}
+                <Link href="/" className="text-accent underline underline-offset-2">
+                  home page
+                </Link>.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-16">
+              <Link
+                href="/subscribe"
+                className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[15px] font-semibold text-paper transition hover:bg-accent"
+              >
+                Subscribe for free
+              </Link>
+            </div>
+          )}
         </article>
       </main>
 

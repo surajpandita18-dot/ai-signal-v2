@@ -4,6 +4,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
+import { isSubscribed } from '@/lib/subscription'
 import { Logo } from '@/components/Logo'
 import type { Beat, ChosenCalls, IssuePayload } from '../../../../db/types/database'
 
@@ -130,6 +131,7 @@ export default async function IssuePage({
 }) {
   const { issueId } = await params
   const supabase = createAdminSupabaseClient()
+  const subscribed = await isSubscribed()
 
   const { data: issue } = await supabase.from('issues').select('*').eq('id', issueId).single()
   if (!issue) notFound()
@@ -148,7 +150,7 @@ export default async function IssuePage({
 
   if (!payload) {
     return (
-      <Shell>
+      <Shell subscribed={subscribed}>
         <div className="mx-auto max-w-reader px-5 py-16">
           <p className="meta">No payload yet.</p>
         </div>
@@ -170,7 +172,7 @@ export default async function IssuePage({
   }
 
   return (
-    <Shell>
+    <Shell subscribed={subscribed}>
       {/* COVER — magazine area, mobile-first scaling */}
       <section className="border-b border-line">
         <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16 lg:py-20">
@@ -530,39 +532,41 @@ export default async function IssuePage({
             —— That&rsquo;s the shift. You&rsquo;re caught up.
           </p>
 
-          {/* PRIMARY CTA: Subscribe — for the stranger who landed here from social */}
-          <div className="mt-10 rounded-lg border border-paper/15 bg-paper/[0.04] p-6 sm:p-8">
-            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
-              Get next Monday&rsquo;s brief
-            </p>
-            <p className="mt-3 font-display text-[22px] font-semibold leading-snug text-paper sm:text-[26px]">
-              One shift. Six layers. Eight minutes. Free.
-            </p>
-            <p className="mt-3 max-w-[520px] font-body text-[15px] leading-relaxed text-paper/80 sm:text-[16px]">
-              The brief for Indian AI builders, PMs, and founders. INR-grounded math, named
-              noise to skip, one production hack you can ship Monday.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href="/subscribe"
-                className="inline-flex items-center rounded bg-accent px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-paper hover:text-ink"
-              >
-                Subscribe — free →
-              </a>
-              <a
-                href="/"
-                className="inline-flex items-center rounded border border-paper/30 px-6 py-3 font-display text-[14px] font-semibold text-paper/90 transition hover:bg-paper/10"
-              >
-                Read past issues
-              </a>
+          {/* PRIMARY CTA: Subscribe — only for visitors who haven't subscribed yet */}
+          {subscribed ? null : (
+            <div className="mt-10 rounded-lg border border-paper/15 bg-paper/[0.04] p-6 sm:p-8">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+                Get next Monday&rsquo;s brief
+              </p>
+              <p className="mt-3 font-display text-[22px] font-semibold leading-snug text-paper sm:text-[26px]">
+                One shift. Six layers. Eight minutes. Free.
+              </p>
+              <p className="mt-3 max-w-[520px] font-body text-[15px] leading-relaxed text-paper/80 sm:text-[16px]">
+                The brief for Indian AI builders, PMs, and founders. INR-grounded math, named
+                noise to skip, one production hack you can ship Monday.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="/subscribe"
+                  className="inline-flex items-center rounded bg-accent px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-paper hover:text-ink"
+                >
+                  Subscribe — free →
+                </a>
+                <a
+                  href="/"
+                  className="inline-flex items-center rounded border border-paper/30 px-6 py-3 font-display text-[14px] font-semibold text-paper/90 transition hover:bg-paper/10"
+                >
+                  Read past issues
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* SECONDARY: Forward — for existing subscribers */}
-          <div className="mt-8 grid gap-6 border-t border-paper/15 pt-8 sm:grid-cols-[1fr_auto] sm:items-end">
+          {/* SECONDARY: Forward — always shown */}
+          <div className={`${subscribed ? 'mt-10' : 'mt-8 border-t border-paper/15 pt-8'} grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end`}>
             <div>
               <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-paper/60">
-                Already subscribed? Forward to one builder.
+                {subscribed ? 'Forward to one builder' : 'Already subscribed? Forward to one builder.'}
               </p>
               <p className="mt-3 max-w-[480px] font-body text-[15px] leading-relaxed text-paper/75">
                 If this lands for someone you work with — co-founder, PM, the engineer thinking about
@@ -625,7 +629,7 @@ function SectionOpener({
 }
 
 /* Site shell — full-bleed dark masthead + footer. */
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({ children, subscribed }: { children: React.ReactNode; subscribed: boolean }) {
   return (
     <>
       <header className="bg-ink text-paper">
@@ -640,16 +644,24 @@ function Shell({ children }: { children: React.ReactNode }) {
             <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
               About
             </Link>
-            <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+            {subscribed ? (
+              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                Subscribed ✓
+              </span>
+            ) : (
+              <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                Subscribe
+              </Link>
+            )}
+          </nav>
+          {subscribed ? null : (
+            <Link
+              href="/subscribe"
+              className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
+            >
               Subscribe
             </Link>
-          </nav>
-          <Link
-            href="/subscribe"
-            className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
-          >
-            Subscribe
-          </Link>
+          )}
         </div>
       </header>
       <main id="main">{children}</main>

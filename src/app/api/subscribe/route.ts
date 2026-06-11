@@ -34,12 +34,27 @@ export async function POST(req: Request) {
     status: 'active',
     subscribed_at: new Date().toISOString(),
   })
+
+  // Set the subscription cookie so every page suppresses Subscribe CTAs after
+  // this. Read by lib/subscription.ts on the server. 2-year retention, HttpOnly
+  // so client JS can't tamper; SameSite=Lax so it survives normal navigation.
+  const setSubCookie = (res: NextResponse, already = false) => {
+    res.cookies.set('aisignal_sub', '1', {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 730,
+      sameSite: 'lax',
+      secure: true,
+      httpOnly: true,
+    })
+    return res
+  }
+
   if (error && !/relation .* does not exist/i.test(error.message)) {
     if (/duplicate key|unique/.test(error.message)) {
-      return NextResponse.json({ ok: true, already: true })
+      return setSubCookie(NextResponse.json({ ok: true, already: true }), true)
     }
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true })
+  return setSubCookie(NextResponse.json({ ok: true }))
 }
