@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { isSubscribed } from '@/lib/subscription'
 import SubscribeForm from './SubscribeForm'
 
@@ -17,23 +18,26 @@ export default async function SubscribePage() {
           <Link href="/" className="text-paper">
             <Logo />
           </Link>
-          <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-            <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              Issues
-            </Link>
-            <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              About
-            </Link>
-            {subscribed ? (
-              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
-                Subscribed ✓
-              </span>
-            ) : (
-              <Link href="/subscribe" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
-                Subscribe
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden gap-6 sm:flex" aria-label="Primary">
+              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                Issues
               </Link>
-            )}
-          </nav>
+              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                About
+              </Link>
+              {subscribed ? (
+                <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                  Subscribed ✓
+                </span>
+              ) : (
+                <Link href="/subscribe" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
+                  Subscribe
+                </Link>
+              )}
+            </nav>
+            <ThemeToggle className="text-paper/80 hover:text-paper" />
+          </div>
         </div>
       </header>
 
@@ -151,6 +155,23 @@ export default async function SubscribePage() {
             <Logo />
             <p className="meta"><span translate="no">getaisignal.org</span></p>
           </div>
+          <nav
+            aria-label="Footer"
+            className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-5"
+          >
+            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Issues
+            </Link>
+            <Link href="/about" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              About
+            </Link>
+            <Link href="/subscribe" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Subscribe
+            </Link>
+            <a href="/feed.xml" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              RSS
+            </a>
+          </nav>
         </div>
       </footer>
     </>

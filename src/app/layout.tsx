@@ -33,10 +33,17 @@ export const viewport: Viewport = {
   ],
 }
 
+// Inline pre-paint script — applies stored theme to <html> BEFORE React
+// hydrates so we never flash the wrong palette. Reads localStorage; absent
+// or 'system' lets the @media query in globals.css pick the theme.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('aisignal_theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* Apply theme BEFORE first paint to avoid flash-of-wrong-theme */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {/* Performance — preconnect to Google Fonts before CSS parses @import */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

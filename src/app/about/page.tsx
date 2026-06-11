@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { Logo } from '@/components/Logo'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { isSubscribed } from '@/lib/subscription'
+import { createAdminSupabaseClient } from '@/lib/supabase-admin'
+import type { IssuePayload } from '../../../db/types/database'
 
 export const metadata = {
   title: 'About',
@@ -9,6 +12,19 @@ export const metadata = {
 
 export default async function AboutPage() {
   const subscribed = await isSubscribed()
+  const supabase = createAdminSupabaseClient()
+  const { data: issues } = await supabase
+    .from('issues')
+    .select('id, payload')
+    .in('status', ['drafted', 'awaiting_human'])
+    .order('created_at', { ascending: false })
+    .limit(1)
+  const latest = issues?.[0]
+  const latestPayload = (latest?.payload as IssuePayload | null) ?? null
+  const latestPersonaArchetype = latestPayload?.persona?.archetype ?? null
+  const latestHack = latestPayload?.production_hack ?? null
+  const showExcerpt = Boolean(latest && latestPayload)
+
   return (
     <>
       <header className="bg-ink text-paper">
@@ -16,28 +32,31 @@ export default async function AboutPage() {
           <Link href="/" className="text-paper">
             <Logo />
           </Link>
-          <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-            <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              Issues
-            </Link>
-            <Link href="/about" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
-              About
-            </Link>
-            {subscribed ? (
-              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
-                Subscribed ✓
-              </span>
-            ) : (
-              <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden gap-6 sm:flex" aria-label="Primary">
+              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                Issues
+              </Link>
+              <Link href="/about" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
+                About
+              </Link>
+              {subscribed ? (
+                <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                  Subscribed ✓
+                </span>
+              ) : (
+                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                  Subscribe
+                </Link>
+              )}
+            </nav>
+            <ThemeToggle className="text-paper/80 hover:text-paper" />
+            {subscribed ? null : (
+              <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
                 Subscribe
               </Link>
             )}
-          </nav>
-          {subscribed ? null : (
-            <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
-              Subscribe
-            </Link>
-          )}
+          </div>
         </div>
       </header>
 
@@ -76,7 +95,53 @@ export default async function AboutPage() {
             </p>
           </div>
 
-          <div className="mt-14 grid gap-8 sm:grid-cols-2">
+          {showExcerpt && latest && latestPayload ? (
+            <section className="mt-14 border-t border-line pt-12">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                From last week&rsquo;s issue
+              </p>
+              <h2 className="mt-3 font-display text-[22px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[28px]">
+                {latestPayload.headline}
+              </h2>
+              {latestPayload.throughline ? (
+                <p className="mt-3 max-w-[620px] font-body text-[17px] italic leading-snug text-ink/80">
+                  {latestPayload.throughline}
+                </p>
+              ) : null}
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {latestPersonaArchetype ? (
+                  <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
+                      Written for
+                    </p>
+                    <p className="mt-2 font-display text-[15px] italic leading-snug text-ink">
+                      {latestPersonaArchetype}
+                    </p>
+                  </div>
+                ) : null}
+                {latestHack ? (
+                  <div className="rounded-md border-l-4 border-accent-2 bg-paper-elev px-5 py-5">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-2">
+                      Production hack
+                    </p>
+                    <p className="mt-2 font-display text-[15px] font-bold leading-snug text-ink">
+                      {latestHack.title}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+
+              <Link
+                href={`/issue/${latest.id}`}
+                className="mt-6 inline-flex items-center font-mono text-[12px] uppercase tracking-[0.16em] text-accent hover:text-ink"
+              >
+                Read the full issue →
+              </Link>
+            </section>
+          ) : null}
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-2">
             <div>
               <p className="eyebrow">Cadence</p>
               <p className="mt-2 font-body text-[16px] leading-relaxed text-ink">
@@ -136,6 +201,23 @@ export default async function AboutPage() {
             <p className="meta"><span translate="no">getaisignal.org</span></p>
           </div>
           <p className="mt-3 meta">Monday mornings. ~1500 words. For Indian AI builders, PMs, founders.</p>
+          <nav
+            aria-label="Footer"
+            className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-5"
+          >
+            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Issues
+            </Link>
+            <Link href="/about" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              About
+            </Link>
+            <Link href="/subscribe" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Subscribe
+            </Link>
+            <a href="/feed.xml" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              RSS
+            </a>
+          </nav>
         </div>
       </footer>
     </>

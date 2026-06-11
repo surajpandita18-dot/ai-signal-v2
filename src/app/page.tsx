@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { isSubscribed } from '@/lib/subscription'
 import { Logo } from '@/components/Logo'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import type { IssuePayload } from '../../db/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -58,31 +59,34 @@ export default async function HomePage() {
           <Link href="/" className="text-paper">
             <Logo />
           </Link>
-          <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-            <Link href="/" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
-              Issues
-            </Link>
-            <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              About
-            </Link>
-            {subscribed ? (
-              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
-                Subscribed ✓
-              </span>
-            ) : (
-              <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden gap-6 sm:flex" aria-label="Primary">
+              <Link href="/" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
+                Issues
+              </Link>
+              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                About
+              </Link>
+              {subscribed ? (
+                <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                  Subscribed ✓
+                </span>
+              ) : (
+                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                  Subscribe
+                </Link>
+              )}
+            </nav>
+            <ThemeToggle className="text-paper/80 hover:text-paper" />
+            {subscribed ? null : (
+              <Link
+                href="/subscribe"
+                className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
+              >
                 Subscribe
               </Link>
             )}
-          </nav>
-          {subscribed ? null : (
-            <Link
-              href="/subscribe"
-              className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
-            >
-              Subscribe
-            </Link>
-          )}
+          </div>
         </div>
       </header>
 
@@ -260,6 +264,26 @@ export default async function HomePage() {
           <p className="mt-3 meta">
             Monday mornings. ~1500 words. For Indian AI builders, PMs, founders.
           </p>
+          <nav
+            aria-label="Footer"
+            className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-5"
+          >
+            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Issues
+            </Link>
+            <Link href="/about" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              About
+            </Link>
+            <Link href="/subscribe" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Subscribe
+            </Link>
+            <a
+              href="/feed.xml"
+              className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink"
+            >
+              RSS
+            </a>
+          </nav>
         </div>
       </footer>
     </>

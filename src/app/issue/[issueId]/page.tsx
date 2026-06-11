@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { isSubscribed } from '@/lib/subscription'
 import { Logo } from '@/components/Logo'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { ChapterNav, type ChapterNavItem } from '@/components/ChapterNav'
 import type { Beat, ChosenCalls, IssuePayload } from '../../../../db/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -171,6 +173,18 @@ export default async function IssuePage({
     if (label) tldrItems.push({ verb: kind[0].toUpperCase() + kind.slice(1), label })
   }
 
+  // Sticky chapter nav — skip 04 if production_hack is null.
+  const chapterList: ChapterNavItem[] = [
+    { id: 'chapter-01', num: '01', label: 'Glance' },
+    { id: 'chapter-02', num: '02', label: 'Moved' },
+    { id: 'chapter-03', num: '03', label: 'For you' },
+    ...(payload.production_hack
+      ? [{ id: 'chapter-04', num: '04', label: 'Steal' }]
+      : []),
+    { id: 'chapter-05', num: '05', label: 'Calls' },
+    { id: 'chapter-06', num: '06', label: 'Reading' },
+  ]
+
   return (
     <Shell subscribed={subscribed}>
       {/* COVER — magazine area, mobile-first scaling */}
@@ -209,9 +223,12 @@ export default async function IssuePage({
         </div>
       </section>
 
+      {/* STICKY CHAPTER NAV */}
+      <ChapterNav chapters={chapterList} />
+
       {/* TL;DR — if you only read this */}
       {tldrItems.length > 0 ? (
-        <section className="border-b border-line">
+        <section id="chapter-01" className="scroll-mt-16 border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 01 — At a glance"
@@ -242,7 +259,7 @@ export default async function IssuePage({
 
       {/* THE DIFF — card-style: PAPER_ELEV bg + section-colored left border */}
       {orderedDiff.length > 0 ? (
-        <section className="border-b border-line">
+        <section id="chapter-02" className="scroll-mt-16 border-b border-line">
           <div className="mx-auto max-w-reader px-4 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 02 — What moved"
@@ -294,7 +311,7 @@ export default async function IssuePage({
 
       {/* PERSONA — primary archetype card */}
       {payload.persona ? (
-        <section id="for-you" className="border-b border-line bg-paper/40">
+        <section id="chapter-03" className="scroll-mt-16 border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 03 — For you"
@@ -385,14 +402,22 @@ export default async function IssuePage({
 
       {/* PRODUCTION HACK — weekly "steal this" technique from the literature */}
       {payload.production_hack ? (
-        <section id="steal-this" className="border-b border-line">
+        <section id="chapter-04" className="scroll-mt-16 border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 04 — Steal this"
               title="Production hack of the week"
               dek="One technique from the literature. Ship it Monday."
             />
-            <div className="rounded-md border-l-4 border-r-4 border-l-accent border-r-accent-2 bg-paper-elev px-6 py-8 sm:px-9 sm:py-10">
+            <div className="relative rounded-md border-l-4 border-r-4 border-l-accent border-r-accent-2 bg-paper-elev px-6 py-8 sm:px-9 sm:py-10">
+              <span
+                aria-hidden="true"
+                className="absolute right-6 top-6 inline-flex items-center gap-1.5"
+              >
+                <span className="h-2.5 w-2.5 rounded-full bg-accent-2/40"></span>
+                <span className="h-2.5 w-2.5 rounded-full bg-muted/40"></span>
+                <span className="h-2.5 w-2.5 rounded-full bg-accent/40"></span>
+              </span>
               <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
                 From the literature
               </p>
@@ -411,9 +436,10 @@ export default async function IssuePage({
                 <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
                   How to apply
                 </p>
-                <p className="mt-2 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]">
+                <div className="mt-2 rounded-sm bg-ink/[0.04] px-4 py-3 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]">
+                  <span className="font-mono text-accent">$</span>&nbsp;
                   {payload.production_hack.how_to_apply}
-                </p>
+                </div>
               </div>
               <p className="mt-7 border-t border-dashed border-muted/50 pt-4 font-mono text-[12px] text-muted">
                 Source:{' '}
@@ -433,7 +459,7 @@ export default async function IssuePage({
 
       {/* SHIP / HOLD / KILL — 3 distinct cards with kind-specific accents */}
       {chosen ? (
-        <section id="shk" className="border-b border-line">
+        <section id="chapter-05" className="scroll-mt-16 border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 05 — The calls"
@@ -476,7 +502,7 @@ export default async function IssuePage({
 
       {/* KEEP / SKIP — two cards, accent-coded */}
       {payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length ? (
-        <section id="keep-skip" className="border-b border-line bg-paper/40">
+        <section id="chapter-06" className="scroll-mt-16 border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
               chapter="Chapter 06 — Your reading list"
@@ -637,31 +663,34 @@ function Shell({ children, subscribed }: { children: React.ReactNode; subscribed
           <Link href="/" className="text-paper">
             <Logo />
           </Link>
-          <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-            <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              Issues
-            </Link>
-            <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
-              About
-            </Link>
-            {subscribed ? (
-              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
-                Subscribed ✓
-              </span>
-            ) : (
-              <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <nav className="hidden gap-6 sm:flex" aria-label="Primary">
+              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                Issues
+              </Link>
+              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                About
+              </Link>
+              {subscribed ? (
+                <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
+                  Subscribed ✓
+                </span>
+              ) : (
+                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                  Subscribe
+                </Link>
+              )}
+            </nav>
+            <ThemeToggle className="text-paper/80 hover:text-paper" />
+            {subscribed ? null : (
+              <Link
+                href="/subscribe"
+                className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
+              >
                 Subscribe
               </Link>
             )}
-          </nav>
-          {subscribed ? null : (
-            <Link
-              href="/subscribe"
-              className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
-            >
-              Subscribe
-            </Link>
-          )}
+          </div>
         </div>
       </header>
       <main id="main">{children}</main>
@@ -676,6 +705,23 @@ function Shell({ children, subscribed }: { children: React.ReactNode; subscribed
           <p className="mt-3 meta">
             Monday mornings. ~1500 words. For Indian AI builders, PMs, founders.
           </p>
+          <nav
+            aria-label="Footer"
+            className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-5"
+          >
+            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Issues
+            </Link>
+            <Link href="/about" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              About
+            </Link>
+            <Link href="/subscribe" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              Subscribe
+            </Link>
+            <a href="/feed.xml" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
+              RSS
+            </a>
+          </nav>
         </div>
       </footer>
     </>
