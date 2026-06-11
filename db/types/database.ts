@@ -225,10 +225,14 @@ export interface IssuePayload {
   throughline_lead: string                  // ~60-100 word lead landing in the throughline
   six_layer_diff: DiffLayerEntry[]          // ideally 6, one per beat; may be fewer if a beat is quiet this week
   persona: {
-    archetype: string                       // e.g. "Bangalore bootstrapped SaaS founder adding AI"
-    translation: string                     // ~250 words: what does this week mean FOR YOU
-    inr_math: string                        // a worked INR calculation, concrete numbers
+    archetype: string                       // primary archetype this week
+    translation: string                     // 120-180 words deep treatment
+    inr_math: string                        // worked INR calculation, concrete numbers
   }
+  also_for?: Array<{
+    archetype: string                       // a different builder archetype
+    take: string                            // 40-60 word implication for THIS archetype
+  }>                                        // 2-3 short briefs serving the broader builder audience
   shk_candidates: {
     ship: ShkCall[]                         // 3-5 candidates — human picks ONE in review
     hold: ShkCall[]                         // 3-5 candidates — human picks ONE

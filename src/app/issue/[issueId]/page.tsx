@@ -177,7 +177,7 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* THE DIFF — magazine-style numbered sections, mobile-first */}
+      {/* THE DIFF — card-style: PAPER_ELEV bg + section-colored left border */}
       {orderedDiff.length > 0 ? (
         <section className="border-b border-line">
           <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16">
@@ -187,29 +187,38 @@ export default async function IssuePage({
                 The 6-layer diff
               </h2>
             </div>
-            <div className="space-y-10 sm:space-y-12">
+            <div className="space-y-5 sm:space-y-6">
               {orderedDiff.map((d, i) => {
                 const num = String(i + 1).padStart(2, '0')
                 const sectionId = `diff-${d.beat}`
-                // Split first sentence for visual hierarchy on web too
                 const m = d.bullet.match(/^([^.!?]+[.!?])\s+([\s\S]+)$/)
                 const lead = m ? m[1].trim() : d.bullet
                 const rest = m ? m[2].trim() : ''
+                const isWarm =
+                  d.beat === 'india-infra' || d.beat === 'indic-models' || d.beat === 'enterprise-deals'
+                const borderCls = isWarm ? 'border-accent-2' : 'border-accent'
+                const accentCls = isWarm ? 'text-accent-2' : 'text-accent'
                 return (
-                  <article key={sectionId} id={sectionId}>
-                    <div className="flex items-baseline gap-3">
-                      <span className="font-mono text-[28px] font-light leading-none text-accent sm:text-[40px]">
-                        {num}
-                      </span>
-                      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted sm:text-[11px]">
-                        {BEAT_LABEL[d.beat]}
-                      </p>
-                    </div>
-                    <p className="mt-3 font-body text-[17px] font-bold leading-snug text-ink sm:text-[19px]">
+                  <article
+                    key={sectionId}
+                    id={sectionId}
+                    className={`rounded-md border-l-4 ${borderCls} bg-paper-elev px-5 py-6 sm:px-7 sm:py-7`}
+                  >
+                    <p
+                      className={`font-mono text-[10px] font-semibold uppercase tracking-[0.16em] ${accentCls} sm:text-[11px]`}
+                    >
+                      {BEAT_LABEL[d.beat]}
+                    </p>
+                    <p
+                      className={`mt-1 font-mono text-[32px] font-light leading-none ${accentCls} sm:text-[40px]`}
+                    >
+                      {num}
+                    </p>
+                    <p className="mt-4 font-body text-[17px] font-bold leading-snug text-ink sm:text-[19px]">
                       {lead}
                     </p>
                     {rest ? (
-                      <p className="mt-2 font-body text-[15px] leading-relaxed text-ink/85 sm:text-[16px]">
+                      <p className="mt-3 font-body text-[15px] leading-relaxed text-body sm:text-[16px]">
                         {rest}
                       </p>
                     ) : null}
@@ -221,7 +230,7 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* PERSONA — bordered editorial card */}
+      {/* PERSONA — primary archetype card */}
       {payload.persona ? (
         <section id="for-you" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
@@ -238,6 +247,30 @@ export default async function IssuePage({
                 <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-[13px] leading-relaxed text-ink">
                   {payload.persona.inr_math}
                 </pre>
+              </div>
+            ) : null}
+
+            {/* ALSO FOR — 2-3 short briefs for other builder archetypes */}
+            {payload.also_for?.length ? (
+              <div className="mt-10">
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-2">
+                  Also for · other builders
+                </p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  {payload.also_for.map((b, i) => (
+                    <div
+                      key={i}
+                      className="rounded-md border-l-[3px] border-accent-2 bg-paper-elev px-5 py-5"
+                    >
+                      <p className="font-display text-[15px] font-semibold text-ink">
+                        {b.archetype}
+                      </p>
+                      <p className="mt-2 font-body text-[15px] leading-relaxed text-body">
+                        {b.take}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>

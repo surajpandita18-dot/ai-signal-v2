@@ -141,35 +141,38 @@ function buildHtml(
     return { lead: m[1].trim(), rest: m[2].trim() }
   }
 
+  // Section accent rotation — peacock for spine layers, terracotta for India/enterprise warmth
+  const sectionAccent = (beat: Beat): string => {
+    if (beat === 'india-infra' || beat === 'indic-models' || beat === 'enterprise-deals') {
+      return ACCENT2
+    }
+    return ACCENT
+  }
+
   const diffHtml = orderedDiff
-    .map(
-      (d, i) => {
-        const { lead, rest } = splitLeadAndRest(d.bullet)
-        return `
-<tr><td class="pad pad-y" style="padding:36px 24px 0 24px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-      <td valign="top" class="diffnumcol" width="56" style="padding-right:16px;">
-        <span class="diffnum" style="font-family:${FONT_MONO};font-size:34px;line-height:1;font-weight:300;color:${ACCENT};">
-          ${String(i + 1).padStart(2, '0')}
-        </span>
-      </td>
-      <td valign="top">
-        <p class="meta-row" style="margin:6px 0 10px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${MUTED};">
-          ${BEAT_LABEL[d.beat]}
-        </p>
-        <p class="lead-bold" style="margin:0;font-family:${FONT_BODY};font-size:18px;line-height:1.45;color:${INK};font-weight:700;">
-          ${esc(lead)}
-        </p>
-        ${rest
-          ? `<p class="lead-rest" style="margin:10px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">${esc(rest)}</p>`
-          : ''}
-      </td>
-    </tr>
+    .map((d, i) => {
+      const { lead, rest } = splitLeadAndRest(d.bullet)
+      const sa = sectionAccent(d.beat)
+      return `
+<tr><td class="pad" style="padding:24px 24px 0 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${sa};border-radius:4px;">
+    <tr><td class="card" style="padding:28px 26px;">
+      <p class="meta-row" style="margin:0 0 4px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${sa};font-weight:600;">
+        ${BEAT_LABEL[d.beat]}
+      </p>
+      <p style="margin:0 0 18px 0;font-family:${FONT_MONO};font-size:40px;line-height:1;font-weight:300;color:${sa};">
+        ${String(i + 1).padStart(2, '0')}
+      </p>
+      <p class="lead-bold" style="margin:0;font-family:${FONT_BODY};font-size:18px;line-height:1.4;color:${INK};font-weight:700;letter-spacing:-0.005em;">
+        ${esc(lead)}
+      </p>
+      ${rest
+        ? `<p class="lead-rest" style="margin:14px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.65;color:${BODY};">${esc(rest)}</p>`
+        : ''}
+    </td></tr>
   </table>
 </td></tr>`
-      }
-    )
+    })
     .join('')
 
   const personaHtml = payload.persona
@@ -194,6 +197,30 @@ function buildHtml(
         : ''}
     </td></tr>
   </table>
+</td></tr>`
+    : ''
+
+  const alsoForHtml = payload.also_for?.length
+    ? `
+<tr><td class="pad" style="padding:24px 24px 0 24px;">
+  <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT2};">
+    Also for &middot; other builders
+  </p>
+  ${payload.also_for
+    .map(
+      (b) => `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:3px solid ${ACCENT2};border-radius:4px;margin-bottom:12px;">
+    <tr><td class="card" style="padding:18px 20px;">
+      <p style="margin:0 0 8px 0;font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;color:${INK};letter-spacing:0.005em;">
+        ${esc(b.archetype)}
+      </p>
+      <p class="lead-rest" style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${BODY};">
+        ${esc(b.take)}
+      </p>
+    </td></tr>
+  </table>`
+    )
+    .join('')}
 </td></tr>`
     : ''
 
@@ -359,6 +386,9 @@ function buildHtml(
   <!-- Persona translation -->
   ${personaHtml}
 
+  <!-- Also for other builders -->
+  ${alsoForHtml}
+
   <!-- Ship / Hold / Kill -->
   ${shkHtml}
 
@@ -478,6 +508,16 @@ function buildText(
       lines.push('')
       lines.push('The math:')
       lines.push(payload.persona.inr_math)
+    }
+  }
+
+  if (payload.also_for?.length) {
+    lines.push('')
+    lines.push('— ALSO FOR OTHER BUILDERS —')
+    for (const b of payload.also_for) {
+      lines.push('')
+      lines.push(b.archetype)
+      lines.push(b.take)
     }
   }
 

@@ -130,10 +130,20 @@ The voice you want: a Sajith Pai-meets-Matt Levine register. Frameworks and foot
     }
   ],
   "persona": {
-    "archetype": "exact string from persona menu",
+    "archetype": "exact string from persona menu — the primary archetype this week's shift hits hardest",
     "translation": "120-180 words in 2-3 short paragraphs separated by \\n\\n. Open with persona's reality. Middle with new moat. Close with 'What I'd do Monday: <action>'.",
     "inr_math": "3-6 lines worked INR calculation. Show the math. End with one-line interpretation."
   },
+  "also_for": [
+    {
+      "archetype": "A DIFFERENT archetype from the menu — not the same as persona.archetype",
+      "take": "40-60 words. Two short sentences. Address THIS archetype directly. First sentence: what changed for them. Second sentence: one Monday action."
+    },
+    {
+      "archetype": "A THIRD archetype from the menu",
+      "take": "40-60 words. Same structure."
+    }
+  ],
   "shk_candidates": {
     "ship": [ { "label": "Ship X this sprint", "rationale": "1-3 sentences with numbers", "cluster_ids": ["uuid"] } ],
     "hold": [ { "label": "Don't commit Y until Z", "rationale": "...", "cluster_ids": ["uuid"] } ],
@@ -183,10 +193,11 @@ The rewrite voice is what gets readers to forward to their CTO. Earn that.
 3. Pick the SPINE — which 3 of 6 layers carry the body.
 4. Write headline (punchy 4-8 words), then throughline, then COLD OPEN lead.
 5. Write 3 deep + 3 tendon diff bullets.
-6. Write persona translation with "What I'd do Monday" close.
-7. Generate 3-5 SHK candidates each.
-8. Name the noise to skip with real specifics.
-9. Output JSON. Stop.`
+6. Write PRIMARY persona translation with "What I'd do Monday" close.
+7. Write 2 also_for short briefs for OTHER archetypes — every issue must serve multiple builder types, never just one.
+8. Generate 3-5 SHK candidates each.
+9. Name the noise to skip with real specifics.
+10. Output JSON. Stop.`
 
 interface SynthesizerOutput extends IssuePayload {}
 
