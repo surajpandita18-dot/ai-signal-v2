@@ -465,15 +465,15 @@ export default async function IssuePage({
         <section id="keep-skip" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
-              chapter="Chapter 06 — Your feed"
-              title="Keep · Skip"
-              dek="Where to spend the next 30 minutes. What to delete unread."
+              chapter="Chapter 06 — Your reading list"
+              title="What to read · What to skip"
+              dek="Three pieces worth your half-hour. Five everyone is talking about that you can safely ignore."
             />
             <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
               {payload.keep_skip?.keep?.length ? (
                 <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-6 sm:px-6 sm:py-7">
                   <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-                    Keep &mdash; worth your half-hour
+                    Read this week &mdash; signal we didn't have room for
                   </p>
                   <ul className="mt-4 space-y-3">
                     {payload.keep_skip.keep.map((k, i) => (
@@ -491,7 +491,7 @@ export default async function IssuePage({
               {payload.keep_skip?.skip?.length ? (
                 <div className="rounded-md border-l-4 border-accent-2 bg-paper-elev px-5 py-6 sm:px-6 sm:py-7">
                   <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
-                    Skip &mdash; named noise this week
+                    Skip this week &mdash; loud, but not yours to act on
                   </p>
                   <ul className="mt-4 space-y-3">
                     {payload.keep_skip.skip.map((s, i) => (

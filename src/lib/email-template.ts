@@ -418,13 +418,13 @@ ${(['ship', 'hold', 'kill'] as const)
   const keepSkipHtml =
     payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length
       ? `
-${sectionHeader('Chapter 06 — Your feed', 'Keep · Skip', 'Where to spend the next 30 minutes. What to delete unread.')}
+${sectionHeader('Chapter 06 — Your reading list', 'What to read · What to skip', 'Three pieces worth your half-hour. Five everyone is talking about that you can safely ignore.')}
 ${payload.keep_skip?.keep?.length
   ? `<tr><td class="pad" style="padding:0 24px 16px 24px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
         <tr><td class="card" style="padding:22px 24px;">
           <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
-            Keep &mdash; worth your half-hour
+            Read this week &mdash; signal we didn't have room for
           </p>
           ${payload.keep_skip.keep
             .map(
@@ -441,7 +441,7 @@ ${payload.keep_skip?.skip?.length
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT2};border-radius:4px;">
         <tr><td class="card" style="padding:22px 24px;">
           <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
-            Skip &mdash; named noise this week
+            Skip this week &mdash; loud, but not yours to act on
           </p>
           ${payload.keep_skip.skip
             .map(

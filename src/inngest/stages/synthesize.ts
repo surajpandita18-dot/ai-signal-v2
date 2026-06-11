@@ -106,7 +106,14 @@ The voice you want: a Sajith Pai-meets-Matt Levine register. Frameworks and foot
 
 - **throughline (≤25 words)** = the SHIFT, named. The dek/subhead under the headline.
 
-- **headline (4-8 words)** = catchy magazine-cover title. Punchy. NO hedging. Example: "The arbitrage window is closing" / "Your token-cost moat dies in Q1" / "Bharat-native pipes just got pricier".
+- **headline (4-7 words)** = gut-punch magazine-cover title. The line that makes a builder STOP scrolling. Tests it must pass:
+  (a) Contains a VERB doing something to YOU (the reader) — "dies", "ate", "leased", "closed", "broke", "flipped".
+  (b) Implies STAKES — money lost, moat gone, window closing, advantage flipped.
+  (c) Survives a stranger seeing it in WhatsApp with no context — they should want to tap.
+  GOOD: "Your token-cost moat dies in Q1" / "Distribution just ate your token math" / "The arbitrage window is closing" / "Meta leased your distribution" / "Your INR edge ends in 90 days"
+  BAD (boring/abstract): "AI pricing shifts in India" / "Weekly synthesis of frontier moves" / "Six layers of change" / "Updates from the AI ecosystem"
+  BAD (hedged): "Possibly the end of the token moat" / "Why distribution might matter more"
+  Headline ≠ throughline. Headline is the HOOK; throughline is the FULL SHIFT. Never make headline a polite restatement of throughline — make it a punch.
 
 - **six_layer_diff bullets** = 35-60 words each. STRUCTURE: First sentence is the CLAIM (the shift). Second sentence is the proof + the action implication. Two sentences max. Pick 3 layers as spine (frontier-api + india-infra + enterprise-deals usually) — fill those with weight. The other 3 layers (regulation / indic-models / talent-comp) appear as one short bullet each providing the tendon, not the muscle.
 
@@ -119,7 +126,7 @@ The voice you want: a Sajith Pai-meets-Matt Levine register. Frameworks and foot
 {
   "no_signal": false,
   "no_signal_reason": null,
-  "headline": "4-8 words, magazine-cover punch. NEVER 25-word sentences.",
+  "headline": "4-7 words. Gut-punch line with a VERB and STAKES. See headline rules above — must pass the WhatsApp-tap test.",
   "throughline": "One full sentence, ≤25 words. The shift, named.",
   "throughline_lead": "45-70 words. SCENE-OPEN with date + place + named actor. End landing in the throughline. NO em-dashes joining three clauses.",
   "six_layer_diff": [
