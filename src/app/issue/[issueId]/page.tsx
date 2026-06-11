@@ -346,7 +346,7 @@ export default async function IssuePage({
             {payload.also_for?.length ? (
               <div className="mt-10">
                 <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
-                  —&nbsp;&nbsp;Also reading
+                  Also reading · other builders
                 </p>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   {payload.also_for.map((b, i) => (
@@ -511,26 +511,56 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* CLOSURE + FORWARD CTA */}
+      {/* CLOSURE + SUBSCRIBE CTA (for first-time readers) + FORWARD CTA (for existing) */}
       <section className="bg-ink text-paper">
         <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
           <p className="font-body text-[20px] italic leading-relaxed text-paper">
             —— That&rsquo;s the shift. You&rsquo;re caught up.
           </p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end">
+
+          {/* PRIMARY CTA: Subscribe — for the stranger who landed here from social */}
+          <div className="mt-10 rounded-lg border border-paper/15 bg-paper/[0.04] p-6 sm:p-8">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+              Get next Monday&rsquo;s brief
+            </p>
+            <p className="mt-3 font-display text-[22px] font-semibold leading-snug text-paper sm:text-[26px]">
+              One shift. Six layers. Eight minutes. Free.
+            </p>
+            <p className="mt-3 max-w-[520px] font-body text-[15px] leading-relaxed text-paper/80 sm:text-[16px]">
+              The brief for Indian AI builders, PMs, and founders. INR-grounded math, named
+              noise to skip, one production hack you can ship Monday.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/subscribe"
+                className="inline-flex items-center rounded bg-accent px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-paper hover:text-ink"
+              >
+                Subscribe — free →
+              </a>
+              <a
+                href="/"
+                className="inline-flex items-center rounded border border-paper/30 px-6 py-3 font-display text-[14px] font-semibold text-paper/90 transition hover:bg-paper/10"
+              >
+                Read past issues
+              </a>
+            </div>
+          </div>
+
+          {/* SECONDARY: Forward — for existing subscribers */}
+          <div className="mt-8 grid gap-6 border-t border-paper/15 pt-8 sm:grid-cols-[1fr_auto] sm:items-end">
             <div>
               <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-paper/60">
-                Forward to one builder
+                Already subscribed? Forward to one builder.
               </p>
-              <p className="mt-3 max-w-[480px] font-body text-[16px] leading-relaxed text-paper/85">
+              <p className="mt-3 max-w-[480px] font-body text-[15px] leading-relaxed text-paper/75">
                 If this lands for someone you work with — co-founder, PM, the engineer thinking about
-                migration — send them the link. That&rsquo;s the whole share button.
+                migration — send them the link.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(
-                  `${payload.throughline} — AI Signal Issue #${issueNumberPadded}: https://getaisignal.org/issue/${issueId}`
+                  `${headline} — AI Signal #${issueNumberPadded}: https://getaisignal.org/issue/${issueId}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

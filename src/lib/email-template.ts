@@ -319,7 +319,7 @@ ${sectionHeader('Chapter 03 — For you', 'Written for this week', `One archetyp
     ? `
 <tr><td class="pad" style="padding:28px 24px 0 24px;">
   <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
-    &mdash;&nbsp;&nbsp;Also reading
+    Also reading &middot; other builders
   </p>
   ${payload.also_for
     .map(
@@ -472,7 +472,7 @@ ${sectionHeader('Chapter 01 — At a glance', 'If you only read this', 'The thre
 </td></tr>`
     : ''
 
-  const waText = `${payload.throughline} — AI Signal Issue #${issueNumberPadded}: ${issueUrl}`
+  const waText = `${headline(payload)} — AI Signal #${issueNumberPadded}: ${issueUrl}`
   const waHref = `https://wa.me/?text=${encodeURIComponent(waText)}`
 
   return `<!DOCTYPE html>
