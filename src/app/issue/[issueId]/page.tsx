@@ -124,36 +124,36 @@ export default async function IssuePage({
 
   return (
     <Shell>
-      {/* COVER — big magazine area */}
+      {/* COVER — magazine area, mobile-first scaling */}
       <section className="border-b border-line">
-        <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-20">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
+        <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16 lg:py-20">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-accent sm:text-[11px]">
               Issue {issueNumberPadded}
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:text-[11px]">
               {issueDate}
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:text-[11px]">
               · {readTime} min read
             </span>
           </div>
 
-          {/* The catchy headline — big, magazine-cover style */}
-          <h1 className="mt-6 font-heading text-[40px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px] sm:leading-[1.02]">
+          {/* Catchy headline — scales 28 → 40 → 56 */}
+          <h1 className="mt-5 font-heading text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px] sm:leading-[1.05] lg:text-[56px] lg:leading-[1.02]">
             {headline}
           </h1>
 
           {/* Throughline as subhead / dek */}
           {payload.throughline && payload.throughline !== headline ? (
-            <p className="mt-6 max-w-[600px] font-body text-[20px] italic leading-snug text-ink/80 sm:text-[22px]">
+            <p className="mt-5 max-w-[600px] font-body text-[17px] italic leading-snug text-ink/80 sm:text-[20px] lg:text-[22px]">
               {payload.throughline}
             </p>
           ) : null}
 
           {/* Lead paragraph */}
           {payload.throughline_lead ? (
-            <p className="mt-8 max-w-[640px] font-body text-[18px] leading-relaxed text-ink/90">
+            <p className="mt-6 max-w-[640px] font-body text-[16px] leading-relaxed text-ink/90 sm:mt-8 sm:text-[18px]">
               {payload.throughline_lead}
             </p>
           ) : null}
@@ -177,41 +177,42 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* THE DIFF — magazine-style numbered sections */}
+      {/* THE DIFF — magazine-style numbered sections, mobile-first */}
       {orderedDiff.length > 0 ? (
         <section className="border-b border-line">
-          <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">
-                §
-              </span>
-              <h2 className="font-heading text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
+          <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16">
+            <div className="mb-8 flex items-baseline gap-3 sm:mb-10 sm:gap-4">
+              <span className="font-heading text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
+              <h2 className="font-heading text-[20px] font-semibold tracking-tight text-ink sm:text-[26px]">
                 The 6-layer diff
               </h2>
             </div>
-            <div className="space-y-12">
+            <div className="space-y-10 sm:space-y-12">
               {orderedDiff.map((d, i) => {
                 const num = String(i + 1).padStart(2, '0')
                 const sectionId = `diff-${d.beat}`
+                // Split first sentence for visual hierarchy on web too
+                const m = d.bullet.match(/^([^.!?]+[.!?])\s+([\s\S]+)$/)
+                const lead = m ? m[1].trim() : d.bullet
+                const rest = m ? m[2].trim() : ''
                 return (
-                  <article
-                    key={sectionId}
-                    id={sectionId}
-                    className="grid gap-6 sm:grid-cols-[80px_1fr] sm:gap-8"
-                  >
-                    <div className="flex flex-row items-baseline gap-3 sm:flex-col sm:items-end sm:gap-1 sm:pt-2 sm:text-right">
-                      <span className="font-mono text-[36px] font-light leading-none text-accent sm:text-[48px]">
+                  <article key={sectionId} id={sectionId}>
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-[28px] font-light leading-none text-accent sm:text-[40px]">
                         {num}
                       </span>
-                    </div>
-                    <div>
-                      <p className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+                      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted sm:text-[11px]">
                         {BEAT_LABEL[d.beat]}
                       </p>
-                      <p className="mt-3 font-body text-[17px] leading-relaxed text-ink sm:text-[18px]">
-                        {d.bullet}
-                      </p>
                     </div>
+                    <p className="mt-3 font-body text-[17px] font-bold leading-snug text-ink sm:text-[19px]">
+                      {lead}
+                    </p>
+                    {rest ? (
+                      <p className="mt-2 font-body text-[15px] leading-relaxed text-ink/85 sm:text-[16px]">
+                        {rest}
+                      </p>
+                    ) : null}
                   </article>
                 )
               })}

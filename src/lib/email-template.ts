@@ -142,23 +142,23 @@ function buildHtml(
       (d, i) => {
         const { lead, rest } = splitLeadAndRest(d.bullet)
         return `
-<tr><td style="padding:40px 24px 0 24px;">
+<tr><td class="pad pad-y" style="padding:36px 24px 0 24px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
-      <td valign="top" width="56" style="padding-right:18px;">
-        <span style="font-family:${FONT_MONO};font-size:34px;line-height:1;font-weight:300;color:${ACCENT};">
+      <td valign="top" class="diffnumcol" width="56" style="padding-right:16px;">
+        <span class="diffnum" style="font-family:${FONT_MONO};font-size:34px;line-height:1;font-weight:300;color:${ACCENT};">
           ${String(i + 1).padStart(2, '0')}
         </span>
       </td>
       <td valign="top">
-        <p style="margin:6px 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${MUTED};">
+        <p class="meta-row" style="margin:6px 0 10px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${MUTED};">
           ${BEAT_LABEL[d.beat]}
         </p>
-        <p style="margin:0;font-family:${FONT_BODY};font-size:18px;line-height:1.55;color:${INK};font-weight:700;">
+        <p class="lead-bold" style="margin:0;font-family:${FONT_BODY};font-size:18px;line-height:1.45;color:${INK};font-weight:700;">
           ${esc(lead)}
         </p>
         ${rest
-          ? `<p style="margin:10px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">${esc(rest)}</p>`
+          ? `<p class="lead-rest" style="margin:10px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">${esc(rest)}</p>`
           : ''}
       </td>
     </tr>
@@ -170,22 +170,22 @@ function buildHtml(
 
   const personaHtml = payload.persona
     ? `
-<tr><td style="padding:36px 24px 0 24px;">
+<tr><td class="pad" style="padding:40px 24px 0 24px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};border:1px solid ${LINE};border-radius:6px;">
-    <tr><td style="padding:24px;">
-      <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">
+    <tr><td class="card" style="padding:24px;">
+      <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
         What this means for you
       </p>
       <p style="margin:8px 0 0 0;font-family:${FONT_HEAD};font-size:14px;font-weight:600;color:${INK};">
         ${esc(payload.persona.archetype)}
       </p>
-      <p style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};white-space:pre-line;">
+      <p class="body-prose" style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};white-space:pre-line;">
         ${esc(payload.persona.translation)}
       </p>
       ${payload.persona.inr_math
         ? `<div style="margin-top:20px;padding-top:16px;border-top:1px solid ${LINE};">
-            <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">The math</p>
-            <pre style="margin:8px 0 0 0;font-family:${FONT_MONO};font-size:13px;line-height:1.55;color:${INK};white-space:pre-wrap;">${esc(payload.persona.inr_math)}</pre>
+            <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">The math</p>
+            <pre style="margin:8px 0 0 0;font-family:${FONT_MONO};font-size:13px;line-height:1.55;color:${INK};white-space:pre-wrap;overflow-x:auto;">${esc(payload.persona.inr_math)}</pre>
           </div>`
         : ''}
     </td></tr>
@@ -195,8 +195,8 @@ function buildHtml(
 
   const shkHtml = chosen
     ? `
-<tr><td style="padding:36px 24px 0 24px;">
-  <p style="margin:0 0 18px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">
+<tr><td class="pad" style="padding:40px 24px 0 24px;">
+  <p class="meta-row" style="margin:0 0 20px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
     Ship / Hold / Kill &middot; this week
   </p>
   ${(['ship', 'hold', 'kill'] as const)
@@ -204,10 +204,10 @@ function buildHtml(
       const c = chosen[kind]
       if (!c) return ''
       return `
-  <div style="border-left:2px solid ${ACCENT};padding-left:18px;margin-bottom:20px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${MUTED};">${kind.toUpperCase()}</p>
-    <p style="margin:6px 0 0 0;font-family:${FONT_HEAD};font-size:17px;font-weight:600;color:${INK};">${esc(c.label)}</p>
-    <p style="margin:6px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};">${esc(c.rationale)}</p>
+  <div style="border-left:3px solid ${ACCENT};padding-left:16px;margin-bottom:22px;">
+    <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${MUTED};font-weight:600;">${kind.toUpperCase()}</p>
+    <p class="shk-label" style="margin:6px 0 0 0;font-family:${FONT_HEAD};font-size:17px;font-weight:600;line-height:1.35;color:${INK};">${esc(c.label)}</p>
+    <p class="shk-body" style="margin:8px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};">${esc(c.rationale)}</p>
   </div>`
     })
     .join('')}
@@ -217,28 +217,28 @@ function buildHtml(
   const keepSkipHtml =
     payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length
       ? `
-<tr><td style="padding:36px 24px 0 24px;">
-  <p style="margin:0 0 18px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">
+<tr><td class="pad" style="padding:40px 24px 0 24px;">
+  <p class="meta-row" style="margin:0 0 20px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
     Keep / Skip
   </p>
   ${payload.keep_skip?.keep?.length
-    ? `<p style="margin:0 0 8px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Keep</p>
-       <ul style="margin:0 0 18px 0;padding:0 0 0 4px;list-style:none;">
+    ? `<p style="margin:0 0 10px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Keep</p>
+       <ul style="margin:0 0 20px 0;padding:0 0 0 4px;list-style:none;">
          ${payload.keep_skip.keep
            .map(
              (k) =>
-               `<li style="margin:0 0 6px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT};">+ </span>${esc(k)}</li>`
+               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT};font-weight:600;">+ </span>${esc(k)}</li>`
            )
            .join('')}
        </ul>`
     : ''}
   ${payload.keep_skip?.skip?.length
-    ? `<p style="margin:0 0 8px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Skip</p>
+    ? `<p style="margin:0 0 10px 0;font-family:${FONT_HEAD};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Skip</p>
        <ul style="margin:0;padding:0 0 0 4px;list-style:none;">
          ${payload.keep_skip.skip
            .map(
              (s) =>
-               `<li style="margin:0 0 6px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${CLAY};">− </span>${esc(s)}</li>`
+               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${CLAY};font-weight:600;">− </span>${esc(s)}</li>`
            )
            .join('')}
        </ul>`
@@ -248,16 +248,16 @@ function buildHtml(
 
   const skimHtml = skimBullets.length
     ? `
-<tr><td style="padding:0 24px 0 24px;">
+<tr><td class="pad" style="padding:0 24px 0 24px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};border:1px solid ${LINE};border-radius:6px;">
-    <tr><td style="padding:18px 20px;">
-      <p style="margin:0 0 10px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">
+    <tr><td class="card" style="padding:18px 20px;">
+      <p class="meta-row" style="margin:0 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
         What changed this week
       </p>
       ${skimBullets
         .map(
           (b) =>
-            `<p style="margin:0 0 6px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.5;color:${INK};"><span style="color:${ACCENT};font-family:${FONT_MONO};">→ </span>${esc(b)}</p>`
+            `<p class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.5;color:${INK};"><span style="color:${ACCENT};font-family:${FONT_MONO};font-weight:600;">→ </span>${esc(b)}</p>`
         )
         .join('')}
     </td></tr>
@@ -277,16 +277,32 @@ function buildHtml(
 <meta name="supported-color-schemes" content="light dark">
 <title>${esc(payload.throughline)}</title>
 <style>
-  /* Mobile-safe — Outlook ignores this but Gmail/Apple Mail honor it */
+  /* Dark mode override — Gmail/Apple Mail honor this */
   @media (prefers-color-scheme: dark) {
     body, .paper { background:#1a1a1a !important; color:#f5f1e8 !important; }
     .ink-text { color:#f5f1e8 !important; }
     .panel { background:#1a1a1a !important; border-color:#2a2a2a !important; }
     .accent { color:#93c5fd !important; }
   }
+  /* Mobile (≤480px iPhone/Android) — tighter padding, smaller heads, narrower
+     number column. Outlook ignores; Gmail/Apple Mail honor. */
   @media only screen and (max-width:600px) {
     .container { width:100% !important; }
-    .pad { padding-left:18px !important; padding-right:18px !important; }
+    .pad { padding-left:16px !important; padding-right:16px !important; }
+    .pad-y { padding-top:24px !important; padding-bottom:0 !important; }
+    .card { padding:18px !important; }
+    .hed { font-size:28px !important; line-height:1.15 !important; }
+    .dek { font-size:16px !important; }
+    .diffnum { font-size:26px !important; }
+    .diffnumcol { width:42px !important; padding-right:12px !important; }
+    .lead-bold { font-size:17px !important; }
+    .lead-rest { font-size:15px !important; }
+    .body-prose { font-size:16px !important; }
+    .shk-label { font-size:16px !important; }
+    .shk-body { font-size:14px !important; }
+    .ks-item { font-size:15px !important; }
+    .meta-row { font-size:10px !important; letter-spacing:0.12em !important; }
+    .cta-btn { padding:12px 16px !important; font-size:13px !important; }
   }
   a { color:${ACCENT}; }
 </style>
@@ -303,14 +319,14 @@ function buildHtml(
 
   <!-- Masthead + meta -->
   <tr><td class="pad" style="padding:8px 24px 8px 24px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${MUTED};">
+    <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${MUTED};">
       <span style="color:${ACCENT};font-weight:600;">AI SIGNAL</span> &middot; ISSUE&nbsp;#${issueNumberPadded}${dateStr ? ` &middot; ${dateStr.toUpperCase()}` : ''}
     </p>
   </td></tr>
 
   <!-- Headline — the catchy 5-word title -->
   <tr><td class="pad" style="padding:24px 24px 16px 24px;">
-    <h1 class="ink-text" style="margin:0;font-family:${FONT_HEAD};font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
+    <h1 class="ink-text hed" style="margin:0;font-family:${FONT_HEAD};font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
       ${esc(headline(payload))}
     </h1>
   </td></tr>
@@ -318,13 +334,13 @@ function buildHtml(
   <!-- Throughline = italic dek under headline (small + restrained) -->
   ${payload.throughline && payload.throughline !== headline(payload)
     ? `<tr><td class="pad" style="padding:0 24px 28px 24px;">
-        <p style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.5;color:${INK};opacity:0.85;">${esc(payload.throughline)}</p>
+        <p class="dek" style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.5;color:${INK};opacity:0.85;">${esc(payload.throughline)}</p>
       </td></tr>`
     : ''}
 
   <!-- Read on web link, small + low key -->
-  <tr><td class="pad" style="padding:0 24px 36px 24px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.10em;color:${MUTED};">
+  <tr><td class="pad" style="padding:0 24px 32px 24px;">
+    <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.10em;color:${MUTED};">
       ${readTime(payload)} MIN READ &middot;
       <a href="${issueUrl}" style="color:${MUTED};text-decoration:underline;">Open on web</a>
     </p>
@@ -346,27 +362,25 @@ function buildHtml(
   ${keepSkipHtml}
 
   <!-- Closure -->
-  <tr><td class="pad" style="padding:36px 24px 24px 24px;border-top:1px solid ${LINE};">
-    <p style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.55;color:${INK};">
+  <tr><td class="pad" style="padding:40px 24px 16px 24px;border-top:1px solid ${LINE};">
+    <p class="dek" style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.55;color:${INK};">
       —— That&rsquo;s the shift. You&rsquo;re caught up.
     </p>
   </td></tr>
 
   <!-- Forward CTA -->
-  <tr><td class="pad" style="padding:8px 24px 24px 24px;">
-    <p style="margin:0 0 10px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${ACCENT};">
+  <tr><td class="pad" style="padding:16px 24px 24px 24px;">
+    <p class="meta-row" style="margin:0 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
       Forward to one builder
     </p>
-    <p style="margin:0 0 16px 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};">
-      If this lands for someone you work with — a co-founder, a PM, the engineer thinking about migration — send them the link.
+    <p class="ks-item" style="margin:0 0 18px 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};">
+      If this lands for someone you work with — co-founder, PM, the engineer thinking about migration — send them the link.
     </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding-right:10px;">
-          <a href="${waHref}" target="_blank" style="display:inline-block;padding:12px 20px;background:${INK};color:${PAPER};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Share on WhatsApp</a>
-        </td>
         <td>
-          <a href="${issueUrl}" style="display:inline-block;padding:12px 20px;border:1px solid ${INK};color:${INK};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Copy link</a>
+          <a href="${waHref}" target="_blank" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-right:8px;margin-bottom:8px;background:${INK};color:${PAPER};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Share on WhatsApp</a>
+          <a href="${issueUrl}" class="cta-btn" style="display:inline-block;padding:13px 20px;margin-bottom:8px;border:1px solid ${INK};color:${INK};font-family:${FONT_HEAD};font-size:14px;font-weight:600;text-decoration:none;border-radius:4px;">Copy link</a>
         </td>
       </tr>
     </table>
