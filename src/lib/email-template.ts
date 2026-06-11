@@ -339,12 +339,57 @@ ${sectionHeader('Chapter 03 — For you', 'Written for this week', `One archetyp
 </td></tr>`
     : ''
 
+  // Production hack — the weekly "steal this" technique pulled from the literature
+  const productionHackHtml = payload.production_hack
+    ? `
+${sectionHeader('Chapter 04 — Steal this', 'Production hack of the week', 'One technique from the literature. Ship it Monday.')}
+<tr><td class="pad" style="padding:0 24px 0 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-right:4px solid ${ACCENT2};border-radius:4px;">
+    <tr><td class="card" style="padding:28px 26px;">
+      <p class="meta-row" style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
+        From the literature
+      </p>
+      <p style="margin:0;font-family:${FONT_DISPLAY};font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-0.01em;color:${INK};">
+        ${esc(payload.production_hack.title)}
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;">
+        <tr><td style="padding:0 0 6px 0;">
+          <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
+            Why it matters
+          </p>
+        </td></tr>
+        <tr><td style="padding:0 0 18px 0;">
+          <p class="body-prose" style="margin:0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">
+            ${esc(payload.production_hack.why_it_matters)}
+          </p>
+        </td></tr>
+        <tr><td style="padding:0 0 6px 0;">
+          <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
+            How to apply
+          </p>
+        </td></tr>
+        <tr><td style="padding:0;">
+          <p class="body-prose" style="margin:0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">
+            ${esc(payload.production_hack.how_to_apply)}
+          </p>
+        </td></tr>
+      </table>
+      <div style="margin-top:22px;padding-top:14px;border-top:1px dashed ${MUTED};">
+        <p style="margin:0;font-family:${FONT_MONO};font-size:12px;line-height:1.5;color:${MUTED};">
+          Source: <a href="${esc(payload.production_hack.source_url)}" style="color:${ACCENT};text-decoration:underline;">${esc(payload.production_hack.source_label)}</a>
+        </p>
+      </div>
+    </td></tr>
+  </table>
+</td></tr>`
+    : ''
+
   // SHK kind-specific accent: peacock for Ship (move forward), muted for Hold, terracotta for Kill
   const shkAccent = { ship: ACCENT, hold: MUTED, kill: ACCENT2 } as const
   const shkVerb = { ship: 'Ship', hold: 'Hold', kill: 'Kill' } as const
   const shkHtml = chosen
     ? `
-${sectionHeader('Chapter 04 — The calls', 'Three moves this week', 'One to ship. One to wait on. One to kill.')}
+${sectionHeader('Chapter 05 — The calls', 'Three moves this week', 'One to ship. One to wait on. One to kill.')}
 ${(['ship', 'hold', 'kill'] as const)
   .map((kind) => {
     const c = chosen[kind]
@@ -373,7 +418,7 @@ ${(['ship', 'hold', 'kill'] as const)
   const keepSkipHtml =
     payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length
       ? `
-${sectionHeader('Chapter 05 — Your feed', 'Keep · Skip', 'Where to spend the next 30 minutes. What to delete unread.')}
+${sectionHeader('Chapter 06 — Your feed', 'Keep · Skip', 'Where to spend the next 30 minutes. What to delete unread.')}
 ${payload.keep_skip?.keep?.length
   ? `<tr><td class="pad" style="padding:0 24px 16px 24px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
@@ -525,6 +570,9 @@ ${sectionHeader('Chapter 01 — At a glance', 'If you only read this', 'The thre
   <!-- Also for other builders -->
   ${alsoForHtml}
 
+  <!-- Production hack of the week -->
+  ${productionHackHtml}
+
   <!-- Ship / Hold / Kill -->
   ${shkHtml}
 
@@ -655,6 +703,23 @@ function buildText(
       lines.push(b.archetype)
       lines.push(b.take)
     }
+  }
+
+  if (payload.production_hack) {
+    lines.push('')
+    lines.push('— STEAL THIS · PRODUCTION HACK —')
+    lines.push(payload.production_hack.title)
+    lines.push('')
+    lines.push('Why it matters: ' + payload.production_hack.why_it_matters)
+    lines.push('')
+    lines.push('How to apply: ' + payload.production_hack.how_to_apply)
+    lines.push('')
+    lines.push(
+      'Source: ' +
+        payload.production_hack.source_label +
+        ' — ' +
+        payload.production_hack.source_url
+    )
   }
 
   if (chosen) {

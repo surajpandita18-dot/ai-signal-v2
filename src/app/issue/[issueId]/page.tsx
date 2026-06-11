@@ -369,12 +369,60 @@ export default async function IssuePage({
         </section>
       ) : null}
 
+      {/* PRODUCTION HACK — weekly "steal this" technique from the literature */}
+      {payload.production_hack ? (
+        <section id="steal-this" className="border-b border-line">
+          <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
+            <SectionOpener
+              chapter="Chapter 04 — Steal this"
+              title="Production hack of the week"
+              dek="One technique from the literature. Ship it Monday."
+            />
+            <div className="rounded-md border-l-4 border-r-4 border-l-accent border-r-accent-2 bg-paper-elev px-6 py-8 sm:px-9 sm:py-10">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
+                From the literature
+              </p>
+              <h3 className="mt-2 font-display text-[22px] font-bold leading-snug tracking-tight text-ink sm:text-[26px]">
+                {payload.production_hack.title}
+              </h3>
+              <div className="mt-6">
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+                  Why it matters
+                </p>
+                <p className="mt-2 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]">
+                  {payload.production_hack.why_it_matters}
+                </p>
+              </div>
+              <div className="mt-6">
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+                  How to apply
+                </p>
+                <p className="mt-2 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]">
+                  {payload.production_hack.how_to_apply}
+                </p>
+              </div>
+              <p className="mt-7 border-t border-dashed border-muted/50 pt-4 font-mono text-[12px] text-muted">
+                Source:{' '}
+                <a
+                  href={payload.production_hack.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
+                >
+                  {payload.production_hack.source_label}
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* SHIP / HOLD / KILL — 3 distinct cards with kind-specific accents */}
       {chosen ? (
         <section id="shk" className="border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
-              chapter="Chapter 04 — The calls"
+              chapter="Chapter 05 — The calls"
               title="Three moves this week"
               dek="One to ship. One to wait on. One to kill."
             />
@@ -417,7 +465,7 @@ export default async function IssuePage({
         <section id="keep-skip" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
             <SectionOpener
-              chapter="Chapter 05 — Your feed"
+              chapter="Chapter 06 — Your feed"
               title="Keep · Skip"
               dek="Where to spend the next 30 minutes. What to delete unread."
             />

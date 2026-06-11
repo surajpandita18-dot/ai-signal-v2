@@ -233,6 +233,13 @@ export interface IssuePayload {
     archetype: string                       // a different builder archetype
     take: string                            // 40-60 word implication for THIS archetype
   }>                                        // 2-3 short briefs serving the broader builder audience
+  production_hack?: {
+    title: string                           // ≤7 words — concrete technique name
+    why_it_matters: string                  // 40-70 words — Indian-builder framing, what production pain it fixes
+    how_to_apply: string                    // 40-70 words — concrete steps the builder can ship this week
+    source_label: string                    // paper title / repo / blog name
+    source_url: string                      // canonical URL
+  } | null                                  // weekly production hack pulled from research/OSS — null if nothing solid this week
   shk_candidates: {
     ship: ShkCall[]                         // 3-5 candidates — human picks ONE in review
     hold: ShkCall[]                         // 3-5 candidates — human picks ONE

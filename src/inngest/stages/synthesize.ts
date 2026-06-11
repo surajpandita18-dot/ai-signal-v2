@@ -153,6 +153,13 @@ The voice you want: a Sajith Pai-meets-Matt Levine register. Frameworks and foot
     "keep": [ "2-3 signal-adjacent items the reader should internalise" ],
     "skip": [ "3-5 NAMED noise items — 'the $5.2B Applied Digital lease everyone quote-tweeted', not 'various funding rounds'" ]
   },
+  "production_hack": {
+    "title": "≤7 words — name the technique. Examples: 'Speculative decoding via vLLM 0.7', 'HyDE retrieval over BM25', 'Text-diffusion sampler for cost'",
+    "why_it_matters": "40-70 words. Frame for Indian builder context — what production pain it solves (latency under variable load / inference cost on Yotta H100s / multilingual quality / safety eval). NO theory talk. Land on the dollar/INR/QPS impact.",
+    "how_to_apply": "40-70 words. Concrete: which lib/flag/PR/repo, where to drop it in, what to measure. The reader should leave knowing the FIRST FILE they'd edit on Monday.",
+    "source_label": "Paper title OR repo/release OR blog headline — the canonical name",
+    "source_url": "https://arxiv.org/abs/... | https://github.com/... | https://huggingface.co/... | etc."
+  },
   "set_aside_observation": "Optional one-sentence note on what dominated the noise this week."
 }
 
@@ -162,6 +169,7 @@ The voice you want: a Sajith Pai-meets-Matt Levine register. Frameworks and foot
 - cluster_ids must reference IDs from the cluster list provided.
 - If no_signal=true: shk_candidates may be empty.
 - All free-text: tight prose, no hedging, no "in conclusion", no LaTeX, no emoji.
+- **production_hack** is REQUIRED unless the week truly has nothing technique-flavored (then set to null). Prefer one extractable from this week's clusters (a new OSS release, a paper writeup, a model-card technique). If nothing in clusters, pull from the prior 2-3 weeks of canonical AI engineering literature (vLLM / Triton / llama.cpp / Unsloth / RAGAS / DSPy / HuggingFace blog / arXiv cs.CL). NEVER fabricate a URL — if you can't cite, set production_hack to null.
 
 # PERSONA ROTATION
 
@@ -197,7 +205,8 @@ The rewrite voice is what gets readers to forward to their CTO. Earn that.
 7. Write 2 also_for short briefs for OTHER archetypes — every issue must serve multiple builder types, never just one.
 8. Generate 3-5 SHK candidates each.
 9. Name the noise to skip with real specifics.
-10. Output JSON. Stop.`
+10. Pick ONE production_hack — a technique from this week's clusters (or recent canonical literature) the reader can drop into their stack on Monday. Cite a real URL. Never fabricate.
+11. Output JSON. Stop.`
 
 interface SynthesizerOutput extends IssuePayload {}
 
@@ -349,7 +358,7 @@ Produce the locked payload per the schema. Scene-open lead. Coined framework. Mo
   try {
     response = await anthropic.messages.create({
       model: MODEL_SYNTHESIZE,
-      max_tokens: 12_000,
+      max_tokens: 16_000,
       system: [
         {
           type: 'text',
