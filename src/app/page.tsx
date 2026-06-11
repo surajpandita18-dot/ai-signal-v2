@@ -54,7 +54,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <header className="bg-ink text-paper">
+      <header className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
           <Link href="/" className="text-paper">
             <Logo />

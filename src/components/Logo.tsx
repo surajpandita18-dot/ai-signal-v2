@@ -11,7 +11,7 @@ export function Logo({ className }: { className?: string }) {
         AI&nbsp;SIGNAL
         <span
           aria-hidden="true"
-          className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#0f4c3a]"
+          className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent"
         />
       </span>
     </span>

@@ -552,7 +552,7 @@ export default async function IssuePage({
       ) : null}
 
       {/* CLOSURE + SUBSCRIBE CTA (for first-time readers) + FORWARD CTA (for existing) */}
-      <section className="bg-ink text-paper">
+      <section className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
           <p className="font-body text-[20px] italic leading-relaxed text-paper">
             —— That&rsquo;s the shift. You&rsquo;re caught up.
@@ -658,9 +658,9 @@ function SectionOpener({
 function Shell({ children, subscribed }: { children: React.ReactNode; subscribed: boolean }) {
   return (
     <>
-      <header className="bg-ink text-paper">
+      <header className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
-          <Link href="/" className="text-paper">
+          <Link href="/" className="text-[#f4efe6]">
             <Logo />
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
