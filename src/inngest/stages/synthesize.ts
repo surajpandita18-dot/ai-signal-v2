@@ -103,17 +103,17 @@ Your persona translation (~250 words) should:
   "no_signal_reason": null,
   "headline": "Catchy magazine-cover title. STRICTLY 4-8 words. Example: 'The arbitrage window is closing' or 'Your token-cost moat dies in Q1'. NEVER 25-word sentences. NEVER hedged ('might', 'maybe'). Punchy + concrete.",
   "throughline": "One full sentence. The shift, named. ≤25 words. This becomes the subhead/dek under the headline.",
-  "throughline_lead": "60-100 word lead that sets the week's context and lands in the throughline. Do NOT restate the throughline verbatim; deliver to it.",
+  "throughline_lead": "STRICTLY 45-70 word lead. ONE short paragraph. Sets context and delivers the throughline. Do NOT restate verbatim. NO em-dashes joining three clauses — break them apart.",
   "six_layer_diff": [
     {
       "beat": "frontier-api | india-infra | regulation | indic-models | talent-comp | enterprise-deals",
-      "bullet": "40-80 words. Specific. Names + numbers. Cite which clusters support this.",
+      "bullet": "STRICTLY 35-60 words. STRUCTURE: First sentence states the SHIFT directly (the claim — like a headline). Second sentence (optional) gives the proof point with numbers. DO NOT write one long sentence with em-dashes — readers skim. Two short sentences max.",
       "cluster_ids": ["uuid", "uuid"]
     }
   ],
   "persona": {
     "archetype": "exact string from the persona menu above",
-    "translation": "~250 words. Concrete persona-specific implication of the throughline + the diff.",
+    "translation": "STRICTLY 120-180 words (NOT 250). Break into 2-3 short paragraphs separated by \\n\\n. Each paragraph 2-3 sentences MAX. Lead with the persona's reality, then the action implication.",
     "inr_math": "one worked INR calculation, 3-6 lines. Show the math, not just the result."
   },
   "shk_candidates": {

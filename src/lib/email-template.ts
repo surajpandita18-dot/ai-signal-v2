@@ -12,11 +12,10 @@
 //
 // Returns { html, text } for Resend's `react`/`html` + `text` fields.
 
-import type {
-  Beat,
-  ChosenCalls,
-  IssuePayload,
-} from '../../db/types/database'
+import type { Beat, ChosenCalls, IssuePayload } from '../../db/types/database'
+
+// re-export so helpers below can name-shadow if needed
+export type { IssuePayload }
 
 const BEAT_LABEL: Record<Beat, string> = {
   'frontier-api': 'FRONTIER APIs',
@@ -70,6 +69,15 @@ function formatDate(iso: string | null): string {
   })
 }
 
+// Fallback if synthesizer didn't produce a headline yet — take first clause
+// of throughline, cap at 8 words.
+function deriveShortSubject(throughline: string | null | undefined): string {
+  if (!throughline) return 'AI Signal · the brief'
+  const firstClause = throughline.split(/[—,]/)[0].trim()
+  const words = firstClause.split(/\s+/)
+  return words.length <= 8 ? firstClause : words.slice(0, 7).join(' ') + '…'
+}
+
 export interface EmailTemplateInput {
   issueId: string
   issueNumber: number
@@ -90,9 +98,10 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
   const issueNumberPadded = String(opts.issueNumber).padStart(3, '0')
   const dateStr = formatDate(opts.issueCreatedAt)
 
-  const subject = opts.payload.throughline
-  // Preheader: extends the subject hook — never repeats it.
-  const preheader = `Monday brief · ${opts.payload.persona?.archetype ?? 'For Indian AI builders'}`
+  // Subject = the catchy 5-8 word headline. NEVER the long throughline.
+  const subject = opts.payload.headline ?? deriveShortSubject(opts.payload.throughline)
+  // Preheader: extends the hook — never repeats subject. Short, complements it.
+  const preheader = opts.payload.throughline ?? 'Monday brief · for Indian AI builders'
 
   const html = buildHtml(opts, issueUrl, issueNumberPadded, dateStr)
   const text = buildText(opts, issueUrl, issueNumberPadded, dateStr)
@@ -120,18 +129,42 @@ function buildHtml(
   if (chosen?.kill?.label) skimBullets.push(`Kill: ${chosen.kill.label}`)
   else if (payload.shk_candidates?.kill?.[0]?.label) skimBullets.push(`Kill: ${payload.shk_candidates.kill[0].label}`)
 
-  // Sections
+  // Per-section helper: split bullet at first sentence boundary so we can
+  // bold the lead claim and let the rest read as supporting body. Scannable.
+  const splitLeadAndRest = (bullet: string): { lead: string; rest: string } => {
+    const m = bullet.match(/^([^.!?]+[.!?])\s+([\s\S]+)$/)
+    if (!m) return { lead: bullet, rest: '' }
+    return { lead: m[1].trim(), rest: m[2].trim() }
+  }
+
   const diffHtml = orderedDiff
     .map(
-      (d, i) => `
-<tr><td style="padding:24px 24px 0 24px;border-top:1px solid ${LINE};">
-  <p style="margin:0 0 10px 0;font-family:${FONT_MONO};font-size:12px;color:${MUTED};letter-spacing:0.06em;">
-    <span style="color:${ACCENT};">${String(i + 1).padStart(2, '0')}</span> &middot; ${BEAT_LABEL[d.beat]}
-  </p>
-  <p style="margin:0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};">
-    ${esc(d.bullet)}
-  </p>
+      (d, i) => {
+        const { lead, rest } = splitLeadAndRest(d.bullet)
+        return `
+<tr><td style="padding:40px 24px 0 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td valign="top" width="56" style="padding-right:18px;">
+        <span style="font-family:${FONT_MONO};font-size:34px;line-height:1;font-weight:300;color:${ACCENT};">
+          ${String(i + 1).padStart(2, '0')}
+        </span>
+      </td>
+      <td valign="top">
+        <p style="margin:6px 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${MUTED};">
+          ${BEAT_LABEL[d.beat]}
+        </p>
+        <p style="margin:0;font-family:${FONT_BODY};font-size:18px;line-height:1.55;color:${INK};font-weight:700;">
+          ${esc(lead)}
+        </p>
+        ${rest
+          ? `<p style="margin:10px 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">${esc(rest)}</p>`
+          : ''}
+      </td>
+    </tr>
+  </table>
 </td></tr>`
+      }
     )
     .join('')
 
@@ -269,21 +302,32 @@ function buildHtml(
 <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};max-width:600px;">
 
   <!-- Masthead + meta -->
-  <tr><td class="pad" style="padding:0 24px 24px 24px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.12em;color:${MUTED};">
-      AI SIGNAL &middot; ISSUE #${issueNumberPadded}${dateStr ? ` &middot; ${dateStr.toUpperCase()}` : ''} &middot;
-      <a href="${issueUrl}" style="color:${MUTED};text-decoration:underline;">Read on web</a>
+  <tr><td class="pad" style="padding:8px 24px 8px 24px;">
+    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${MUTED};">
+      <span style="color:${ACCENT};font-weight:600;">AI SIGNAL</span> &middot; ISSUE&nbsp;#${issueNumberPadded}${dateStr ? ` &middot; ${dateStr.toUpperCase()}` : ''}
     </p>
   </td></tr>
 
-  <!-- Title (the throughline) -->
-  <tr><td class="pad" style="padding:0 24px 24px 24px;">
-    <h1 class="ink-text" style="margin:0;font-family:${FONT_HEAD};font-size:28px;font-weight:700;line-height:1.2;color:${INK};letter-spacing:-0.01em;">
-      ${esc(payload.throughline)}
+  <!-- Headline — the catchy 5-word title -->
+  <tr><td class="pad" style="padding:24px 24px 16px 24px;">
+    <h1 class="ink-text" style="margin:0;font-family:${FONT_HEAD};font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
+      ${esc(headline(payload))}
     </h1>
-    ${payload.throughline_lead
-      ? `<p style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};">${esc(payload.throughline_lead)}</p>`
-      : ''}
+  </td></tr>
+
+  <!-- Throughline = italic dek under headline (small + restrained) -->
+  ${payload.throughline && payload.throughline !== headline(payload)
+    ? `<tr><td class="pad" style="padding:0 24px 28px 24px;">
+        <p style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.5;color:${INK};opacity:0.85;">${esc(payload.throughline)}</p>
+      </td></tr>`
+    : ''}
+
+  <!-- Read on web link, small + low key -->
+  <tr><td class="pad" style="padding:0 24px 36px 24px;">
+    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.10em;color:${MUTED};">
+      ${readTime(payload)} MIN READ &middot;
+      <a href="${issueUrl}" style="color:${MUTED};text-decoration:underline;">Open on web</a>
+    </p>
   </td></tr>
 
   <!-- Executive skim -->
@@ -348,6 +392,28 @@ function buildHtml(
 
 function site(opts: EmailTemplateInput): string {
   return opts.siteUrl ?? 'https://getaisignal.org'
+}
+
+function headline(p: IssuePayload): string {
+  if (p.headline) return p.headline
+  const firstClause = (p.throughline ?? '').split(/[—,]/)[0].trim()
+  const words = firstClause.split(/\s+/)
+  return words.length <= 9 ? firstClause : words.slice(0, 8).join(' ') + '…'
+}
+
+function readTime(p: IssuePayload): number {
+  const words = [
+    p.throughline_lead ?? '',
+    ...(p.six_layer_diff ?? []).map((d) => d.bullet),
+    p.persona?.translation ?? '',
+    p.persona?.inr_math ?? '',
+    ...(p.keep_skip?.keep ?? []),
+    ...(p.keep_skip?.skip ?? []),
+  ]
+    .join(' ')
+    .trim()
+    .split(/\s+/).length
+  return Math.max(3, Math.round(words / 200))
 }
 
 function buildText(
