@@ -37,6 +37,20 @@ export default async function HomePage() {
     throughline: (it.payload as IssuePayload | null)?.throughline ?? '',
   }))
 
+  // Pull the most recent issue's payload for the "Inside this week's brief"
+  // preview teaser block on the hero. Shows a stranger what the format
+  // actually looks like before they have to click anything.
+  const latest = (issues ?? [])[0]?.payload as IssuePayload | null
+  const latestDiff = latest?.six_layer_diff?.[1] ?? latest?.six_layer_diff?.[0]
+  const teaserDiff = latestDiff
+    ? {
+        beat: latestDiff.beat,
+        lead: latestDiff.bullet.match(/^([^.!?]+[.!?])/)?.[1] ?? latestDiff.bullet,
+      }
+    : null
+  const teaserHackTitle = latest?.production_hack?.title ?? null
+  const teaserPersonaArchetype = latest?.persona?.archetype ?? null
+
   return (
     <>
       <header className="bg-ink text-paper">
@@ -116,13 +130,85 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Inside this week's brief — content teaser so a stranger sees the
+            format and quality before clicking into an issue */}
+        {(teaserDiff || teaserHackTitle || teaserPersonaArchetype) && list[0] ? (
+          <section className="border-b border-line bg-paper/40">
+            <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                Inside this week&rsquo;s brief
+              </p>
+              <h2 className="mt-3 font-display text-[26px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[34px]">
+                {list[0].headline}
+              </h2>
+              {list[0].throughline ? (
+                <p className="mt-3 max-w-[620px] font-body text-[17px] italic leading-snug text-ink/80 sm:text-[19px]">
+                  {list[0].throughline}
+                </p>
+              ) : null}
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                {teaserDiff ? (
+                  <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
+                      One of six layers
+                    </p>
+                    <p className="mt-2 font-body text-[15px] font-semibold leading-snug text-ink">
+                      {teaserDiff.lead}
+                    </p>
+                  </div>
+                ) : null}
+                {teaserPersonaArchetype ? (
+                  <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
+                      Written for
+                    </p>
+                    <p className="mt-2 font-display text-[15px] italic leading-snug text-ink">
+                      {teaserPersonaArchetype}
+                    </p>
+                  </div>
+                ) : null}
+                {teaserHackTitle ? (
+                  <div className="rounded-md border-l-4 border-accent-2 bg-paper-elev px-5 py-5">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-2">
+                      This week&rsquo;s production hack
+                    </p>
+                    <p className="mt-2 font-body text-[15px] font-semibold leading-snug text-ink">
+                      {teaserHackTitle}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href={`/issue/${list[0].id}`}
+                  className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-accent"
+                >
+                  Read this week&rsquo;s brief →
+                </Link>
+                {subscribed ? null : (
+                  <Link
+                    href="/subscribe"
+                    className="inline-flex items-center font-mono text-[12px] uppercase tracking-[0.16em] text-muted hover:text-ink"
+                  >
+                    Get next Monday&rsquo;s free →
+                  </Link>
+                )}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* Archive */}
         <section>
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
-                Recent issues
+            <div className="mb-10">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                Archive
+              </p>
+              <h2 className="mt-2 font-display text-[26px] font-bold tracking-tight text-ink sm:text-[32px]">
+                Past issues
               </h2>
             </div>
 

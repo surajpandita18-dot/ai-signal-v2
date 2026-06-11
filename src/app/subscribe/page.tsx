@@ -78,6 +78,60 @@ export default async function SubscribePage() {
                 written for Indian AI builders, PMs, founders. Free.
               </p>
 
+              {/* What you get — concrete feature list sells the value before the form */}
+              <div className="mt-10 rounded-md border-l-4 border-accent bg-paper-elev px-6 py-6 sm:px-7 sm:py-7">
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                  Every Monday, 7:30 AM IST
+                </p>
+                <ul className="mt-4 space-y-3 font-body text-[15px] leading-relaxed text-ink sm:text-[16px]">
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <strong className="font-semibold">One non-obvious shift</strong>{' '}
+                      named in 4-7 words. No daily-news summary.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <strong className="font-semibold">Six layers tracked</strong>:
+                      frontier APIs, India infra, regulation, Indic models,
+                      talent &amp; comp, enterprise deals.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <strong className="font-semibold">INR-grounded math</strong>:
+                      ₹/M tokens, ₹/H100/hour, real INR deltas on real
+                      production workloads.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <strong className="font-semibold">One production hack</strong> from
+                      the literature (vLLM, ArXiv, HuggingFace) — with the
+                      first file to edit.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <strong className="font-semibold">Three opinionated calls</strong>{' '}
+                      — Ship, Hold, Kill — picked by hand, not auto-generated.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-mono font-semibold text-accent-2">−</span>
+                    <span>
+                      <strong className="font-semibold">Named noise to skip</strong>{' '}
+                      — the loud takes you don&rsquo;t need to read this week.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
               <div className="mt-10">
                 <SubscribeForm />
               </div>
