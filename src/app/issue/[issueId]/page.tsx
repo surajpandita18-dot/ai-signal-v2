@@ -48,12 +48,24 @@ function formatIssueDate(iso: string | null): string {
     .toUpperCase()
 }
 
-function estimateReadTime(payload: IssuePayload): number {
+function estimateReadTime(payload: IssuePayload, chosen: ChosenCalls | null): number {
   const words = [
+    payload.headline ?? '',
+    payload.throughline ?? '',
     payload.throughline_lead ?? '',
     ...(payload.six_layer_diff ?? []).map((d) => d.bullet),
+    payload.persona?.archetype ?? '',
     payload.persona?.translation ?? '',
     payload.persona?.inr_math ?? '',
+    ...(payload.also_for ?? []).flatMap((b) => [b.archetype, b.take]),
+    payload.production_hack?.title ?? '',
+    payload.production_hack?.why_it_matters ?? '',
+    payload.production_hack?.how_to_apply ?? '',
+    ...(chosen
+      ? (['ship', 'hold', 'kill'] as const).flatMap((k) =>
+          chosen[k] ? [chosen[k]!.label, chosen[k]!.rationale] : []
+        )
+      : []),
     ...(payload.keep_skip?.keep ?? []),
     ...(payload.keep_skip?.skip ?? []),
   ]
@@ -145,7 +157,7 @@ export default async function IssuePage({
   }
 
   const headline = deriveHeadline(payload)
-  const readTime = estimateReadTime(payload)
+  const readTime = estimateReadTime(payload, chosen)
   const orderedDiff = [...(payload.six_layer_diff ?? [])].sort(
     (a, b) => BEAT_ORDER.indexOf(a.beat) - BEAT_ORDER.indexOf(b.beat)
   )
@@ -313,7 +325,7 @@ export default async function IssuePage({
                 return (
                   <div className="mt-8 border-t border-dashed border-muted/50 pt-6">
                     <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-2">
-                      §&nbsp;&nbsp;The math
+                      The math
                     </p>
                     {math.rows.length ? (
                       <dl className="mt-4 divide-y divide-line">

@@ -292,7 +292,7 @@ function buildHtml(
             ? `
       <div style="margin-top:28px;padding:20px 0 0 0;border-top:1px dashed ${MUTED};">
         <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
-          §&nbsp;&nbsp;The math
+          The math
         </p>
         ${mathRowsHtml}
         ${mathConclusionHtml}
@@ -552,7 +552,7 @@ ${sectionHeader('Chapter 01 — At a glance', 'If you only read this', 'The thre
   <!-- Read on web link, small + low key -->
   <tr><td class="pad" style="padding:0 24px 32px 24px;">
     <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.10em;color:${MUTED};">
-      ${readTime(payload)} MIN READ &middot;
+      ${readTime(payload, chosen)} MIN READ &middot;
       <a href="${issueUrl}" style="color:${MUTED};text-decoration:underline;">Open on web</a>
     </p>
   </td></tr>
@@ -633,12 +633,24 @@ function headline(p: IssuePayload): string {
   return words.length <= 9 ? firstClause : words.slice(0, 8).join(' ') + '…'
 }
 
-function readTime(p: IssuePayload): number {
+function readTime(p: IssuePayload, chosen: ChosenCalls | null): number {
   const words = [
+    p.headline ?? '',
+    p.throughline ?? '',
     p.throughline_lead ?? '',
     ...(p.six_layer_diff ?? []).map((d) => d.bullet),
+    p.persona?.archetype ?? '',
     p.persona?.translation ?? '',
     p.persona?.inr_math ?? '',
+    ...(p.also_for ?? []).flatMap((b) => [b.archetype, b.take]),
+    p.production_hack?.title ?? '',
+    p.production_hack?.why_it_matters ?? '',
+    p.production_hack?.how_to_apply ?? '',
+    ...(chosen
+      ? (['ship', 'hold', 'kill'] as const).flatMap((k) =>
+          chosen[k] ? [chosen[k]!.label, chosen[k]!.rationale] : []
+        )
+      : []),
     ...(p.keep_skip?.keep ?? []),
     ...(p.keep_skip?.skip ?? []),
   ]
