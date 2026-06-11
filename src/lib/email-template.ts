@@ -53,6 +53,46 @@ const FONT_BODY =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' // for body (Inter-like)
 const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 
+// Parse the synthesizer's free-form INR math block into structured rows.
+// Lines like "Label: ~₹250/M output tokens." → row { label, value }.
+// Lines without a numeric/currency RHS roll up into a single conclusion paragraph.
+function parseInrMath(raw: string): {
+  rows: Array<{ label: string; value: string }>
+  conclusion: string | null
+} {
+  const lines = raw
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+  const rows: Array<{ label: string; value: string }> = []
+  const tail: string[] = []
+  const numRe = /[₹$%]|\b\d+(\.\d+)?\b|×|x\b/i
+  for (const line of lines) {
+    const idx = line.indexOf(':')
+    if (idx > 0 && idx < 90) {
+      const label = line.slice(0, idx).trim()
+      const value = line
+        .slice(idx + 1)
+        .trim()
+        .replace(/\.$/, '')
+      if (numRe.test(value) && value.length < 60) {
+        rows.push({ label, value })
+        continue
+      }
+    }
+    tail.push(line)
+  }
+  return { rows, conclusion: tail.join(' ').trim() || null }
+}
+
+// Split persona translation into paragraphs (blank-line separated).
+function paragraphs(raw: string): string[] {
+  return raw
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+}
+
 function esc(s: string | null | undefined): string {
   if (!s) return ''
   return s
@@ -176,28 +216,77 @@ function buildHtml(
     .join('')
 
   const personaHtml = payload.persona
-    ? `
+    ? (() => {
+        const persona = payload.persona
+        const paras = paragraphs(persona.translation)
+        const math = persona.inr_math ? parseInrMath(persona.inr_math) : null
+
+        const paragraphsHtml = paras
+          .map((p, i) => {
+            const isLead = i === 0
+            return `
+      <p class="body-prose" style="margin:${i === 0 ? '24px' : '14px'} 0 0 0;font-family:${FONT_BODY};font-size:${isLead ? '18' : '17'}px;line-height:1.6;color:${INK};${isLead ? 'font-weight:500;' : ''}">
+        ${esc(p)}
+      </p>`
+          })
+          .join('')
+
+        const mathRowsHtml =
+          math && math.rows.length
+            ? `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:0;">
+        ${math.rows
+          .map(
+            (r, i) => `
+        <tr>
+          <td class="math-label" style="padding:${i === 0 ? '0' : '10px'} 14px 10px 0;vertical-align:top;font-family:${FONT_BODY};font-size:15px;line-height:1.45;color:${BODY};border-bottom:1px solid ${LINE};">
+            ${esc(r.label)}
+          </td>
+          <td class="math-value" style="padding:${i === 0 ? '0' : '10px'} 0 10px 14px;text-align:right;vertical-align:top;font-family:${FONT_MONO};font-size:15px;line-height:1.4;color:${ACCENT};font-weight:600;white-space:nowrap;border-bottom:1px solid ${LINE};">
+            ${esc(r.value)}
+          </td>
+        </tr>`
+          )
+          .join('')}
+      </table>`
+            : ''
+
+        const mathConclusionHtml =
+          math && math.conclusion
+            ? `
+      <p class="lead-rest" style="margin:16px 0 0 0;font-family:${FONT_BODY};font-style:italic;font-size:15px;line-height:1.6;color:${INK};">
+        ${esc(math.conclusion)}
+      </p>`
+            : ''
+
+        const mathBlockHtml =
+          math && (math.rows.length || math.conclusion)
+            ? `
+      <div style="margin-top:28px;padding:20px 0 0 0;border-top:1px dashed ${MUTED};">
+        <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
+          §&nbsp;&nbsp;The math
+        </p>
+        ${mathRowsHtml}
+        ${mathConclusionHtml}
+      </div>`
+            : ''
+
+        return `
 <tr><td class="pad" style="padding:40px 24px 0 24px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border:1px solid ${LINE};border-radius:6px;">
-    <tr><td class="card" style="padding:24px;">
-      <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
-        What this means for you
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
+    <tr><td class="card" style="padding:32px 28px;">
+      <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
+        Written for &middot; this week
       </p>
-      <p style="margin:8px 0 0 0;font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;color:${INK};">
-        ${esc(payload.persona.archetype)}
+      <p style="margin:10px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-size:20px;line-height:1.3;color:${INK};letter-spacing:-0.005em;">
+        ${esc(persona.archetype)}
       </p>
-      <p class="body-prose" style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:17px;line-height:1.55;color:${INK};white-space:pre-line;">
-        ${esc(payload.persona.translation)}
-      </p>
-      ${payload.persona.inr_math
-        ? `<div style="margin-top:20px;padding-top:16px;border-top:1px solid ${LINE};">
-            <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">The math</p>
-            <pre style="margin:8px 0 0 0;font-family:${FONT_MONO};font-size:13px;line-height:1.55;color:${INK};white-space:pre-wrap;overflow-x:auto;">${esc(payload.persona.inr_math)}</pre>
-          </div>`
-        : ''}
+      ${paragraphsHtml}
+      ${mathBlockHtml}
     </td></tr>
   </table>
 </td></tr>`
+      })()
     : ''
 
   const alsoForHtml = payload.also_for?.length
@@ -333,6 +422,8 @@ function buildHtml(
     .shk-body { font-size:14px !important; }
     .ks-item { font-size:15px !important; }
     .meta-row { font-size:10px !important; letter-spacing:0.12em !important; }
+    .math-label { font-size:14px !important; padding-right:10px !important; }
+    .math-value { font-size:14px !important; padding-left:10px !important; }
     .cta-btn { padding:12px 16px !important; font-size:13px !important; }
   }
   a { color:${ACCENT}; }

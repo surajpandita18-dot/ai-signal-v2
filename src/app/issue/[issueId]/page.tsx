@@ -63,6 +63,43 @@ function estimateReadTime(payload: IssuePayload): number {
   return Math.max(3, Math.round(words / 200))
 }
 
+// Parse the synthesizer's free-form INR math block into structured rows.
+function parseInrMath(raw: string): {
+  rows: Array<{ label: string; value: string }>
+  conclusion: string | null
+} {
+  const lines = raw
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+  const rows: Array<{ label: string; value: string }> = []
+  const tail: string[] = []
+  const numRe = /[₹$%]|\b\d+(\.\d+)?\b|×|x\b/i
+  for (const line of lines) {
+    const idx = line.indexOf(':')
+    if (idx > 0 && idx < 90) {
+      const label = line.slice(0, idx).trim()
+      const value = line
+        .slice(idx + 1)
+        .trim()
+        .replace(/\.$/, '')
+      if (numRe.test(value) && value.length < 60) {
+        rows.push({ label, value })
+        continue
+      }
+    }
+    tail.push(line)
+  }
+  return { rows, conclusion: tail.join(' ').trim() || null }
+}
+
+function splitParagraphs(raw: string): string[] {
+  return raw
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+}
+
 // Fallback: derive a short headline if synthesizer didn't produce one yet.
 function deriveHeadline(payload: IssuePayload): string {
   if (payload.headline) return payload.headline
@@ -234,21 +271,63 @@ export default async function IssuePage({
       {payload.persona ? (
         <section id="for-you" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <p className="eyebrow">For the…</p>
-            <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
-              {payload.persona.archetype}
-            </h2>
-            <p className="mt-6 max-w-[680px] whitespace-pre-line font-body text-[17px] leading-relaxed text-ink sm:text-[18px]">
-              {payload.persona.translation}
-            </p>
-            {payload.persona.inr_math ? (
-              <div className="mt-8 rounded border border-line bg-paper p-5 sm:p-6">
-                <p className="eyebrow mb-3">The math</p>
-                <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-[13px] leading-relaxed text-ink">
-                  {payload.persona.inr_math}
-                </pre>
+            <div className="rounded-md border-l-4 border-accent bg-paper-elev px-6 py-8 sm:px-9 sm:py-10">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+                Written for · this week
+              </p>
+              <p className="mt-3 font-display text-[19px] italic leading-snug text-ink sm:text-[22px]">
+                {payload.persona.archetype}
+              </p>
+
+              <div className="mt-6 max-w-[640px] space-y-4">
+                {splitParagraphs(payload.persona.translation).map((para, i) => (
+                  <p
+                    key={i}
+                    className={
+                      i === 0
+                        ? 'font-body text-[17px] font-medium leading-relaxed text-ink sm:text-[18px]'
+                        : 'font-body text-[16px] leading-relaxed text-ink/95 sm:text-[17px]'
+                    }
+                  >
+                    {para}
+                  </p>
+                ))}
               </div>
-            ) : null}
+
+              {payload.persona.inr_math ? (() => {
+                const math = parseInrMath(payload.persona.inr_math)
+                if (!math.rows.length && !math.conclusion) return null
+                return (
+                  <div className="mt-8 border-t border-dashed border-muted/50 pt-6">
+                    <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-2">
+                      §&nbsp;&nbsp;The math
+                    </p>
+                    {math.rows.length ? (
+                      <dl className="mt-4 divide-y divide-line">
+                        {math.rows.map((r, i) => (
+                          <div
+                            key={i}
+                            className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-3"
+                          >
+                            <dt className="font-body text-[14px] leading-snug text-body sm:text-[15px]">
+                              {r.label}
+                            </dt>
+                            <dd className="whitespace-nowrap font-mono text-[14px] font-semibold text-accent sm:text-[15px]">
+                              {r.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : null}
+                    {math.conclusion ? (
+                      <p className="mt-4 font-body text-[15px] italic leading-relaxed text-ink sm:text-[16px]">
+                        {math.conclusion}
+                      </p>
+                    ) : null}
+                  </div>
+                )
+              })() : null}
+            </div>
 
             {/* ALSO FOR — 2-3 short briefs for other builder archetypes */}
             {payload.also_for?.length ? (
