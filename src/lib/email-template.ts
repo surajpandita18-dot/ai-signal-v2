@@ -166,12 +166,17 @@ function buildHtml(
     (a, b) => BEAT_ORDER.indexOf(a.beat) - BEAT_ORDER.indexOf(b.beat)
   )
 
-  // Skim bullets: derive from top SHK candidates if available
+  // Skim bullets: 3 lines — Ship, Hold, Kill — derived from chosen calls if present
+  // and falling back to the top synth candidate.
   const skimBullets: string[] = []
-  if (chosen?.ship?.label) skimBullets.push(`Ship: ${chosen.ship.label}`)
-  else if (payload.shk_candidates?.ship?.[0]?.label) skimBullets.push(`Ship: ${payload.shk_candidates.ship[0].label}`)
-  if (chosen?.kill?.label) skimBullets.push(`Kill: ${chosen.kill.label}`)
-  else if (payload.shk_candidates?.kill?.[0]?.label) skimBullets.push(`Kill: ${payload.shk_candidates.kill[0].label}`)
+  for (const kind of ['ship', 'hold', 'kill'] as const) {
+    const label =
+      chosen?.[kind]?.label ?? payload.shk_candidates?.[kind]?.[0]?.label
+    if (label) {
+      const verb = kind[0].toUpperCase() + kind.slice(1)
+      skimBullets.push(`${verb} — ${label}`)
+    }
+  }
 
   // Per-section helper: split bullet at first sentence boundary so we can
   // bold the lead claim and let the rest read as supporting body. Scannable.
@@ -188,6 +193,29 @@ function buildHtml(
     }
     return ACCENT
   }
+
+  // Reusable editorial section opener — chapter kicker + big display title + dek.
+  // Creates breathing room between cards and a magazine-table-of-contents rhythm.
+  const sectionHeader = (chapter: string, title: string, dek?: string): string => `
+<tr><td class="pad" style="padding:52px 24px 26px 24px;">
+  <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
+    ${esc(chapter)}
+  </p>
+  <h2 class="hed-2" style="margin:10px 0 ${dek ? '12px' : '0'} 0;font-family:${FONT_DISPLAY};font-size:30px;font-weight:700;line-height:1.18;letter-spacing:-0.01em;color:${INK};">
+    ${esc(title)}
+  </h2>
+  ${dek
+    ? `<p class="dek-sm" style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${BODY};max-width:480px;">${esc(dek)}</p>`
+    : ''}
+</td></tr>`
+
+  const diffHeaderHtml = orderedDiff.length
+    ? sectionHeader(
+        'Chapter 02 — What moved',
+        'The six layers',
+        'Frontier APIs · India infra · regulation · Indic models · talent · enterprise. Card colour signals the layer.'
+      )
+    : ''
 
   const diffHtml = orderedDiff
     .map((d, i) => {
@@ -272,13 +300,11 @@ function buildHtml(
             : ''
 
         return `
-<tr><td class="pad" style="padding:40px 24px 0 24px;">
+${sectionHeader('Chapter 03 — For you', 'Written for this week', `One archetype, deep. Two more get a paragraph each below.`)}
+<tr><td class="pad" style="padding:0 24px 0 24px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
-    <tr><td class="card" style="padding:32px 28px;">
-      <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
-        Written for &middot; this week
-      </p>
-      <p style="margin:10px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-size:20px;line-height:1.3;color:${INK};letter-spacing:-0.005em;">
+    <tr><td class="card" style="padding:28px;">
+      <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-size:19px;line-height:1.3;color:${INK};letter-spacing:-0.005em;">
         ${esc(persona.archetype)}
       </p>
       ${paragraphsHtml}
@@ -291,19 +317,19 @@ function buildHtml(
 
   const alsoForHtml = payload.also_for?.length
     ? `
-<tr><td class="pad" style="padding:24px 24px 0 24px;">
-  <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT2};">
-    Also for &middot; other builders
+<tr><td class="pad" style="padding:28px 24px 0 24px;">
+  <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
+    &mdash;&nbsp;&nbsp;Also reading
   </p>
   ${payload.also_for
     .map(
       (b) => `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:3px solid ${ACCENT2};border-radius:4px;margin-bottom:12px;">
-    <tr><td class="card" style="padding:18px 20px;">
-      <p style="margin:0 0 8px 0;font-family:${FONT_DISPLAY};font-size:14px;font-weight:600;color:${INK};letter-spacing:0.005em;">
+    <tr><td class="card" style="padding:20px 22px;">
+      <p style="margin:0 0 10px 0;font-family:${FONT_DISPLAY};font-style:italic;font-size:15px;color:${INK};line-height:1.35;">
         ${esc(b.archetype)}
       </p>
-      <p class="lead-rest" style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${BODY};">
+      <p class="lead-rest" style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.6;color:${BODY};">
         ${esc(b.take)}
       </p>
     </td></tr>
@@ -313,71 +339,87 @@ function buildHtml(
 </td></tr>`
     : ''
 
+  // SHK kind-specific accent: peacock for Ship (move forward), muted for Hold, terracotta for Kill
+  const shkAccent = { ship: ACCENT, hold: MUTED, kill: ACCENT2 } as const
+  const shkVerb = { ship: 'Ship', hold: 'Hold', kill: 'Kill' } as const
   const shkHtml = chosen
     ? `
-<tr><td class="pad" style="padding:40px 24px 0 24px;">
-  <p class="meta-row" style="margin:0 0 20px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
-    Ship / Hold / Kill &middot; this week
-  </p>
-  ${(['ship', 'hold', 'kill'] as const)
-    .map((kind) => {
-      const c = chosen[kind]
-      if (!c) return ''
-      return `
-  <div style="border-left:3px solid ${ACCENT};padding-left:16px;margin-bottom:22px;">
-    <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${MUTED};font-weight:600;">${kind.toUpperCase()}</p>
-    <p class="shk-label" style="margin:6px 0 0 0;font-family:${FONT_DISPLAY};font-size:17px;font-weight:600;line-height:1.35;color:${INK};">${esc(c.label)}</p>
-    <p class="shk-body" style="margin:8px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};">${esc(c.rationale)}</p>
-  </div>`
-    })
-    .join('')}
+${sectionHeader('Chapter 04 — The calls', 'Three moves this week', 'One to ship. One to wait on. One to kill.')}
+${(['ship', 'hold', 'kill'] as const)
+  .map((kind) => {
+    const c = chosen[kind]
+    if (!c) return ''
+    const sa = shkAccent[kind]
+    return `
+<tr><td class="pad" style="padding:0 24px 14px 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${sa};border-radius:4px;">
+    <tr><td class="card" style="padding:22px 24px;">
+      <p class="meta-row" style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${sa};font-weight:600;">
+        ${shkVerb[kind]}
+      </p>
+      <p class="shk-label" style="margin:8px 0 0 0;font-family:${FONT_DISPLAY};font-size:18px;font-weight:600;line-height:1.3;color:${INK};letter-spacing:-0.005em;">
+        ${esc(c.label)}
+      </p>
+      <p class="shk-body" style="margin:12px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.6;color:${BODY};">
+        ${esc(c.rationale)}
+      </p>
+    </td></tr>
+  </table>
 </td></tr>`
+  })
+  .join('')}`
     : ''
 
   const keepSkipHtml =
     payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length
       ? `
-<tr><td class="pad" style="padding:40px 24px 0 24px;">
-  <p class="meta-row" style="margin:0 0 20px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
-    Keep / Skip
-  </p>
-  ${payload.keep_skip?.keep?.length
-    ? `<p style="margin:0 0 10px 0;font-family:${FONT_DISPLAY};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Keep</p>
-       <ul style="margin:0 0 20px 0;padding:0 0 0 4px;list-style:none;">
-         ${payload.keep_skip.keep
-           .map(
-             (k) =>
-               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT};font-weight:600;">+ </span>${esc(k)}</li>`
-           )
-           .join('')}
-       </ul>`
-    : ''}
-  ${payload.keep_skip?.skip?.length
-    ? `<p style="margin:0 0 10px 0;font-family:${FONT_DISPLAY};font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${INK};">Skip</p>
-       <ul style="margin:0;padding:0 0 0 4px;list-style:none;">
-         ${payload.keep_skip.skip
-           .map(
-             (s) =>
-               `<li class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT2};font-weight:600;">− </span>${esc(s)}</li>`
-           )
-           .join('')}
-       </ul>`
-    : ''}
-</td></tr>`
+${sectionHeader('Chapter 05 — Your feed', 'Keep · Skip', 'Where to spend the next 30 minutes. What to delete unread.')}
+${payload.keep_skip?.keep?.length
+  ? `<tr><td class="pad" style="padding:0 24px 16px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
+        <tr><td class="card" style="padding:22px 24px;">
+          <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT};font-weight:600;">
+            Keep &mdash; worth your half-hour
+          </p>
+          ${payload.keep_skip.keep
+            .map(
+              (k) =>
+                `<p class="ks-item" style="margin:0 0 10px 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${INK};"><span style="color:${ACCENT};font-family:${FONT_MONO};font-weight:600;">+&nbsp;</span>${esc(k)}</p>`
+            )
+            .join('')}
+        </td></tr>
+      </table>
+    </td></tr>`
+  : ''}
+${payload.keep_skip?.skip?.length
+  ? `<tr><td class="pad" style="padding:0 24px 0 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT2};border-radius:4px;">
+        <tr><td class="card" style="padding:22px 24px;">
+          <p class="meta-row" style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${ACCENT2};font-weight:600;">
+            Skip &mdash; named noise this week
+          </p>
+          ${payload.keep_skip.skip
+            .map(
+              (s) =>
+                `<p class="ks-item" style="margin:0 0 10px 0;font-family:${FONT_BODY};font-size:15px;line-height:1.55;color:${BODY};"><span style="color:${ACCENT2};font-family:${FONT_MONO};font-weight:600;">−&nbsp;</span>${esc(s)}</p>`
+            )
+            .join('')}
+        </td></tr>
+      </table>
+    </td></tr>`
+  : ''}`
       : ''
 
   const skimHtml = skimBullets.length
     ? `
+${sectionHeader('Chapter 01 — At a glance', 'If you only read this', 'The three moves you should walk away with.')}
 <tr><td class="pad" style="padding:0 24px 0 24px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border:1px solid ${LINE};border-radius:6px;">
-    <tr><td class="card" style="padding:18px 20px;">
-      <p class="meta-row" style="margin:0 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${ACCENT};">
-        What changed this week
-      </p>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER_ELEV};border-left:4px solid ${ACCENT};border-radius:4px;">
+    <tr><td class="card" style="padding:24px 26px;">
       ${skimBullets
         .map(
-          (b) =>
-            `<p class="ks-item" style="margin:0 0 8px 0;font-family:${FONT_BODY};font-size:16px;line-height:1.5;color:${INK};"><span style="color:${ACCENT};font-family:${FONT_MONO};font-weight:600;">→ </span>${esc(b)}</p>`
+          (b, i) =>
+            `<p class="ks-item" style="margin:${i === 0 ? '0' : '12px'} 0 0 0;font-family:${FONT_BODY};font-size:16px;line-height:1.55;color:${INK};"><span style="color:${ACCENT};font-family:${FONT_MONO};font-weight:600;">→&nbsp;</span>${esc(b)}</p>`
         )
         .join('')}
     </td></tr>
@@ -412,7 +454,9 @@ function buildHtml(
     .pad-y { padding-top:24px !important; padding-bottom:0 !important; }
     .card { padding:18px !important; }
     .hed { font-size:28px !important; line-height:1.15 !important; }
+    .hed-2 { font-size:24px !important; line-height:1.2 !important; }
     .dek { font-size:16px !important; }
+    .dek-sm { font-size:14px !important; }
     .diffnum { font-size:26px !important; }
     .diffnumcol { width:42px !important; padding-right:12px !important; }
     .lead-bold { font-size:17px !important; }
@@ -472,6 +516,7 @@ function buildHtml(
   ${skimHtml}
 
   <!-- 6-layer diff -->
+  ${diffHeaderHtml}
   ${diffHtml}
 
   <!-- Persona translation -->

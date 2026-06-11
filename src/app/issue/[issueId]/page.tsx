@@ -150,14 +150,12 @@ export default async function IssuePage({
     (a, b) => BEAT_ORDER.indexOf(a.beat) - BEAT_ORDER.indexOf(b.beat)
   )
 
-  // TL;DR strip — pick the strongest 3 signals: throughline summary + top SHK ship + top SHK kill
-  const tldrItems: string[] = []
-  if (chosen?.ship?.label) tldrItems.push(`Ship: ${chosen.ship.label}`)
-  else if (payload.shk_candidates?.ship?.[0]?.label) tldrItems.push(`Ship: ${payload.shk_candidates.ship[0].label}`)
-  if (chosen?.hold?.label) tldrItems.push(`Hold: ${chosen.hold.label}`)
-  else if (payload.shk_candidates?.hold?.[0]?.label) tldrItems.push(`Hold: ${payload.shk_candidates.hold[0].label}`)
-  if (chosen?.kill?.label) tldrItems.push(`Kill: ${chosen.kill.label}`)
-  else if (payload.shk_candidates?.kill?.[0]?.label) tldrItems.push(`Kill: ${payload.shk_candidates.kill[0].label}`)
+  // TL;DR strip — Ship · Hold · Kill summary for skim readers
+  const tldrItems: Array<{ verb: string; label: string }> = []
+  for (const kind of ['ship', 'hold', 'kill'] as const) {
+    const label = chosen?.[kind]?.label ?? payload.shk_candidates?.[kind]?.[0]?.label
+    if (label) tldrItems.push({ verb: kind[0].toUpperCase() + kind.slice(1), label })
+  }
 
   return (
     <Shell>
@@ -197,19 +195,33 @@ export default async function IssuePage({
         </div>
       </section>
 
-      {/* TL;DR strip — what changed */}
+      {/* TL;DR — if you only read this */}
       {tldrItems.length > 0 ? (
-        <section className="border-b border-line bg-accent-soft/30">
-          <div className="mx-auto max-w-reader px-5 py-7 sm:px-6">
-            <p className="eyebrow mb-4">What changed</p>
-            <ul className="grid gap-3 sm:grid-cols-3">
-              {tldrItems.map((t, i) => (
-                <li key={i} className="flex gap-2 text-[15px] leading-snug text-ink">
-                  <span className="font-mono text-accent">→</span>
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
+        <section className="border-b border-line">
+          <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
+            <SectionOpener
+              chapter="Chapter 01 — At a glance"
+              title="If you only read this"
+              dek="The three moves you should walk away with."
+            />
+            <div className="rounded-md border-l-4 border-accent bg-paper-elev px-6 py-7 sm:px-8 sm:py-8">
+              <ul className="space-y-3">
+                {tldrItems.map((t, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]"
+                  >
+                    <span className="font-mono font-semibold text-accent">→</span>
+                    <span>
+                      <span className="font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+                        {t.verb}
+                      </span>
+                      <span className="ml-2">{t.label}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       ) : null}
@@ -217,13 +229,12 @@ export default async function IssuePage({
       {/* THE DIFF — card-style: PAPER_ELEV bg + section-colored left border */}
       {orderedDiff.length > 0 ? (
         <section className="border-b border-line">
-          <div className="mx-auto max-w-reader px-4 py-10 sm:px-6 sm:py-16">
-            <div className="mb-8 flex items-baseline gap-3 sm:mb-10 sm:gap-4">
-              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-display text-[20px] font-semibold tracking-tight text-ink sm:text-[26px]">
-                The 6-layer diff
-              </h2>
-            </div>
+          <div className="mx-auto max-w-reader px-4 py-12 sm:px-6 sm:py-16">
+            <SectionOpener
+              chapter="Chapter 02 — What moved"
+              title="The six layers"
+              dek="Frontier APIs · India infra · regulation · Indic models · talent · enterprise. Card colour signals the layer."
+            />
             <div className="space-y-5 sm:space-y-6">
               {orderedDiff.map((d, i) => {
                 const num = String(i + 1).padStart(2, '0')
@@ -271,11 +282,13 @@ export default async function IssuePage({
       {payload.persona ? (
         <section id="for-you" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
+            <SectionOpener
+              chapter="Chapter 03 — For you"
+              title="Written for this week"
+              dek="One archetype, deep. Two more get a paragraph each below."
+            />
             <div className="rounded-md border-l-4 border-accent bg-paper-elev px-6 py-8 sm:px-9 sm:py-10">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
-                Written for · this week
-              </p>
-              <p className="mt-3 font-display text-[19px] italic leading-snug text-ink sm:text-[22px]">
+              <p className="font-display text-[19px] italic leading-snug text-ink sm:text-[22px]">
                 {payload.persona.archetype}
               </p>
 
@@ -329,11 +342,11 @@ export default async function IssuePage({
               })() : null}
             </div>
 
-            {/* ALSO FOR — 2-3 short briefs for other builder archetypes */}
+            {/* ALSO READING — short briefs for adjacent archetypes */}
             {payload.also_for?.length ? (
               <div className="mt-10">
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-2">
-                  Also for · other builders
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
+                  —&nbsp;&nbsp;Also reading
                 </p>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   {payload.also_for.map((b, i) => (
@@ -341,10 +354,10 @@ export default async function IssuePage({
                       key={i}
                       className="rounded-md border-l-[3px] border-accent-2 bg-paper-elev px-5 py-5"
                     >
-                      <p className="font-display text-[15px] font-semibold text-ink">
+                      <p className="font-display text-[15px] italic leading-snug text-ink">
                         {b.archetype}
                       </p>
-                      <p className="mt-2 font-body text-[15px] leading-relaxed text-body">
+                      <p className="mt-3 font-body text-[15px] leading-relaxed text-body">
                         {b.take}
                       </p>
                     </div>
@@ -356,34 +369,39 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* SHIP / HOLD / KILL — 3 distinct cards */}
+      {/* SHIP / HOLD / KILL — 3 distinct cards with kind-specific accents */}
       {chosen ? (
         <section id="shk" className="border-b border-line">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
-                Ship · Hold · Kill
-              </h2>
-              <p className="ml-2 hidden text-xs italic text-muted sm:inline">this week</p>
-            </div>
+            <SectionOpener
+              chapter="Chapter 04 — The calls"
+              title="Three moves this week"
+              dek="One to ship. One to wait on. One to kill."
+            />
             <div className="grid gap-5 sm:grid-cols-3">
               {(['ship', 'hold', 'kill'] as const).map((kind) => {
                 const c = chosen[kind]
                 if (!c) return null
+                const accentCls =
+                  kind === 'ship'
+                    ? 'border-accent text-accent'
+                    : kind === 'kill'
+                      ? 'border-accent-2 text-accent-2'
+                      : 'border-muted text-muted'
+                const [borderCls, kickerCls] = accentCls.split(' ')
                 return (
                   <div
                     key={kind}
                     id={`shk-${kind}`}
-                    className={`rounded border-l-4 ${KIND_ACCENT[kind]} bg-paper p-5 sm:p-6`}
+                    className={`rounded-md border-l-4 ${borderCls} bg-paper-elev px-5 py-6 sm:px-6 sm:py-7`}
                   >
-                    <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-muted">
+                    <p className={`font-mono text-[11px] font-bold uppercase tracking-[0.18em] ${kickerCls}`}>
                       {KIND_LABEL[kind]}
                     </p>
-                    <p className="mt-3 font-display text-[17px] font-semibold leading-snug text-ink">
+                    <p className="mt-3 font-display text-[17px] font-semibold leading-snug tracking-tight text-ink">
                       {c.label}
                     </p>
-                    <p className="mt-3 font-body text-[15px] leading-relaxed text-ink/85">
+                    <p className="mt-3 font-body text-[15px] leading-relaxed text-body">
                       {c.rationale}
                     </p>
                   </div>
@@ -394,26 +412,28 @@ export default async function IssuePage({
         </section>
       ) : null}
 
-      {/* KEEP / SKIP */}
+      {/* KEEP / SKIP — two cards, accent-coded */}
       {payload.keep_skip?.keep?.length || payload.keep_skip?.skip?.length ? (
         <section id="keep-skip" className="border-b border-line bg-paper/40">
           <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <div className="mb-10 flex items-baseline gap-4">
-              <span className="font-display text-[13px] font-semibold tracking-[0.16em] text-accent">§</span>
-              <h2 className="font-display text-[22px] font-semibold tracking-tight text-ink sm:text-[26px]">
-                Keep · Skip
-              </h2>
-            </div>
-            <div className="grid gap-10 sm:grid-cols-2 sm:gap-12">
+            <SectionOpener
+              chapter="Chapter 05 — Your feed"
+              title="Keep · Skip"
+              dek="Where to spend the next 30 minutes. What to delete unread."
+            />
+            <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
               {payload.keep_skip?.keep?.length ? (
-                <div>
-                  <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-accent">
-                    KEEP
+                <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-6 sm:px-6 sm:py-7">
+                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                    Keep &mdash; worth your half-hour
                   </p>
                   <ul className="mt-4 space-y-3">
                     {payload.keep_skip.keep.map((k, i) => (
-                      <li key={i} className="flex gap-3 font-body text-[16px] leading-relaxed text-ink/90">
-                        <span className="font-mono text-accent">+</span>
+                      <li
+                        key={i}
+                        className="flex gap-3 font-body text-[15px] leading-relaxed text-ink/95 sm:text-[16px]"
+                      >
+                        <span className="font-mono font-semibold text-accent">+</span>
                         <span>{k}</span>
                       </li>
                     ))}
@@ -421,14 +441,17 @@ export default async function IssuePage({
                 </div>
               ) : null}
               {payload.keep_skip?.skip?.length ? (
-                <div>
-                  <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-accent-2">
-                    SKIP
+                <div className="rounded-md border-l-4 border-accent-2 bg-paper-elev px-5 py-6 sm:px-6 sm:py-7">
+                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-2">
+                    Skip &mdash; named noise this week
                   </p>
                   <ul className="mt-4 space-y-3">
                     {payload.keep_skip.skip.map((s, i) => (
-                      <li key={i} className="flex gap-3 font-body text-[16px] leading-relaxed text-ink/90">
-                        <span className="font-mono text-accent-2">−</span>
+                      <li
+                        key={i}
+                        className="flex gap-3 font-body text-[15px] leading-relaxed text-body sm:text-[16px]"
+                      >
+                        <span className="font-mono font-semibold text-accent-2">−</span>
                         <span>{s}</span>
                       </li>
                     ))}
@@ -480,6 +503,34 @@ export default async function IssuePage({
         </div>
       </section>
     </Shell>
+  )
+}
+
+/* Editorial section opener — chapter kicker + display title + dek.
+   Builds magazine-table-of-contents rhythm between cards. */
+function SectionOpener({
+  chapter,
+  title,
+  dek,
+}: {
+  chapter: string
+  title: string
+  dek?: string
+}) {
+  return (
+    <div className="mb-7 sm:mb-9">
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+        {chapter}
+      </p>
+      <h2 className="mt-3 font-display text-[26px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[34px] lg:text-[40px]">
+        {title}
+      </h2>
+      {dek ? (
+        <p className="mt-3 max-w-[540px] font-body text-[15px] leading-relaxed text-body sm:text-[16px]">
+          {dek}
+        </p>
+      ) : null}
+    </div>
   )
 }
 
