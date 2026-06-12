@@ -338,12 +338,31 @@ export default function DeepDiveReader({
         </section>
       ) : null}
 
-      {/* Closure */}
-      <section className="bg-[#0e0c08] text-[#f4efe6]">
-        <div className="mx-auto max-w-[680px] px-4 py-12 sm:px-6 sm:py-16">
-          <p className="font-body text-[20px] italic leading-relaxed text-paper">
-            —— That&rsquo;s the dive. Argue back at me.
+      {/* Closure — inline on paper, not a full-bleed dark band. Dark band looks
+          like an empty void next to the dark Shell footer on phone (esp. dark
+          mode). A bordered italic moment on paper reads as the editorial
+          send-off without making the bottom feel cut off. */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-[680px] px-4 py-10 sm:px-6 sm:py-12">
+          <p className="font-display text-[19px] italic leading-[1.5] text-ink/85 sm:text-[22px]">
+            —— That&rsquo;s the dive. Argue back at me by replying to the email.
           </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`${payload.title} — AI Signal deep-dive`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded bg-ink px-5 py-2.5 font-display text-[13px] font-semibold text-paper transition hover:bg-accent"
+            >
+              Share on WhatsApp
+            </a>
+            <a
+              href="/subscribe"
+              className="inline-flex items-center rounded border border-line px-5 py-2.5 font-display text-[13px] font-semibold text-ink transition hover:border-accent hover:text-accent"
+            >
+              Get next deep-dive
+            </a>
+          </div>
         </div>
       </section>
     </article>

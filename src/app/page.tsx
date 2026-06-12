@@ -5,7 +5,11 @@ import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { isSubscribed } from '@/lib/subscription'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import type { IssuePayload } from '../../db/types/database'
+import type {
+  IssuePayload,
+  DeepDivePayload,
+  IssueType,
+} from '../../db/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,23 +29,44 @@ export default async function HomePage() {
   const subscribed = await isSubscribed()
   const { data: issues } = await supabase
     .from('issues')
-    .select('id, status, created_at, payload')
+    .select('id, status, issue_type, created_at, payload')
     .in('status', ['drafted', 'awaiting_human'])
     .order('created_at', { ascending: false })
     .limit(20)
 
-  const list = (issues ?? []).map((it, i) => ({
-    id: it.id,
-    number: String((issues?.length ?? 0) - i).padStart(3, '0'),
-    date: fmt(it.created_at),
-    headline: (it.payload as IssuePayload | null)?.headline ?? '—',
-    throughline: (it.payload as IssuePayload | null)?.throughline ?? '',
-  }))
+  // Map archive list — render both weekly briefs + deep-dives, using each
+  // type's appropriate payload shape (weekly has headline/throughline,
+  // deep-dive has title/subtitle).
+  const list = (issues ?? []).map((it, i) => {
+    const issueType: IssueType = (it.issue_type as IssueType) ?? 'weekly_brief'
+    if (issueType === 'deep_dive') {
+      const dd = it.payload as unknown as DeepDivePayload | null
+      return {
+        id: it.id,
+        type: issueType,
+        number: String((issues?.length ?? 0) - i).padStart(3, '0'),
+        date: fmt(it.created_at),
+        headline: dd?.title ?? 'Deep-dive draft in progress',
+        throughline: dd?.subtitle ?? '',
+      }
+    }
+    const wb = it.payload as IssuePayload | null
+    return {
+      id: it.id,
+      type: issueType,
+      number: String((issues?.length ?? 0) - i).padStart(3, '0'),
+      date: fmt(it.created_at),
+      headline: wb?.headline ?? '—',
+      throughline: wb?.throughline ?? '',
+    }
+  })
 
-  // Pull the most recent issue's payload for the "Inside this week's brief"
-  // preview teaser block on the hero. Shows a stranger what the format
-  // actually looks like before they have to click anything.
-  const latest = (issues ?? [])[0]?.payload as IssuePayload | null
+  // Hero teaser block — pull from the most recent WEEKLY brief specifically
+  // (deep-dive payload shape doesn't have six_layer_diff/persona/hack fields).
+  const latestWeekly = (issues ?? []).find(
+    (it) => (it.issue_type as IssueType) !== 'deep_dive'
+  )
+  const latest = latestWeekly?.payload as IssuePayload | null
   const latestDiff = latest?.six_layer_diff?.[1] ?? latest?.six_layer_diff?.[0]
   const teaserDiff = latestDiff
     ? {
@@ -51,6 +76,7 @@ export default async function HomePage() {
     : null
   const teaserHackTitle = latest?.production_hack?.title ?? null
   const teaserPersonaArchetype = latest?.persona?.archetype ?? null
+  const latestWeeklyListItem = list.find((it) => it.type !== 'deep_dive')
 
   return (
     <>
@@ -136,18 +162,18 @@ export default async function HomePage() {
 
         {/* Inside this week's brief — content teaser so a stranger sees the
             format and quality before clicking into an issue */}
-        {(teaserDiff || teaserHackTitle || teaserPersonaArchetype) && list[0] ? (
+        {(teaserDiff || teaserHackTitle || teaserPersonaArchetype) && latestWeeklyListItem ? (
           <section className="border-b border-line bg-paper/40">
             <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
               <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
                 Inside this week&rsquo;s brief
               </p>
               <h2 className="mt-3 font-display text-[26px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[34px]">
-                {list[0].headline}
+                {latestWeeklyListItem.headline}
               </h2>
-              {list[0].throughline ? (
+              {latestWeeklyListItem.throughline ? (
                 <p className="mt-3 max-w-[620px] font-body text-[17px] italic leading-snug text-ink/80 sm:text-[19px]">
-                  {list[0].throughline}
+                  {latestWeeklyListItem.throughline}
                 </p>
               ) : null}
 
@@ -186,7 +212,7 @@ export default async function HomePage() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
-                  href={`/issue/${list[0].id}`}
+                  href={`/issue/${latestWeeklyListItem.id}`}
                   className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-accent"
                 >
                   Read this week&rsquo;s brief →
@@ -229,14 +255,18 @@ export default async function HomePage() {
                       className="group block focus-visible:outline-none"
                     >
                       <div className="flex items-baseline gap-4 text-[11px] tabular">
-                        <span className="font-mono uppercase tracking-[0.16em] text-accent">
-                          Issue&nbsp;{it.number}
+                        <span
+                          className={`font-mono uppercase tracking-[0.16em] ${it.type === 'deep_dive' ? 'text-accent-2' : 'text-accent'}`}
+                        >
+                          {it.type === 'deep_dive' ? 'Deep dive' : 'Issue'}&nbsp;{it.number}
                         </span>
                         <span className="font-mono uppercase tracking-[0.12em] text-muted">
                           {it.date}
                         </span>
                       </div>
-                      <p className="mt-2 font-display text-[22px] font-semibold leading-snug text-ink group-hover:text-accent">
+                      <p
+                        className={`mt-2 font-display text-[22px] font-semibold leading-snug text-ink ${it.type === 'deep_dive' ? 'group-hover:text-accent-2' : 'group-hover:text-accent'}`}
+                      >
                         {it.headline}
                       </p>
                       {it.throughline ? (
