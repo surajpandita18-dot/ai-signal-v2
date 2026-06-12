@@ -26,10 +26,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // matches paper light + ink dark — browser chrome blends with the page
+  // Browser chrome matches paper exactly so masthead extends edge-to-edge
+  // on iOS Safari (JAPM-style). Updated to actual --paper hex from globals.css.
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f5f1e8' },
-    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
+    { media: '(prefers-color-scheme: light)', color: '#f4efe6' },
+    { media: '(prefers-color-scheme: dark)', color: '#16140f' },
   ],
 }
 

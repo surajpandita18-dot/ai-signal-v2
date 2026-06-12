@@ -249,11 +249,14 @@ function buildHtml(
         const paras = paragraphs(persona.translation)
         const math = persona.inr_math ? parseInrMath(persona.inr_math) : null
 
+        // Persona translation in serif (Georgia/Fraunces fallback chain via
+        // FONT_DISPLAY). JAPM-style: serif body for the editorial heart of
+        // each issue — roomier line-height than sans, slightly smaller size.
         const paragraphsHtml = paras
           .map((p, i) => {
             const isLead = i === 0
             return `
-      <p class="body-prose" style="margin:${i === 0 ? '24px' : '14px'} 0 0 0;font-family:${FONT_BODY};font-size:${isLead ? '18' : '17'}px;line-height:1.6;color:${INK};${isLead ? 'font-weight:500;' : ''}">
+      <p class="body-prose" style="margin:${i === 0 ? '24px' : '16px'} 0 0 0;font-family:${FONT_DISPLAY};font-weight:400;font-size:${isLead ? '17' : '16'}px;line-height:1.7;color:${INK};">
         ${esc(p)}
       </p>`
           })
@@ -542,10 +545,11 @@ ${sectionHeader('Chapter 01 — At a glance', 'If you only read this', 'The thre
     </h1>
   </td></tr>
 
-  <!-- Throughline = italic dek under headline (small + restrained) -->
+  <!-- Throughline = italic dek under headline. JAPM-style: serif display,
+       bigger, roomier line-height. The deck reads as a second voice. -->
   ${payload.throughline && payload.throughline !== headline(payload)
-    ? `<tr><td class="pad" style="padding:0 24px 28px 24px;">
-        <p class="dek" style="margin:0;font-family:${FONT_BODY};font-style:italic;font-size:17px;line-height:1.5;color:${INK};opacity:0.85;">${esc(payload.throughline)}</p>
+    ? `<tr><td class="pad" style="padding:4px 24px 32px 24px;">
+        <p class="dek" style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:21px;line-height:1.4;color:${INK};opacity:0.75;">${esc(payload.throughline)}</p>
       </td></tr>`
     : ''}
 

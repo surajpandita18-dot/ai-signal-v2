@@ -210,9 +210,10 @@ export default async function IssuePage({
             {headline}
           </h1>
 
-          {/* Throughline as subhead / dek */}
+          {/* Throughline as subhead / dek — JAPM-style: serif italic, bigger,
+              roomier line-height. The deck is a second voice, not a footnote. */}
           {payload.throughline && payload.throughline !== headline ? (
-            <p className="mt-5 max-w-[600px] font-body text-[17px] italic leading-snug text-ink/80 sm:text-[20px] lg:text-[22px]">
+            <p className="mt-6 max-w-[640px] font-display text-[19px] italic font-normal leading-[1.45] text-ink/75 sm:text-[22px] sm:leading-[1.4] lg:text-[24px]">
               {payload.throughline}
             </p>
           ) : null}
@@ -326,14 +327,17 @@ export default async function IssuePage({
                 {payload.persona.archetype}
               </p>
 
-              <div className="mt-6 max-w-[640px] space-y-4">
+              {/* Persona translation — Fraunces serif body (JAPM-inspired).
+                  Editorial heart of each issue gets magazine-feature feel.
+                  Roomier line-height + max-width for comfortable serif read. */}
+              <div className="mt-6 max-w-[620px] space-y-5">
                 {splitParagraphs(payload.persona.translation).map((para, i) => (
                   <p
                     key={i}
                     className={
                       i === 0
-                        ? 'font-body text-[17px] font-medium leading-relaxed text-ink sm:text-[18px]'
-                        : 'font-body text-[16px] leading-relaxed text-ink/95 sm:text-[17px]'
+                        ? 'font-serif text-[17px] leading-[1.65] text-ink sm:text-[18px] sm:leading-[1.7]'
+                        : 'font-serif text-[16px] leading-[1.7] text-ink/95 sm:text-[17px]'
                     }
                   >
                     {para}
