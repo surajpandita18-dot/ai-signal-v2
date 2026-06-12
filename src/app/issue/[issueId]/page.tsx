@@ -8,6 +8,9 @@ import { isSubscribed } from '@/lib/subscription'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ChapterNav, type ChapterNavItem } from '@/components/ChapterNav'
+import { ReadingProgress } from '@/components/ReadingProgress'
+import { AnimatedValue } from '@/components/AnimatedValue'
+import { SelectionShare } from '@/components/SelectionShare'
 import type { Beat, ChosenCalls, IssuePayload } from '../../../../db/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -357,7 +360,7 @@ export default async function IssuePage({
                               {r.label}
                             </dt>
                             <dd className="whitespace-nowrap font-mono text-[14px] font-semibold text-accent sm:text-[15px]">
-                              {r.value}
+                              <AnimatedValue value={r.value} />
                             </dd>
                           </div>
                         ))}
@@ -658,6 +661,8 @@ function SectionOpener({
 function Shell({ children, subscribed }: { children: React.ReactNode; subscribed: boolean }) {
   return (
     <>
+      <ReadingProgress />
+      <SelectionShare />
       <header className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
           <Link href="/" className="text-[#f4efe6]">

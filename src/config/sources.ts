@@ -59,20 +59,31 @@ export const SOURCES: Source[] = [
   { id: 'karpathy',       name: 'Andrej Karpathy',       tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://karpathy.github.io/feed.xml',        windowHours: H_48, kind: 'rss' },
   { id: 'chip-huyen',     name: 'Chip Huyen',            tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://huyenchip.com/feed.xml',             windowHours: H_48, kind: 'rss' },
 
+  // Anthropic News (community mirror — Anthropic has no official RSS)
+  { id: 'anthropic-news-mirror', name: 'Anthropic News (mirror)', tier: 'A', weight: 5, beat: 'frontier-api', feedUrl: 'https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml', windowHours: H_48, kind: 'rss' },
+
+  // High-signal long-form lab interviews + curated papers
+  { id: 'dwarkesh',       name: 'Dwarkesh Podcast',         tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://www.dwarkesh.com/feed',         windowHours: H_7D, kind: 'rss' },
+  { id: 'hf-papers-takara', name: 'HF Daily Papers (Takara)', tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://papers.takara.ai/api/feed', windowHours: H_48, kind: 'rss' },
+  // Re-tagged talent-comp -> frontier-api (2026-06-12 audit): actual content is platform/lab analysis.
+  { id: 'stratechery',    name: 'Stratechery (free)',       tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://stratechery.com/feed/',         windowHours: H_7D, kind: 'rss' },
+
   // Frontier analysis (weekly)
   { id: 'import-ai',         name: 'Import AI (Jack Clark)',          tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://importai.substack.com/feed',           windowHours: H_7D, kind: 'rss' },
   { id: 'ahead-of-ai',       name: 'Ahead of AI (Raschka)',           tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://magazine.sebastianraschka.com/feed',    windowHours: H_7D, kind: 'rss' },
   { id: 'the-gradient',      name: 'The Gradient',                    tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://thegradient.pub/rss/',                  windowHours: H_7D, kind: 'rss' },
-  { id: 'gary-marcus',       name: 'Gary Marcus (skeptic)',           tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://garymarcus.substack.com/feed',          windowHours: H_7D, kind: 'rss' },
+  // Down-weighted 3 -> 2 (2026-06-12 audit): volume of skeptic posts skews convergence.
+  { id: 'gary-marcus',       name: 'Gary Marcus (skeptic)',           tier: 'C', weight: 2, beat: 'frontier-api', feedUrl: 'https://garymarcus.substack.com/feed',          windowHours: H_7D, kind: 'rss' },
   { id: 'ai-snake-oil',      name: 'AI Snake Oil (Narayanan/Kapoor)', tier: 'C', weight: 3, beat: 'frontier-api', feedUrl: 'https://www.aisnakeoil.com/feed',               windowHours: H_7D, kind: 'rss' },
 
   // Frontier press / volume
   { id: 'marktechpost',   name: 'MarkTechPost',        tier: 'B', weight: 2, beat: 'frontier-api', feedUrl: 'https://www.marktechpost.com/feed/',                                  windowHours: H_48, kind: 'rss' },
   { id: 'techcrunch-ai',  name: 'TechCrunch AI',       tier: 'B', weight: 2, beat: 'frontier-api', feedUrl: 'https://techcrunch.com/category/artificial-intelligence/feed/',       windowHours: H_48, kind: 'rss' },
-  { id: 'mit-tech-review',name: 'MIT Tech Review',     tier: 'B', weight: 2, beat: 'frontier-api', feedUrl: 'https://www.technologyreview.com/feed/',                              windowHours: H_48, kind: 'rss' },
+  // Down-weighted 2 -> 1 (2026-06-12 audit): long-form, rarely first.
+  { id: 'mit-tech-review',name: 'MIT Tech Review',     tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'https://www.technologyreview.com/feed/',                              windowHours: H_48, kind: 'rss' },
   { id: 'hn-frontpage',   name: 'Hacker News (front)', tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'https://hnrss.org/frontpage',                                          windowHours: H_48, kind: 'rss' },
-  { id: 'hn-show',        name: 'Hacker News (Show)',  tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'https://hnrss.org/show',                                               windowHours: H_48, kind: 'rss' },
-  { id: 'arxiv-ai',       name: 'arXiv cs.AI',         tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'http://export.arxiv.org/rss/cs.AI',                                    windowHours: H_48, kind: 'rss' },
+  // Removed (2026-06-12 audit): hn-show — Show HN noise overwhelms signal; hn-frontpage covers AI tier.
+  // Removed (2026-06-12 audit): arxiv-ai — overlaps heavily with cs.LG; cs.LG + cs.CL retained.
   { id: 'arxiv-lg',       name: 'arXiv cs.LG',         tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'http://export.arxiv.org/rss/cs.LG',                                    windowHours: H_48, kind: 'rss' },
   { id: 'arxiv-cl',       name: 'arXiv cs.CL',         tier: 'B', weight: 1, beat: 'frontier-api', feedUrl: 'http://export.arxiv.org/rss/cs.CL',                                    windowHours: H_48, kind: 'rss' },
 
@@ -90,12 +101,19 @@ export const SOURCES: Source[] = [
   // ─────────────────────────────────────────────────────────────────────
   // BEAT: regulation — DPDP / MeitY / RBI / SEBI / IRDAI / CDSCO
   // ─────────────────────────────────────────────────────────────────────
-  { id: 'scc-online',       name: 'SCC Online Times',         tier: 'C', weight: 3, beat: 'regulation', feedUrl: 'https://www.scconline.com/blog/feed/',                    windowHours: H_7D, kind: 'rss' },
+  // Primary regulator feeds (added 2026-06-12 audit) — load-bearing for fintech/AI procurement context.
+  { id: 'rbi-press',         name: 'RBI Press Releases',       tier: 'A', weight: 5, beat: 'regulation', feedUrl: 'https://www.rbi.org.in/pressreleases_rss.xml',           windowHours: H_48, kind: 'rss' },
+  { id: 'rbi-notifications', name: 'RBI Notifications',        tier: 'A', weight: 5, beat: 'regulation', feedUrl: 'https://www.rbi.org.in/notifications_rss.xml',          windowHours: H_48, kind: 'rss' },
+  // Authoritative DPDP litigation / IT-Rules interpretation.
+  { id: 'sflc-in',           name: 'SFLC.in',                  tier: 'A', weight: 4, beat: 'regulation', feedUrl: 'https://sflc.in/feed/',                                  windowHours: H_7D, kind: 'rss' },
+  // Best mainstream Indian paper for MeitY/DPDP reportage.
+  { id: 'indian-express-tech', name: 'Indian Express Tech',    tier: 'A', weight: 3, beat: 'regulation', feedUrl: 'https://indianexpress.com/section/technology/feed/',    windowHours: H_48, kind: 'rss' },
+  { id: 'scc-online',        name: 'SCC Online Times',         tier: 'C', weight: 3, beat: 'regulation', feedUrl: 'https://www.scconline.com/blog/feed/',                   windowHours: H_7D, kind: 'rss' },
   // Removed (no usable RSS — all return Cloudflare 403 or 404):
   //   indiaai-news      https://indiaai.gov.in/{rss,feed}
   //   medianama-regul   https://www.medianama.com/category/regulation/feed/
   //   mondaq-india-ai   https://www.mondaq.com/india/rss.aspx
-  // Phase 2 will add WebFetch-based scrapers for MeitY/PIB/RBI/SEBI. Until then
+  // Phase 2 will add WebFetch-based scrapers for MeitY/PIB/SEBI. Until then
   // regulation signals reach us via Inc42 + MediaNama main + ET Tech coverage.
 
   // ─────────────────────────────────────────────────────────────────────
@@ -106,28 +124,40 @@ export const SOURCES: Source[] = [
   //   sarvam-blog       no RSS on sarvam.ai/blogs (HTML head has no <link rel="alternate">)
   //   ai4bharat         ai4bharat.iitm.ac.in fails public DNS resolution
   //   analytics-india   Cloudflare JS challenge — serves HTML not XML
+  // Failed verification 2026-06-12 audit (HuggingFace org /feed endpoints require auth — 401):
+  //   ai4bharat-hf      https://huggingface.co/ai4bharat/feed
+  //   krutrim-ai-hf     https://huggingface.co/krutrim-ai-labs/feed
+  //   bharatgen-hf      https://huggingface.co/bharatgenai/feed
   // Sarvam/AI4Bharat coverage flows through MediaNama + Inc42 + ET Tech instead.
-  // Phase 2: build WebFetch-based scraper to read sarvam.ai/blogs HTML page weekly.
+  // Phase 2: build WebFetch-based scraper to read sarvam.ai/blogs HTML page weekly,
+  // and switch to HF JSON API (https://huggingface.co/api/models?author=X) for org releases.
 
   // ─────────────────────────────────────────────────────────────────────
   // BEAT: talent-comp — funding tracker, hiring, comp benchmarks
   // ─────────────────────────────────────────────────────────────────────
   { id: 'inc42-funding',    name: 'Inc42 — Funding Tracker',  tier: 'A', weight: 4, beat: 'talent-comp', feedUrl: 'https://inc42.com/buzz/feed/',                            windowHours: H_48, kind: 'rss' },
   { id: 'pragmatic-engineer', name: 'The Pragmatic Engineer', tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://newsletter.pragmaticengineer.com/feed',           windowHours: H_7D, kind: 'rss' },
-  // Indian VC + ops voices
-  { id: 'sajith-pai',       name: 'Sajith Pai (Blume)',       tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://sajithpai.substack.com/feed',                    windowHours: H_7D, kind: 'rss' },
+  // Indian VC + ops voices — Sajith Pai bumped C/3 -> A/4 (2026-06-12 audit): only Indian VC consistently doing INR-grounded analysis.
+  { id: 'sajith-pai',       name: 'Sajith Pai (Blume)',       tier: 'A', weight: 4, beat: 'talent-comp', feedUrl: 'https://sajithpai.substack.com/feed',                    windowHours: H_7D, kind: 'rss' },
   { id: 'ben-evans',        name: 'Benedict Evans',           tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://www.ben-evans.com/benedictevans?format=rss',     windowHours: H_7D, kind: 'rss' },
-  { id: 'stratechery',      name: 'Stratechery (free)',       tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://stratechery.com/feed/',                          windowHours: H_7D, kind: 'rss' },
+  // Stratechery re-tagged talent-comp -> frontier-api (2026-06-12 audit): actual content is platform/lab analysis.
 
   // ─────────────────────────────────────────────────────────────────────
   // BEAT: enterprise-deals — vendor newsrooms + Indian enterprise AI buyer stories
   // ─────────────────────────────────────────────────────────────────────
   { id: 'microsoft-india',  name: 'Microsoft India Newsroom', tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://news.microsoft.com/en-in/feed/',            windowHours: H_48, kind: 'rss' },
+  // Indian enterprise / fintech distribution reporting (added 2026-06-12 audit).
+  { id: 'the-ken',          name: 'The Ken',                  tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://the-ken.com/feed/',                          windowHours: H_7D, kind: 'rss' },
+  { id: 'tigerfeathers',    name: 'Tigerfeathers',            tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://tigerfeathers.substack.com/feed',            windowHours: H_7D, kind: 'rss' },
+  { id: 'the-generalist',   name: 'The Generalist',           tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://www.generalist.com/feed',                   windowHours: H_7D, kind: 'rss' },
+  // Strong procurement signal (HDFC/SBI/Infosys AI).
+  { id: 'livemint-tech',    name: 'Livemint Tech',            tier: 'A', weight: 3, beat: 'enterprise-deals', feedUrl: 'https://www.livemint.com/rss/technology',           windowHours: H_48, kind: 'rss' },
   // Removed: anthropic-news — confirmed no RSS (HTML has no <link rel="alternate">).
   //          Anthropic India enterprise wins reach us via Microsoft/AWS coverage + TechCrunch AI.
   { id: 'venturebeat-ai',   name: 'VentureBeat AI',           tier: 'B', weight: 2, beat: 'enterprise-deals', feedUrl: 'https://venturebeat.com/category/ai/feed/',         windowHours: H_48, kind: 'rss' },
-  { id: 'aws-ml',           name: 'AWS ML Blog',              tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://aws.amazon.com/blogs/machine-learning/feed/', windowHours: H_48, kind: 'rss' },
-  { id: 'nvidia-dev',       name: 'NVIDIA Developer Blog',    tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://developer.nvidia.com/blog/feed/',           windowHours: H_48, kind: 'rss' },
+  // Down-weighted A/4 -> A/3 (2026-06-12 audit): vendor blogs are marketing; A/4 belongs to The Ken / Livemint / Indian Express.
+  { id: 'aws-ml',           name: 'AWS ML Blog',              tier: 'A', weight: 3, beat: 'enterprise-deals', feedUrl: 'https://aws.amazon.com/blogs/machine-learning/feed/', windowHours: H_48, kind: 'rss' },
+  { id: 'nvidia-dev',       name: 'NVIDIA Developer Blog',    tier: 'A', weight: 3, beat: 'enterprise-deals', feedUrl: 'https://developer.nvidia.com/blog/feed/',           windowHours: H_48, kind: 'rss' },
 ]
 
 export function sourcesByTier(tier: Tier): Source[] {
