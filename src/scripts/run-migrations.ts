@@ -47,9 +47,11 @@ After this, all future migrations auto-apply with no manual SQL Editor.
     process.exit(1)
   }
   const ref = m[1]
-  // Use the connection pooler so we can connect from outside Supabase egress.
-  // Session-mode (port 5432 for direct, 6543 for transaction pooler).
-  return `postgresql://postgres.${ref}:${encodeURIComponent(password)}@aws-0-ap-south-1.pooler.supabase.com:6543/postgres`
+  // Direct connection — region-independent. The pooler hostname varies by
+  // project region (aws-0-ap-south-1, aws-0-us-east-1, etc.) which we can't
+  // derive from the project URL alone; direct works from any region.
+  // If the user's network blocks port 5432, fall back to pooler manually.
+  return `postgresql://postgres:${encodeURIComponent(password)}@db.${ref}.supabase.co:5432/postgres`
 }
 
 const MIGRATIONS_DIR = join(process.cwd(), 'db', 'migrations')
