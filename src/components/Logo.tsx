@@ -1,19 +1,16 @@
-// Typographic logo. Editorial-style (Stratechery/Every-aligned). Uses currentColor
-// so it inherits light/dark. The peacock-green dot is the brand mark.
+// AI SIGNAL wordmark with animated equalizer bars (signal motif).
+// Replaces the v2 peacock-dot logo. From Figr design 2026-06-13.
+
+import SignalBars from './SignalBars'
 
 export function Logo({ className }: { className?: string }) {
   return (
     <span
-      className={`inline-flex items-baseline gap-1.5 font-display text-[16px] font-bold tracking-[-0.01em] ${className ?? ''}`}
+      className={`inline-flex items-center gap-2 font-mono text-[15px] font-semibold tracking-[0.12em] ${className ?? ''}`}
       translate="no"
     >
-      <span className="inline-flex items-center">
-        AI&nbsp;SIGNAL
-        <span
-          aria-hidden="true"
-          className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent"
-        />
-      </span>
+      <SignalBars color="currentColor" />
+      AI SIGNAL
     </span>
   )
 }

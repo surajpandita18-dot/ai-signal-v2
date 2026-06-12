@@ -2,22 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* DESIGN SYSTEM v2 — Indian Editorial palette + Fraunces/Inter.
- * RGB triplets so Tailwind's /<alpha-value> opacity modifier works. */
+/* DESIGN SYSTEM v3 — Figr palette (June 2026, replaces v2 warm-paper system).
+ * Dark-first. Lime accent. Signal-themed motifs. Fraunces + Inter + JetBrains.
+ *
+ * The palette was specified in /tmp/figr-export/index.css and is the canonical
+ * design source. v3 keeps a v2-token-compat layer so existing components that
+ * reference paper/ink/accent/etc. resolve to the closest v3 equivalent.
+ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* RGB triplets (used by Tailwind with `rgb(var(--paper) / <alpha-value>)`) */
-  --paper: 244 239 230;       /* #f4efe6 warm paper */
-  --paper-elev: 239 232 218;  /* #efe8da slight tint */
-  --ink: 18 18 18;            /* #121212 sophisticated black */
-  --body: 42 41 38;           /* #2a2926 warm dark for body */
-  --accent: 15 76 58;         /* #0f4c3a peacock / deep forest green */
-  --accent-2: 212 98 42;      /* #d4622a restrained terracotta */
-  --muted: 138 121 104;       /* #8a7968 warm taupe */
-  --line: 227 220 204;        /* #e3dccc hairline */
-  --accent-soft: 226 239 233; /* #e2efe9 peacock tint */
+  /* v3 Figr tokens — canonical */
+  --bg: 11 13 10;              /* #0b0d0a near-black with green tint */
+  --bg-raised: 14 17 12;       /* #0e110c */
+  --bg-card: 19 23 18;         /* #131712 */
+  --line: 32 36 28;            /* #20241c */
+  --line-strong: 44 49 39;     /* #2c3127 */
+  --cream: 236 231 221;        /* #ece7dd primary text */
+  --cream-dim: 207 201 189;    /* #cfc9bd subdued */
+  --lime: 194 245 61;          /* #c2f53d signal accent */
+  --lime-soft: 159 212 74;     /* #9fd44a labels */
+  --fg: 244 242 236;           /* #f4f2ec high-emphasis text */
+  --fg-muted: 139 143 134;     /* #8b8f86 secondary */
+  --fg-subtle: 107 112 98;     /* #6b7062 tertiary */
+  --danger: 229 103 90;        /* #e5675a */
+
+  /* v2 compat layer — legacy components reference these; map to v3 */
+  --paper: 11 13 10;           /* old bg → v3 bg */
+  --paper-elev: 19 23 18;      /* old card → v3 bg-card */
+  --ink: 244 242 236;          /* old high-text → v3 fg */
+  --body: 207 201 189;         /* old body → v3 cream-dim */
+  --accent: 194 245 61;        /* old peacock → v3 lime */
+  --accent-2: 229 103 90;      /* old terracotta → v3 danger */
+  --muted: 139 143 134;        /* v3 fg-muted */
+  --line: 32 36 28;            /* shared with v3 */
+  --accent-soft: 159 212 74;   /* v3 lime-soft */
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, 'New York', serif;
@@ -25,57 +45,43 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-serif-body: 'Fraunces', Georgia, serif;
 
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: 22 20 15;
-    --paper-elev: 31 28 22;
-    --ink: 244 239 230;
-    --body: 232 226 212;
-    --accent: 79 166 133;
-    --accent-2: 232 155 90;
-    --muted: 159 148 131;
-    --line: 42 38 32;
-    --accent-soft: 31 46 38;
-    color-scheme: dark;
-  }
-}
-
-/* Manual theme override — set by <ThemeToggle/> via data-theme on <html>.
- * Takes precedence over the system @media query above. */
-:root[data-theme="light"] {
-  --paper: 244 239 230;
-  --paper-elev: 239 232 218;
-  --ink: 18 18 18;
-  --body: 42 41 38;
-  --accent: 15 76 58;
-  --accent-2: 212 98 42;
-  --muted: 138 121 104;
-  --line: 227 220 204;
-  --accent-soft: 226 239 233;
-  color-scheme: light;
-}
-
-:root[data-theme="dark"] {
-  --paper: 22 20 15;
-  --paper-elev: 31 28 22;
-  --ink: 244 239 230;
-  --body: 232 226 212;
-  --accent: 79 166 133;
-  --accent-2: 232 155 90;
-  --muted: 159 148 131;
-  --line: 42 38 32;
-  --accent-soft: 31 46 38;
+  /* The site is dark-first; system pref does nothing */
   color-scheme: dark;
 }
 
+/* Manual theme override — kept for forward-compat, but dark IS the design now.
+ * Light mode inverts most tokens for users who genuinely prefer it. */
+:root[data-theme='light'] {
+  --bg: 244 242 236;
+  --bg-raised: 236 231 221;
+  --bg-card: 252 251 247;
+  --line: 215 211 200;
+  --line-strong: 187 183 170;
+  --cream: 11 13 10;
+  --cream-dim: 60 64 56;
+  --lime: 90 130 25;           /* darker lime so it reads on light */
+  --lime-soft: 75 110 22;
+  --fg: 11 13 10;
+  --fg-muted: 87 92 82;
+  --fg-subtle: 124 128 114;
+  --danger: 197 65 51;
+
+  --paper: 244 242 236;
+  --paper-elev: 252 251 247;
+  --ink: 11 13 10;
+  --body: 60 64 56;
+  --accent: 90 130 25;
+  --accent-2: 197 65 51;
+  --muted: 87 92 82;
+  --accent-soft: 75 110 22;
+  color-scheme: light;
+}
+
 html, body {
-  background: rgb(var(--paper));
-  color: rgb(var(--body));
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.55;
   font-feature-settings: 'kern', 'liga', 'calt', 'ss01';
   text-rendering: optimizeLegibility;
@@ -83,26 +89,96 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  border-color: rgb(var(--line));
-}
+html { scroll-behavior: smooth; }
 
-/* Display headings — Fraunces, magazine-feel */
+* { border-color: rgb(var(--line)); }
+
+/* Display headings — Fraunces */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  color: rgb(var(--ink));
+  color: rgb(var(--fg));
   text-wrap: balance;
   scroll-margin-top: 80px;
   letter-spacing: -0.01em;
 }
 
-p, li {
-  text-wrap: pretty;
+p, li { text-wrap: pretty; }
+
+button, a, input, select, textarea, label { touch-action: manipulation; }
+
+::selection { background: rgb(var(--lime)); color: rgb(var(--bg)); }
+
+/* Eyebrow / mono labels — Figr style */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--lime-soft));
+  font-weight: 600;
 }
 
-button, a, input, select, textarea, label {
-  touch-action: manipulation;
+.eyebrow-muted {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--fg-subtle));
+  font-weight: 500;
 }
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgb(var(--fg-subtle));
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Body prose */
+.body-prose {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgb(var(--fg-muted));
+}
+
+/* Editorial body (Figr) — for dangerouslySetInnerHTML content */
+.editorial p { font-size: 15px; line-height: 1.75; color: rgb(var(--fg-muted)); }
+.editorial p + p { margin-top: 1.1rem; }
+.editorial em { font-style: italic; color: rgb(var(--cream-dim)); }
+.editorial strong { color: rgb(var(--fg)); font-weight: 600; }
+.editorial a {
+  color: rgb(var(--lime));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Figr animations */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.reveal { opacity: 0; animation: fade-in 0.7s ease forwards; }
+.d-1 { animation-delay: 0.05s; }
+.d-2 { animation-delay: 0.15s; }
+.d-3 { animation-delay: 0.25s; }
+.d-4 { animation-delay: 0.35s; }
+.d-5 { animation-delay: 0.45s; }
+.d-6 { animation-delay: 0.55s; }
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+.eq-bar { transform-origin: bottom; animation: eq 1.1s ease-in-out infinite; }
+
+@keyframes trace { to { stroke-dashoffset: -1000; } }
+.signal-pulse {
+  stroke-dasharray: 70 930;
+  stroke-dashoffset: 0;
+  animation: trace 4.5s linear infinite;
+}
+
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.caret { animation: blink 1.1s step-end infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -111,84 +187,11 @@ button, a, input, select, textarea, label {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Eyebrow — Air Mail / Atlantic style ALL CAPS mono */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgb(var(--accent));
-  font-weight: 600;
-}
-
-.eyebrow-muted {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgb(var(--muted));
-  font-weight: 500;
-}
-
-.meta {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: rgb(var(--muted));
-}
-
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Editorial body — serif for special / lede prose */
-.lede {
-  font-family: var(--font-serif-body);
-  font-size: 19px;
-  line-height: 1.55;
-  color: rgb(var(--ink));
-  font-style: italic;
-  font-weight: 400;
-}
-
-.body-prose {
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.65;
-  color: rgb(var(--body));
-}
-
-/* Magazine pull-quote */
-.pullquote {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 28px;
-  line-height: 1.25;
-  color: rgb(var(--accent));
-  border-left: 3px solid rgb(var(--accent-2));
-  padding: 4px 0 4px 18px;
-  margin: 1.75em 0;
-}
-
-/* Editorial link — replaces filled CTA buttons in body */
-.editorial-link {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgb(var(--ink));
-  border-bottom: 1px solid rgb(var(--accent));
-  padding-bottom: 2px;
-  transition: color 0.12s ease, border-color 0.12s ease;
-}
-.editorial-link:hover {
-  color: rgb(var(--accent));
-  border-bottom-color: rgb(var(--ink));
+  .reveal, .eq-bar, .signal-pulse, .caret { animation: none; opacity: 1; }
 }
 
 :focus-visible {
-  outline: 2px solid rgb(var(--accent));
+  outline: 2px solid rgb(var(--lime));
   outline-offset: 2px;
   border-radius: 2px;
 }

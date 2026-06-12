@@ -1,10 +1,15 @@
-// Homepage — issue archive index + subscribe CTA.
+// Homepage — Figr design (June 2026).
+// Two-column hero with email capture + featured issue card,
+// What You Get strip, Manifesto, Archive list.
 
 import Link from 'next/link'
+import { ArrowRight, ArrowUpRight, CornerDownRight } from 'lucide-react'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { isSubscribed } from '@/lib/subscription'
-import { Logo } from '@/components/Logo'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import SiteNav from '@/components/SiteNav'
+import SiteFooter from '@/components/SiteFooter'
+import SignalTrace from '@/components/SignalTrace'
+import HomeSubscribeForm from './HomeSubscribeForm'
 import type {
   IssuePayload,
   DeepDivePayload,
@@ -15,14 +20,50 @@ export const dynamic = 'force-dynamic'
 
 function fmt(iso: string | null): string {
   if (!iso) return ''
-  return new Date(iso)
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d
     .toLocaleDateString('en-IN', {
-      month: 'short',
+      weekday: 'short',
       day: 'numeric',
+      month: 'short',
       year: 'numeric',
     })
     .toUpperCase()
 }
+
+function readMinutes(payload: IssuePayload | DeepDivePayload | null): number {
+  if (!payload) return 6
+  if ('evidence_sections' in payload) {
+    const words = (payload.evidence_sections ?? [])
+      .map((s) => s.body)
+      .join(' ')
+      .split(/\s+/).length
+    return Math.max(8, Math.round(words / 200))
+  }
+  return 6
+}
+
+const WHAT_YOU_GET = [
+  {
+    k: '01',
+    label: 'ONE SHIFT',
+    title: 'Not a roundup. A single move.',
+    body: 'We pick the one thing that actually changes how you build this week and ignore the other forty.',
+  },
+  {
+    k: '02',
+    label: "WHO IT'S FOR",
+    title: 'Mapped to your archetype.',
+    body: 'Founder, eng lead, or operator — every issue says who should act and who can skim.',
+  },
+  {
+    k: '03',
+    label: 'WHAT TO DO',
+    title: 'A Monday-morning action.',
+    body: 'Each brief ends with the exact move to make this sprint. Steal it, ship it, move on.',
+  },
+]
 
 export default async function HomePage() {
   const supabase = createAdminSupabaseClient()
@@ -34,288 +75,310 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(20)
 
-  // Map archive list — render both weekly briefs + deep-dives, using each
-  // type's appropriate payload shape (weekly has headline/throughline,
-  // deep-dive has title/subtitle).
   const list = (issues ?? []).map((it, i) => {
     const issueType: IssueType = (it.issue_type as IssueType) ?? 'weekly_brief'
+    const num = String((issues?.length ?? 0) - i).padStart(3, '0')
     if (issueType === 'deep_dive') {
       const dd = it.payload as unknown as DeepDivePayload | null
       return {
         id: it.id,
         type: issueType,
-        number: String((issues?.length ?? 0) - i).padStart(3, '0'),
-        date: fmt(it.created_at),
-        headline: dd?.title ?? 'Deep-dive draft in progress',
-        throughline: dd?.subtitle ?? '',
+        kind: 'DEEP DIVE' as const,
+        no: num,
+        archiveDate: fmt(it.created_at),
+        title: dd?.title ?? 'Deep-dive in progress',
+        dek: dd?.subtitle ?? '',
+        read: `${readMinutes(dd)} MIN`,
+        forLine: dd?.primary_audience ?? 'For everyone shipping AI',
+        stealLine: dd?.monday_actions?.[0]?.action ?? '',
       }
     }
     const wb = it.payload as IssuePayload | null
     return {
       id: it.id,
       type: issueType,
-      number: String((issues?.length ?? 0) - i).padStart(3, '0'),
-      date: fmt(it.created_at),
-      headline: wb?.headline ?? '—',
-      throughline: wb?.throughline ?? '',
+      kind: 'BRIEF' as const,
+      no: num,
+      archiveDate: fmt(it.created_at),
+      title: wb?.headline ?? '—',
+      dek: wb?.throughline ?? '',
+      read: '6 MIN',
+      forLine: wb?.persona?.archetype ?? '',
+      stealLine: wb?.production_hack?.title ?? '',
     }
   })
 
-  // Hero teaser block — pull from the most recent WEEKLY brief specifically
-  // (deep-dive payload shape doesn't have six_layer_diff/persona/hack fields).
-  const latestWeekly = (issues ?? []).find(
-    (it) => (it.issue_type as IssueType) !== 'deep_dive'
-  )
-  const latest = latestWeekly?.payload as IssuePayload | null
-  const latestDiff = latest?.six_layer_diff?.[1] ?? latest?.six_layer_diff?.[0]
-  const teaserDiff = latestDiff
-    ? {
-        beat: latestDiff.beat,
-        lead: latestDiff.bullet.match(/^([^.!?]+[.!?])/)?.[1] ?? latestDiff.bullet,
-      }
-    : null
-  const teaserHackTitle = latest?.production_hack?.title ?? null
-  const teaserPersonaArchetype = latest?.persona?.archetype ?? null
-  const latestWeeklyListItem = list.find((it) => it.type !== 'deep_dive')
+  const featured = list[0]
 
   return (
-    <>
-      <header className="bg-[#0e0c08] text-[#f4efe6]">
-        <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
-          <Link href="/" className="text-[#f4efe6]">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-3 sm:gap-5">
-            <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-              <Link href="/" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6] hover:text-[#f4efe6]">
-                Issues
-              </Link>
-              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
-                About
-              </Link>
-              {subscribed ? (
-                <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent">
-                  Subscribed ✓
-                </span>
-              ) : (
-                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
-                  Subscribe
-                </Link>
-              )}
-            </nav>
-            <ThemeToggle className="text-[#f4efe6]/80 hover:text-[#f4efe6]" />
-            {subscribed ? null : (
-              <Link
-                href="/subscribe"
-                className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden"
-              >
-                Subscribe
-              </Link>
-            )}
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-bg font-sans text-fg">
+      <SiteNav subscribed={subscribed} />
 
-      <main id="main">
-        {/* Hero / brand statement */}
-        <section className="border-b border-line">
-          <div className="mx-auto max-w-reader px-5 py-16 sm:px-6 sm:py-24">
-            <p className="eyebrow">The India AI Builder’s Brief</p>
-            <h1 className="mt-4 font-display text-[40px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]">
-              Mondays. <span className="text-accent">One shift.</span> Indian
-              builders only.
+      {/* HERO */}
+      <section
+        id="subscribe"
+        className="relative overflow-hidden border-b border-line"
+      >
+        <SignalTrace className="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-50" />
+        <div className="relative mx-auto grid max-w-shell grid-cols-1 lg:grid-cols-[1.42fr_1fr]">
+          <div className="flex flex-col justify-center px-5 py-16 sm:px-8 lg:border-r lg:border-line lg:py-24 lg:pr-14">
+            <div className="reveal d-1 mb-7 flex items-center gap-2.5 font-mono text-[11px] tracking-label text-lime-soft">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime" />
+              THE MONDAY BRIEF · INDIAN BUILDERS ONLY
+            </div>
+            <h1 className="reveal d-2 font-serif text-[44px] font-semibold leading-[1.02] tracking-tight text-fg sm:text-6xl">
+              One AI shift
+              <br />
+              that matters.
+              <br />
+              <span className="text-fg-muted">Every Monday.</span>
             </h1>
-            <p className="mt-6 max-w-[600px] font-body text-[18px] leading-relaxed text-ink/85 sm:text-[20px]">
-              A weekly synthesis for Indian AI builders, PMs, and founders. We
-              read frontier-API moves, India infra, regulation, Indic models,
-              talent, and enterprise deals — and tell you the one shift that
-              actually matters for what you ship this quarter.
+            <p className="reveal d-3 mt-6 max-w-md text-[15px] leading-relaxed text-fg-muted sm:text-base">
+              The single move reshaping the stack — what happened, who it&apos;s
+              for, and what to do Monday morning. No roundups. No hype.
             </p>
-            {subscribed ? (
-              <div className="mt-10 rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5 sm:px-6 sm:py-6">
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-                  You&rsquo;re on the list ✓
-                </p>
-                <p className="mt-2 font-body text-[16px] leading-relaxed text-ink sm:text-[17px]">
-                  Your next brief lands Monday 7:30 AM IST. In the meantime,
-                  read the latest issue below.
-                </p>
-              </div>
-            ) : (
-              <div className="mt-10 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/subscribe"
-                  className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[15px] font-semibold text-paper transition hover:bg-accent"
-                >
-                  Subscribe for free
-                </Link>
-                <Link
-                  href="/about"
-                  className="font-mono text-[12px] uppercase tracking-[0.16em] text-muted hover:text-ink"
-                >
-                  Read what we cover →
-                </Link>
-              </div>
-            )}
-          </div>
-        </section>
 
-        {/* Inside this week's brief — content teaser so a stranger sees the
-            format and quality before clicking into an issue */}
-        {(teaserDiff || teaserHackTitle || teaserPersonaArchetype) && latestWeeklyListItem ? (
-          <section className="border-b border-line bg-paper/40">
-            <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-                Inside this week&rsquo;s brief
-              </p>
-              <h2 className="mt-3 font-display text-[26px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[34px]">
-                {latestWeeklyListItem.headline}
-              </h2>
-              {latestWeeklyListItem.throughline ? (
-                <p className="mt-3 max-w-[620px] font-body text-[17px] italic leading-snug text-ink/80 sm:text-[19px]">
-                  {latestWeeklyListItem.throughline}
-                </p>
-              ) : null}
-
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                {teaserDiff ? (
-                  <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
-                      One of six layers
-                    </p>
-                    <p className="mt-2 font-body text-[15px] font-semibold leading-snug text-ink">
-                      {teaserDiff.lead}
-                    </p>
+            <div className="reveal d-4 mt-9 max-w-lg">
+              {subscribed ? (
+                <div className="flex flex-col gap-2 border border-line-strong bg-card px-5 py-4">
+                  <div className="font-mono text-[11px] tracking-label text-lime">
+                    SUBSCRIBED ✓
                   </div>
-                ) : null}
-                {teaserPersonaArchetype ? (
-                  <div className="rounded-md border-l-4 border-accent bg-paper-elev px-5 py-5">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
-                      Written for
-                    </p>
-                    <p className="mt-2 font-display text-[15px] italic leading-snug text-ink">
-                      {teaserPersonaArchetype}
-                    </p>
-                  </div>
-                ) : null}
-                {teaserHackTitle ? (
-                  <div className="rounded-md border-l-4 border-accent-2 bg-paper-elev px-5 py-5">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-2">
-                      This week&rsquo;s production hack
-                    </p>
-                    <p className="mt-2 font-body text-[15px] font-semibold leading-snug text-ink">
-                      {teaserHackTitle}
-                    </p>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Link
-                  href={`/issue/${latestWeeklyListItem.id}`}
-                  className="inline-flex items-center rounded bg-ink px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-accent"
-                >
-                  Read this week&rsquo;s brief →
-                </Link>
-                {subscribed ? null : (
-                  <Link
-                    href="/subscribe"
-                    className="inline-flex items-center font-mono text-[12px] uppercase tracking-[0.16em] text-muted hover:text-ink"
-                  >
-                    Get next Monday&rsquo;s free →
-                  </Link>
-                )}
+                  <p className="text-[14px] text-fg-muted">
+                    Your next brief lands Monday 7:30 AM IST. Scroll for the
+                    latest issue.
+                  </p>
+                </div>
+              ) : (
+                <HomeSubscribeForm />
+              )}
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.04em] text-fg-subtle">
+                <span>FREE FOREVER</span>
+                <span className="text-line-strong">/</span>
+                <span>6-MIN READ</span>
+                <span className="text-line-strong">/</span>
+                <span>WRITTEN IN BENGALURU</span>
               </div>
             </div>
-          </section>
-        ) : null}
+          </div>
 
-        {/* Archive */}
-        <section>
-          <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-            <div className="mb-10">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-                Archive
-              </p>
-              <h2 className="mt-2 font-display text-[26px] font-bold tracking-tight text-ink sm:text-[32px]">
+          {featured ? (
+            <div className="flex flex-col justify-center bg-bg-raised px-5 py-12 sm:px-8 lg:py-24 lg:pl-12">
+              <div className="reveal d-3 mb-5 flex items-center gap-2 font-mono text-[11px] tracking-label text-fg-subtle">
+                <CornerDownRight size={13} strokeWidth={2} />
+                THIS WEEK · ISSUE {featured.no}
+              </div>
+              <div className="reveal d-4 border-l-2 border-lime pl-5">
+                <h2 className="font-serif text-2xl font-semibold leading-[1.1] tracking-tight text-fg sm:text-[28px]">
+                  {featured.title}
+                </h2>
+                <p className="mt-3.5 text-[13.5px] leading-relaxed text-fg-muted">
+                  {featured.dek}
+                </p>
+              </div>
+              <dl className="reveal d-5 mt-7 flex flex-col gap-3">
+                {featured.forLine ? (
+                  <div className="flex items-baseline gap-3">
+                    <dt className="w-16 shrink-0 font-mono text-[10px] font-semibold tracking-label text-lime-soft">
+                      FOR
+                    </dt>
+                    <dd className="text-[13px] text-cream-dim">{featured.forLine}</dd>
+                  </div>
+                ) : null}
+                {featured.stealLine ? (
+                  <div className="flex items-baseline gap-3">
+                    <dt className="w-16 shrink-0 font-mono text-[10px] font-semibold tracking-label text-lime-soft">
+                      STEAL
+                    </dt>
+                    <dd className="text-[13px] text-cream-dim">
+                      {featured.stealLine}
+                    </dd>
+                  </div>
+                ) : null}
+              </dl>
+              <div className="reveal d-6 mt-8">
+                <Link
+                  href={`/issue/${featured.id}`}
+                  className="group inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-lime"
+                >
+                  READ THIS ISSUE FREE
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.25}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </Link>
+                <p className="mt-2 text-[12px] text-fg-subtle">
+                  …then get the next one Monday.
+                </p>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {/* WHAT YOU GET */}
+      <section className="border-b border-line">
+        <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
+          <div className="mb-10 flex items-end justify-between">
+            <h2 className="max-w-xl font-serif text-[28px] font-medium leading-tight tracking-tight text-fg sm:text-4xl">
+              Five minutes. One decision you&apos;d have missed.
+            </h2>
+            <span className="hidden font-mono text-[11px] tracking-label text-fg-subtle sm:block">
+              THE FORMAT
+            </span>
+          </div>
+          <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-3">
+            {WHAT_YOU_GET.map((it) => (
+              <div key={it.k} className="flex flex-col bg-bg p-7">
+                <div className="flex items-center justify-between">
+                  <span className="font-serif text-4xl font-semibold text-line-strong">
+                    {it.k}
+                  </span>
+                  <span className="font-mono text-[10px] tracking-label text-lime-soft">
+                    {it.label}
+                  </span>
+                </div>
+                <h3 className="mt-6 font-serif text-xl font-medium tracking-tight text-fg">
+                  {it.title}
+                </h3>
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-fg-muted">
+                  {it.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MANIFESTO */}
+      <section id="about-strip" className="border-b border-line bg-bg-raised">
+        <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+            <div>
+              <div className="mb-6 font-mono text-[11px] tracking-label text-lime-soft">
+                WHY THIS EXISTS
+              </div>
+              <h2 className="max-w-2xl font-serif text-3xl font-semibold leading-[1.08] tracking-tight text-fg sm:text-[40px]">
+                There are 400 AI newsletters. None of them respect your Monday.
+              </h2>
+              <div className="mt-8 flex max-w-xl flex-col gap-5 text-[15px] leading-[1.75] text-fg-muted">
+                <p>
+                  AI Signal runs on one belief: you don&apos;t need more
+                  information, you need less — chosen well. Every Monday we read
+                  the firehose so you don&apos;t have to, and send exactly{' '}
+                  <span className="text-cream-dim">one shift</span> that changes
+                  how you build.
+                </p>
+                <p>
+                  No affiliate links. No &ldquo;top 10 tools.&rdquo; No
+                  breathless threads. A working engineer in Bengaluru writes
+                  every issue and reads every reply — built for the people
+                  shipping AI in India, not the people tweeting about it.
+                </p>
+              </div>
+              <Link
+                href="/#subscribe"
+                className="group mt-9 inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-lime"
+              >
+                START WITH MONDAY&apos;S BRIEF
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.25}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
+
+            <div className="border border-line-strong">
+              {[
+                { k: 'WRITTEN BY', v: 'A working engineer — not a content team.' },
+                { k: 'CADENCE', v: 'Every Monday · 7:30 AM IST.' },
+                { k: 'THE SHAPE', v: "One shift · who it's for · what to do." },
+                { k: 'MADE IN', v: 'Bengaluru, India.' },
+                { k: 'PRICE', v: 'Free, forever. Reply anytime.' },
+              ].map((row, i) => (
+                <div
+                  key={row.k}
+                  className={`flex flex-col gap-1.5 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
+                >
+                  <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                    {row.k}
+                  </span>
+                  <span className="text-[14px] text-cream-dim">{row.v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ARCHIVE */}
+      <section id="archive">
+        <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <div className="mb-2 font-mono text-[11px] tracking-label text-fg-subtle">
+                ARCHIVE
+              </div>
+              <h2 className="font-serif text-[28px] font-medium tracking-tight text-fg sm:text-4xl">
                 Past issues
               </h2>
             </div>
-
-            {list.length === 0 ? (
-              <p className="font-body text-[16px] italic text-muted">
-                Issue #001 is being drafted now.
-              </p>
-            ) : (
-              <ul className="divide-y divide-line">
-                {list.map((it) => (
-                  <li key={it.id} className="py-6 first:pt-0 last:pb-0">
-                    <Link
-                      href={`/issue/${it.id}`}
-                      className="group block focus-visible:outline-none"
-                    >
-                      <div className="flex items-baseline gap-4 text-[11px] tabular">
-                        <span
-                          className={`font-mono uppercase tracking-[0.16em] ${it.type === 'deep_dive' ? 'text-accent-2' : 'text-accent'}`}
-                        >
-                          {it.type === 'deep_dive' ? 'Deep dive' : 'Issue'}&nbsp;{it.number}
-                        </span>
-                        <span className="font-mono uppercase tracking-[0.12em] text-muted">
-                          {it.date}
-                        </span>
-                      </div>
-                      <p
-                        className={`mt-2 font-display text-[22px] font-semibold leading-snug text-ink ${it.type === 'deep_dive' ? 'group-hover:text-accent-2' : 'group-hover:text-accent'}`}
-                      >
-                        {it.headline}
-                      </p>
-                      {it.throughline ? (
-                        <p className="mt-2 font-body text-[16px] italic leading-snug text-ink/70">
-                          {it.throughline}
-                        </p>
-                      ) : null}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-line bg-paper">
-        <div className="mx-auto max-w-[1100px] px-5 py-10 sm:px-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-4">
-            <Logo />
-            <p className="meta">
-              <span translate="no">getaisignal.org</span>
+          {list.length === 0 ? (
+            <p className="font-mono text-[12px] tracking-label text-fg-subtle">
+              ISSUE #001 IS BEING DRAFTED.
             </p>
-          </div>
-          <p className="mt-3 meta">
-            Monday mornings. ~1500 words. For Indian AI builders, PMs, founders.
-          </p>
-          <nav
-            aria-label="Footer"
-            className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-5"
-          >
-            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
-              Issues
-            </Link>
-            <Link href="/about" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
-              About
-            </Link>
-            <Link href="/subscribe" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink">
-              Subscribe
-            </Link>
-            <a
-              href="/feed.xml"
-              className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-ink"
-            >
-              RSS
-            </a>
-          </nav>
+          ) : (
+            <div className="border-t border-line">
+              {list.map((iss) => (
+                <Link
+                  key={iss.id}
+                  href={`/issue/${iss.id}`}
+                  className="group grid grid-cols-1 gap-3 border-b border-line py-6 transition-colors hover:bg-bg-raised sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-7 sm:px-3"
+                >
+                  <div className="flex items-center gap-4 sm:w-44 sm:flex-col sm:items-start sm:gap-1.5">
+                    <span className="font-mono text-[13px] font-semibold text-lime">
+                      {iss.no}
+                    </span>
+                    <span className="font-mono text-[10px] tracking-[0.08em] text-fg-subtle">
+                      {iss.archiveDate}
+                    </span>
+                    <span
+                      className={`hidden border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.08em] sm:inline ${
+                        iss.kind === 'DEEP DIVE'
+                          ? 'border-lime/40 text-lime'
+                          : 'border-line-strong text-fg-subtle'
+                      }`}
+                    >
+                      {iss.kind}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-serif text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-lime sm:text-[22px]">
+                      {iss.title}
+                    </h3>
+                    <p className="mt-1 line-clamp-1 text-[13px] text-fg-muted">
+                      {iss.dek}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 font-mono text-[10px] tracking-label text-fg-subtle">
+                    <span>{iss.read}</span>
+                    <ArrowUpRight
+                      size={16}
+                      strokeWidth={1.75}
+                      className="text-fg-subtle transition-all group-hover:text-lime"
+                    />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      </footer>
-    </>
+      </section>
+
+      <SiteFooter />
+    </div>
   )
 }
