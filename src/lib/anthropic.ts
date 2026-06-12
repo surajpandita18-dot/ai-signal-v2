@@ -14,8 +14,14 @@ export function getAnthropic(): Anthropic {
 // Models — pinned per stage. Use aliases per claude-api skill guidance.
 //   Haiku 4.5 — structural task (clustering): cheap, fast, fine.
 //   Opus 4.7 — Stage 3 synthesis: the product's reasoning core. Worth the cost.
+//   Opus 4.7 — Deep-dive research + write: long-form reasoning at high effort.
+//   Sonnet 4.6 — Deep-dive QA: hot-loop scoring + per-section regen; judging is
+//     easier than writing, Sonnet's cheaper and fast enough.
 export const MODEL_CLUSTER = 'claude-haiku-4-5'
 export const MODEL_SYNTHESIZE = 'claude-opus-4-7'
+export const MODEL_DEEP_DIVE_RESEARCH = 'claude-opus-4-7'
+export const MODEL_DEEP_DIVE_DRAFT = 'claude-opus-4-7'
+export const MODEL_QA_DEEP_DIVE = 'claude-sonnet-4-6'
 
 /**
  * Extract the first text block from an Anthropic messages response.

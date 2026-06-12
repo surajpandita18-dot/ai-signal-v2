@@ -45,7 +45,11 @@ export default async function ReviewPage({
     .single()
   if (!issue) notFound()
 
-  const payload: IssuePayload | null = issue.payload
+  // Weekly-brief review surface only — deep-dives don't use SHK picker.
+  const payload: IssuePayload | null =
+    issue.issue_type === 'weekly_brief'
+      ? ((issue.payload as IssuePayload | null) ?? null)
+      : null
   const isAlreadyDrafted = issue.status === 'drafted'
   const isFailed = issue.status === 'failed'
   const isNoSignal = issue.status === 'no_signal'

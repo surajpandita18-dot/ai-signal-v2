@@ -168,7 +168,11 @@ export interface Database {
           markdown_path: string | null
           failure_reason: string | null
           set_aside_count: number | null
-          payload: IssuePayload | null
+          // Payload shape varies by issue_type:
+          //   weekly_brief → IssuePayload (locked 6-section)
+          //   deep_dive    → DeepDivePayload + research_pack + candidate_meta
+          // Renderer dispatches on issue_type. Use the IssuePayloadAny union.
+          payload: IssuePayloadAny | null
           chosen_calls: ChosenCalls | null
           created_at: string
           updated_at: string
@@ -182,7 +186,7 @@ export interface Database {
           markdown_path?: string | null
           failure_reason?: string | null
           set_aside_count?: number | null
-          payload?: IssuePayload | null
+          payload?: IssuePayloadAny | null
           chosen_calls?: ChosenCalls | null
           created_at?: string
           updated_at?: string
@@ -196,7 +200,7 @@ export interface Database {
           markdown_path?: string | null
           failure_reason?: string | null
           set_aside_count?: number | null
-          payload?: IssuePayload | null
+          payload?: IssuePayloadAny | null
           chosen_calls?: ChosenCalls | null
           created_at?: string
           updated_at?: string
@@ -365,3 +369,83 @@ export interface ChosenCalls {
   hold: { label: string; rationale: string } | null
   kill: { label: string; rationale: string } | null
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// Deep-dive payload — locked 7-section essay format (June 2026)
+// Sits in the same issues.payload JSONB. Renderer dispatches on
+// issue_type: 'deep_dive' to use this shape.
+// ─────────────────────────────────────────────────────────────────────
+
+export interface EvidenceTriple {
+  url: string
+  quote: string                // ≤200 words direct excerpt anchoring the claim
+  claim_supported: string      // one-sentence claim the quote backs
+}
+
+export interface CounterPosition {
+  claim: string                // strongest opposing view, charitable phrasing
+  best_link: string            // canonical URL for that opposing view
+  steel_man: string            // ≤80-word steel-man so the writer is honest
+}
+
+export interface IndiaContextAnchor {
+  fact: string                 // INR / DPDP / Indic / GCC fact
+  source: string               // URL or named source
+}
+
+// Output of stage 1 (deep-dive-research). Persisted to payload.research_pack.
+export interface DeepDiveResearchPack {
+  evidence_triples: EvidenceTriple[]
+  counter_positions: CounterPosition[]
+  india_context_anchors: IndiaContextAnchor[]
+}
+
+// A minimal snapshot of the discovery candidate so the writer + QA stages
+// don't need to re-read deep_dive_candidates. Persisted as payload.candidate_meta.
+export interface DeepDiveCandidateMeta {
+  candidate_id: string
+  assumption_challenged: string
+  one_paragraph_hook: string
+  primary_audience: DeepDiveAudience
+  evidence_anchor_urls: string[]
+}
+
+export interface DeepDiveEvidenceSection {
+  heading: string              // ≤8 words
+  body: string                 // includes inline [text](url) markdown links
+}
+
+export interface DeepDiveMondayAction {
+  number: number               // 1, 2, 3
+  action: string               // ≤2 sentences; names file/team/contract
+}
+
+export interface DeepDiveFurtherReading {
+  url: string
+  annotation: string           // one-line annotation
+}
+
+export interface DeepDivePayload {
+  // optional discriminator — renderer primarily dispatches on issues.issue_type
+  // but this field lets payload-only consumers branch without re-reading the row.
+  kind?: 'deep_dive'
+  title: string                // ≤8 words, sharp, contrarian
+  subtitle: string             // 1 sentence, ≤20 words
+  cold_open: string            // 120-180 words
+  assumption: string           // 80-120 words — italicize the belief
+  evidence_sections: DeepDiveEvidenceSection[]  // 3-5 sub-sections, 1800-2800 total
+  india_twist: string          // 350-500 words
+  monday_actions: DeepDiveMondayAction[]        // 3 numbered actions
+  counter_positions: CounterPosition[]          // honest steel-mans for section 6
+  further_reading: DeepDiveFurtherReading[]     // 5-8 links
+  primary_audience: DeepDiveAudience
+
+  // Intermediate artifacts kept on the payload for QA + reruns.
+  // Optional because the research stage writes them before the writer stage
+  // adds the essay fields.
+  research_pack?: DeepDiveResearchPack
+  candidate_meta?: DeepDiveCandidateMeta
+}
+
+// The full union actually stored in issues.payload.
+export type IssuePayloadAny = IssuePayload | DeepDivePayload
