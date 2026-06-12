@@ -11,6 +11,13 @@ import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { runStageDeepDiveResearch } from '@/inngest/stages/deep-dive-research'
 import { runStageDeepDiveWrite } from '@/inngest/stages/deep-dive-write'
 import { runStageDeepDiveQA } from '@/inngest/stages/deep-dive-qa'
+import { sendDeepDiveToSubscribers } from '@/lib/deep-dive-email'
+import type { DeepDivePayload } from '../../../../../db/types/database'
+
+// Auto-send threshold for deep-dives. If every rubric dimension scores
+// >= 9, the essay ships to subscribers without a human click. 8-8.99
+// drafts for review. <8 awaits human edits.
+const AUTO_SEND_FLOOR = 9
 
 // Long pipeline: research ~40s + write ~120s + QA up to ~140s with 2 retries.
 // Pro tier max is 300s; budget accordingly.
@@ -58,10 +65,42 @@ export async function POST(req: Request) {
     // 3. QA (auto-regenerate failing sections).
     const qa = await runStageDeepDiveQA({ issueId, maxRetries: 2 })
 
-    // 4. Set final status. Per CLAUDE.md rule #1 (refined for deep-dive track),
-    // the human gate sits at the candidate pick. The factual essay can ship
-    // without a second human pass — but if QA fails, hold for review.
-    const finalStatus = qa.finalPass ? 'drafted' : 'awaiting_human'
+    // 4. Tiered outcome: auto-send / drafted / awaiting_human.
+    const minScore = Math.min(...Object.values(qa.scores as Record<string, number>))
+    let finalStatus: 'drafted' | 'awaiting_human' = qa.finalPass
+      ? 'drafted'
+      : 'awaiting_human'
+    let sendStats: { attempted: number; sent: number; failed: number } | null = null
+
+    if (minScore >= AUTO_SEND_FLOOR) {
+      // Auto-send to subscribers. Owner gets a post-fact summary email
+      // from the discovery cron route (not here).
+      const { data: issue } = await supabase
+        .from('issues')
+        .select('payload, created_at')
+        .eq('id', issueId)
+        .single()
+      const payload = issue?.payload as unknown as DeepDivePayload | null
+      if (payload && payload.evidence_sections) {
+        try {
+          const send = await sendDeepDiveToSubscribers({
+            issueId,
+            payload,
+            issueCreatedAt: issue?.created_at ?? null,
+          })
+          sendStats = {
+            attempted: send.attempted,
+            sent: send.sent,
+            failed: send.failed,
+          }
+          finalStatus = 'drafted'
+        } catch (err) {
+          // Send failed — degrade to drafted; owner can retry from /review.
+          console.warn('deep-dive auto-send failed:', err)
+        }
+      }
+    }
+
     await supabase.from('issues').update({ status: finalStatus }).eq('id', issueId)
 
     return NextResponse.json({
@@ -71,6 +110,7 @@ export async function POST(req: Request) {
       write,
       qa,
       finalStatus,
+      sendStats,
     })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
