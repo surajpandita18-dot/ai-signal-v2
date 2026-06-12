@@ -166,12 +166,12 @@ export async function runStageCluster(opts: { issueId: string }): Promise<Cluste
   const anthropic = getAnthropic()
   const response = await anthropic.messages.create({
     model: MODEL_CLUSTER,
-    max_tokens: 8192,
+    max_tokens: 16_000,
     messages: [{ role: 'user', content: prompt }],
   })
   if (response.stop_reason === 'max_tokens') {
     throw new Error(
-      `Cluster response hit max_tokens (8192) — input had ${compact.length} items. ` +
+      `Cluster response hit max_tokens (16000) — input had ${compact.length} items. ` +
         `Lower ITEM_CAP or split into batches.`
     )
   }
