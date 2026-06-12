@@ -31,6 +31,10 @@ export type IssueStatus =
   | 'drafted'
   | 'failed'
   | 'no_signal'
+
+// Content track — every issue is either the weekly Monday brief or a
+// long-form deep-dive essay. Added 2026-06-12 (migration 0007).
+export type IssueType = 'weekly_brief' | 'deep_dive'
 export type ObviousOrNot = 'obvious' | 'non-obvious' | 'unclear'
 
 export interface Database {
@@ -152,6 +156,7 @@ export interface Database {
         Row: {
           id: string
           status: IssueStatus
+          issue_type: IssueType
           chosen_candidate_id: string | null
           chosen_throughline_override: string | null
           markdown_path: string | null
@@ -165,6 +170,7 @@ export interface Database {
         Insert: {
           id?: string
           status?: IssueStatus
+          issue_type?: IssueType
           chosen_candidate_id?: string | null
           chosen_throughline_override?: string | null
           markdown_path?: string | null
@@ -178,6 +184,7 @@ export interface Database {
         Update: {
           id?: string
           status?: IssueStatus
+          issue_type?: IssueType
           chosen_candidate_id?: string | null
           chosen_throughline_override?: string | null
           markdown_path?: string | null
@@ -187,6 +194,42 @@ export interface Database {
           chosen_calls?: ChosenCalls | null
           created_at?: string
           updated_at?: string
+        }
+      }
+      deep_dive_candidates: {
+        Relationships: []
+        Row: {
+          id: string
+          discovered_at: string
+          assumption_challenged: string
+          one_paragraph_hook: string
+          evidence_anchor_urls: Json
+          score: number | null
+          chosen: boolean
+          chosen_issue_id: string | null
+          rejection_reason: string | null
+        }
+        Insert: {
+          id?: string
+          discovered_at?: string
+          assumption_challenged: string
+          one_paragraph_hook: string
+          evidence_anchor_urls?: Json
+          score?: number | null
+          chosen?: boolean
+          chosen_issue_id?: string | null
+          rejection_reason?: string | null
+        }
+        Update: {
+          id?: string
+          discovered_at?: string
+          assumption_challenged?: string
+          one_paragraph_hook?: string
+          evidence_anchor_urls?: Json
+          score?: number | null
+          chosen?: boolean
+          chosen_issue_id?: string | null
+          rejection_reason?: string | null
         }
       }
       issue_quality_logs: {
@@ -254,6 +297,7 @@ export type Cluster = Database['public']['Tables']['clusters']['Row']
 export type Candidate = Database['public']['Tables']['candidates']['Row']
 export type Issue = Database['public']['Tables']['issues']['Row']
 export type IssueQualityLog = Database['public']['Tables']['issue_quality_logs']['Row']
+export type DeepDiveCandidate = Database['public']['Tables']['deep_dive_candidates']['Row']
 
 // ─────────────────────────────────────────────────────────────────────
 // Issue payload — locked 6-section product format (June 2026)

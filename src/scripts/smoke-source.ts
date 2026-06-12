@@ -27,9 +27,17 @@ async function main() {
     process.exit(1)
   }
 
-  console.log(`Pulling ${SOURCES.length} feeds...\n`)
+  // --track=news (default) or --track=long-form. Passes through to the stage.
+  const trackIdx = process.argv.indexOf('--track')
+  const track =
+    trackIdx !== -1 && process.argv[trackIdx + 1] === 'long-form'
+      ? ('long-form' as const)
+      : ('news' as const)
+
+  const filtered = SOURCES.filter((s) => (s.tracks ?? ['news']).includes(track))
+  console.log(`Pulling ${filtered.length} feeds (track=${track})...\n`)
   const t0 = Date.now()
-  const results = await runStageSource()
+  const results = await runStageSource({ track })
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1)
 
   const head = `${pad('SOURCE', 22)} ${pad('TIER', 5)} ${pad('W', 3)} ${pad('FETCHED', 8)} ${pad('INSERTED', 9)} ${pad('SKIPPED', 8)} NOTES`

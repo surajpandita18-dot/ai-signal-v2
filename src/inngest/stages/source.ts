@@ -1,5 +1,14 @@
 import Parser from 'rss-parser'
-import { SOURCES, type Source } from '@/config/sources'
+import { SOURCES, type Source, type ContentTrack } from '@/config/sources'
+
+// Filter sources by which content track they feed. Default 'news' so
+// existing call-sites (the weekly cron) get the same behavior as before.
+function sourcesForTrack(track: ContentTrack): Source[] {
+  return SOURCES.filter((s) => {
+    const tracks = s.tracks ?? ['news']
+    return tracks.includes(track)
+  })
+}
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import type { Beat } from '../../../db/types/database'
 
@@ -79,12 +88,15 @@ async function fetchSource(source: Source, now: Date): Promise<NormalizedItem[]>
  * unattached and can be claimed by an issue later. When the orchestrator calls this,
  * it passes its issueId so the items belong to that run.
  */
-export async function runStageSource(opts: { issueId?: string; now?: Date } = {}): Promise<SourceResult[]> {
+export async function runStageSource(
+  opts: { issueId?: string; now?: Date; track?: ContentTrack } = {}
+): Promise<SourceResult[]> {
   const supabase = createAdminSupabaseClient()
   const now = opts.now ?? new Date()
+  const activeSources = sourcesForTrack(opts.track ?? 'news')
 
   const settled = await Promise.allSettled(
-    SOURCES.map(async (s): Promise<SourceResult> => {
+    activeSources.map(async (s): Promise<SourceResult> => {
       try {
         const fetched = await fetchSource(s, now)
         if (fetched.length === 0) {
@@ -127,9 +139,9 @@ export async function runStageSource(opts: { issueId?: string; now?: Date } = {}
     r.status === 'fulfilled'
       ? r.value
       : {
-          source: SOURCES[i].id,
-          tier: SOURCES[i].tier,
-          weight: SOURCES[i].weight,
+          source: activeSources[i].id,
+          tier: activeSources[i].tier,
+          weight: activeSources[i].weight,
           fetched: 0,
           inWindow: 0,
           inserted: 0,

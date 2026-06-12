@@ -24,6 +24,11 @@ import type { Beat } from '../../db/types/database'
 
 export type Tier = 'A' | 'B' | 'C'
 export type SourceKind = 'rss'
+// Which content track a source feeds. Most existing sources feed the
+// weekly brief ('news'). Long-form essays + research feeds feed the
+// deep-dive track ('long-form'). A few sources feed both. Default ['news']
+// when unspecified — preserves existing behavior.
+export type ContentTrack = 'news' | 'long-form'
 
 export interface Source {
   id: string
@@ -34,6 +39,7 @@ export interface Source {
   feedUrl: string
   windowHours: number
   kind: SourceKind
+  tracks?: ContentTrack[] // defaults to ['news']
 }
 
 const H_48 = 48
@@ -51,7 +57,7 @@ export const SOURCES: Source[] = [
   //          Microsoft AI announcements still reach us via TechCrunch AI + MarkTechPost.
 
   // High-signal frontier individuals
-  { id: 'simon-willison', name: 'Simon Willison',        tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://simonwillison.net/atom/everything/', windowHours: H_48, kind: 'rss' },
+  { id: 'simon-willison', name: 'Simon Willison',        tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://simonwillison.net/atom/everything/', windowHours: H_48, kind: 'rss', tracks: ['news', 'long-form'] },
   { id: 'latent-space',   name: 'Latent Space (Swyx)',   tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://www.latent.space/feed',              windowHours: H_48, kind: 'rss' },
   { id: 'interconnects',  name: 'Interconnects (Lambert)', tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://www.interconnects.ai/feed',        windowHours: H_48, kind: 'rss' },
   { id: 'ethan-mollick',  name: 'One Useful Thing',      tier: 'A', weight: 4, beat: 'frontier-api', feedUrl: 'https://www.oneusefulthing.org/feed',        windowHours: H_48, kind: 'rss' },
@@ -138,7 +144,7 @@ export const SOURCES: Source[] = [
   { id: 'inc42-funding',    name: 'Inc42 — Funding Tracker',  tier: 'A', weight: 4, beat: 'talent-comp', feedUrl: 'https://inc42.com/buzz/feed/',                            windowHours: H_48, kind: 'rss' },
   { id: 'pragmatic-engineer', name: 'The Pragmatic Engineer', tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://newsletter.pragmaticengineer.com/feed',           windowHours: H_7D, kind: 'rss' },
   // Indian VC + ops voices — Sajith Pai bumped C/3 -> A/4 (2026-06-12 audit): only Indian VC consistently doing INR-grounded analysis.
-  { id: 'sajith-pai',       name: 'Sajith Pai (Blume)',       tier: 'A', weight: 4, beat: 'talent-comp', feedUrl: 'https://sajithpai.substack.com/feed',                    windowHours: H_7D, kind: 'rss' },
+  { id: 'sajith-pai',       name: 'Sajith Pai (Blume)',       tier: 'A', weight: 4, beat: 'talent-comp', feedUrl: 'https://sajithpai.substack.com/feed',                    windowHours: H_7D, kind: 'rss', tracks: ['news', 'long-form'] },
   { id: 'ben-evans',        name: 'Benedict Evans',           tier: 'C', weight: 3, beat: 'talent-comp', feedUrl: 'https://www.ben-evans.com/benedictevans?format=rss',     windowHours: H_7D, kind: 'rss' },
   // Stratechery re-tagged talent-comp -> frontier-api (2026-06-12 audit): actual content is platform/lab analysis.
 
@@ -158,6 +164,23 @@ export const SOURCES: Source[] = [
   // Down-weighted A/4 -> A/3 (2026-06-12 audit): vendor blogs are marketing; A/4 belongs to The Ken / Livemint / Indian Express.
   { id: 'aws-ml',           name: 'AWS ML Blog',              tier: 'A', weight: 3, beat: 'enterprise-deals', feedUrl: 'https://aws.amazon.com/blogs/machine-learning/feed/', windowHours: H_48, kind: 'rss' },
   { id: 'nvidia-dev',       name: 'NVIDIA Developer Blog',    tier: 'A', weight: 3, beat: 'enterprise-deals', feedUrl: 'https://developer.nvidia.com/blog/feed/',           windowHours: H_48, kind: 'rss' },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // DEEP-DIVE CANON — feeds for the long-form essay track (Thursday cadence,
+  // 3000-5000 word pieces challenging builder assumptions). All curl-verified
+  // 200 on 2026-06-12. window=30d because long-form publishes irregularly.
+  // tracks: ['long-form'] means the weekly sourcer ignores these.
+  // ─────────────────────────────────────────────────────────────────────
+  { id: 'hamel-husain',     name: 'Hamel Husain (evals)',     tier: 'A', weight: 5, beat: 'frontier-api',     feedUrl: 'https://hamel.dev/index.xml',                       windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'eugene-yan',       name: 'Eugene Yan',               tier: 'A', weight: 5, beat: 'frontier-api',     feedUrl: 'https://eugeneyan.com/rss/',                        windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'sebastian-raschka',name: 'Ahead of AI (Raschka)',    tier: 'A', weight: 4, beat: 'frontier-api',     feedUrl: 'https://magazine.sebastianraschka.com/feed',        windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'answer-ai',        name: 'Answer.AI',                tier: 'A', weight: 4, beat: 'frontier-api',     feedUrl: 'https://www.answer.ai/index.xml',                   windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'aman-chadha',      name: 'aman.ai',                  tier: 'A', weight: 4, beat: 'frontier-api',     feedUrl: 'https://aman.ai/feed.xml',                          windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'drew-breunig',     name: 'Drew Breunig',             tier: 'A', weight: 4, beat: 'frontier-api',     feedUrl: 'https://www.dbreunig.com/feed.xml',                 windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'zvi-mowshowitz',   name: 'Zvi Mowshowitz',           tier: 'B', weight: 3, beat: 'frontier-api',     feedUrl: 'https://thezvi.substack.com/feed',                  windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'ai-snake-oil',     name: 'AI Snake Oil',             tier: 'B', weight: 3, beat: 'frontier-api',     feedUrl: 'https://www.aisnakeoil.com/feed',                   windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'alignment-forum',  name: 'Alignment Forum',          tier: 'B', weight: 3, beat: 'frontier-api',     feedUrl: 'https://www.alignmentforum.org/feed.xml',           windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
+  { id: 'japm-sid-arora',   name: 'JustAnotherPM (Sid Arora)',tier: 'A', weight: 4, beat: 'enterprise-deals', feedUrl: 'https://japm.substack.com/feed',                    windowHours: H_7D * 4, kind: 'rss', tracks: ['long-form'] },
 ]
 
 export function sourcesByTier(tier: Tier): Source[] {
