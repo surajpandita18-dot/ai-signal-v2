@@ -11,7 +11,13 @@ import { ChapterNav, type ChapterNavItem } from '@/components/ChapterNav'
 import { ReadingProgress } from '@/components/ReadingProgress'
 import { AnimatedValue } from '@/components/AnimatedValue'
 import { SelectionShare } from '@/components/SelectionShare'
-import type { Beat, ChosenCalls, IssuePayload } from '../../../../db/types/database'
+import DeepDiveReader from '@/components/issue/DeepDiveReader'
+import type {
+  Beat,
+  ChosenCalls,
+  DeepDivePayload,
+  IssuePayload,
+} from '../../../../db/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -141,9 +147,6 @@ export default async function IssuePage({
   const { data: issue } = await supabase.from('issues').select('*').eq('id', issueId).single()
   if (!issue) notFound()
 
-  const payload: IssuePayload | null = issue.payload
-  const chosen: ChosenCalls | null = issue.chosen_calls
-
   const { count } = await supabase
     .from('issues')
     .select('id', { count: 'exact', head: true })
@@ -152,6 +155,34 @@ export default async function IssuePage({
   const issueNumber = count ?? 1
   const issueNumberPadded = String(issueNumber).padStart(3, '0')
   const issueDate = formatIssueDate(issue.created_at)
+
+  // Dispatch on issue_type. Deep-dive payloads have a different shape from
+  // weekly briefs (DeepDivePayload vs IssuePayload). The row type is
+  // IssuePayload | null for back-compat; cast through unknown.
+  if (issue.issue_type === 'deep_dive') {
+    const ddPayload = issue.payload as unknown as DeepDivePayload | null
+    if (!ddPayload || !ddPayload.evidence_sections) {
+      return (
+        <Shell subscribed={subscribed}>
+          <div className="mx-auto max-w-reader px-5 py-16">
+            <p className="meta">Deep-dive draft in progress. Refresh in a few minutes.</p>
+          </div>
+        </Shell>
+      )
+    }
+    return (
+      <Shell subscribed={subscribed}>
+        <DeepDiveReader
+          payload={ddPayload}
+          issueNumberPadded={issueNumberPadded}
+          issueDate={issueDate}
+        />
+      </Shell>
+    )
+  }
+
+  const payload: IssuePayload | null = issue.payload as IssuePayload | null
+  const chosen: ChosenCalls | null = issue.chosen_calls
 
   if (!payload) {
     return (

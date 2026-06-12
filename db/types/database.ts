@@ -171,8 +171,10 @@ export interface Database {
           // Payload shape varies by issue_type:
           //   weekly_brief → IssuePayload (locked 6-section)
           //   deep_dive    → DeepDivePayload + research_pack + candidate_meta
-          // Renderer dispatches on issue_type. Use the IssuePayloadAny union.
-          payload: IssuePayloadAny | null
+          // Row type stays IssuePayload | null for backwards compatibility with
+          // the existing weekly pipeline. Deep-dive consumers cast via
+          // `payload as unknown as DeepDivePayload` after branching on issue_type.
+          payload: IssuePayload | null
           chosen_calls: ChosenCalls | null
           created_at: string
           updated_at: string
@@ -186,7 +188,7 @@ export interface Database {
           markdown_path?: string | null
           failure_reason?: string | null
           set_aside_count?: number | null
-          payload?: IssuePayloadAny | null
+          payload?: IssuePayload | DeepDivePayload | null
           chosen_calls?: ChosenCalls | null
           created_at?: string
           updated_at?: string
@@ -200,7 +202,7 @@ export interface Database {
           markdown_path?: string | null
           failure_reason?: string | null
           set_aside_count?: number | null
-          payload?: IssuePayloadAny | null
+          payload?: IssuePayload | DeepDivePayload | null
           chosen_calls?: ChosenCalls | null
           created_at?: string
           updated_at?: string
@@ -447,5 +449,6 @@ export interface DeepDivePayload {
   candidate_meta?: DeepDiveCandidateMeta
 }
 
-// The full union actually stored in issues.payload.
+// The full union of shapes that can be persisted into issues.payload.
+// Consumers branch on issues.issue_type then cast as the appropriate shape.
 export type IssuePayloadAny = IssuePayload | DeepDivePayload
