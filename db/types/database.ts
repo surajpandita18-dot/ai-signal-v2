@@ -35,6 +35,12 @@ export type IssueStatus =
 // Content track — every issue is either the weekly Monday brief or a
 // long-form deep-dive essay. Added 2026-06-12 (migration 0007).
 export type IssueType = 'weekly_brief' | 'deep_dive'
+
+// Primary audience leaning for a deep-dive candidate. CLAUDE.md positions
+// the brief for builders, PMs, AND founders co-equally — the discovery
+// agent must yield a mix so we don't drift into single-archetype content.
+// Added 2026-06-12 (migration 0008).
+export type DeepDiveAudience = 'builder' | 'pm' | 'founder' | 'cross-cutting'
 export type ObviousOrNot = 'obvious' | 'non-obvious' | 'unclear'
 
 export interface Database {
@@ -203,6 +209,7 @@ export interface Database {
           discovered_at: string
           assumption_challenged: string
           one_paragraph_hook: string
+          primary_audience: DeepDiveAudience
           evidence_anchor_urls: Json
           score: number | null
           chosen: boolean
@@ -214,6 +221,7 @@ export interface Database {
           discovered_at?: string
           assumption_challenged: string
           one_paragraph_hook: string
+          primary_audience?: DeepDiveAudience
           evidence_anchor_urls?: Json
           score?: number | null
           chosen?: boolean
@@ -225,6 +233,7 @@ export interface Database {
           discovered_at?: string
           assumption_challenged?: string
           one_paragraph_hook?: string
+          primary_audience?: DeepDiveAudience
           evidence_anchor_urls?: Json
           score?: number | null
           chosen?: boolean
