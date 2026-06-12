@@ -189,6 +189,57 @@ export interface Database {
           updated_at?: string
         }
       }
+      issue_quality_logs: {
+        Relationships: []
+        Row: {
+          id: string
+          issue_id: string
+          attempt: number
+          headline_score: number | null
+          persona_score: number | null
+          math_score: number | null
+          hack_score: number | null
+          keep_skip_score: number | null
+          cohesion_score: number | null
+          overall_pass: boolean
+          feedback: Json
+          evaluator_model: string
+          cache_usage: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          issue_id: string
+          attempt?: number
+          headline_score?: number | null
+          persona_score?: number | null
+          math_score?: number | null
+          hack_score?: number | null
+          keep_skip_score?: number | null
+          cohesion_score?: number | null
+          overall_pass: boolean
+          feedback: Json
+          evaluator_model: string
+          cache_usage?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          issue_id?: string
+          attempt?: number
+          headline_score?: number | null
+          persona_score?: number | null
+          math_score?: number | null
+          hack_score?: number | null
+          keep_skip_score?: number | null
+          cohesion_score?: number | null
+          overall_pass?: boolean
+          feedback?: Json
+          evaluator_model?: string
+          cache_usage?: Json | null
+          created_at?: string
+        }
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -202,6 +253,7 @@ export type RawItem = Database['public']['Tables']['raw_items']['Row']
 export type Cluster = Database['public']['Tables']['clusters']['Row']
 export type Candidate = Database['public']['Tables']['candidates']['Row']
 export type Issue = Database['public']['Tables']['issues']['Row']
+export type IssueQualityLog = Database['public']['Tables']['issue_quality_logs']['Row']
 
 // ─────────────────────────────────────────────────────────────────────
 // Issue payload — locked 6-section product format (June 2026)

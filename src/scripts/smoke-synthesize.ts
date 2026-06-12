@@ -7,6 +7,7 @@ import 'dotenv/config'
 import { config as loadDotenv } from 'dotenv'
 import { createAdminSupabaseClient } from '../lib/supabase-admin'
 import { runStageSynthesize } from '../inngest/stages/synthesize'
+import { runStageEditorialQA } from '../inngest/stages/editorial-qa'
 
 loadDotenv({ path: '.env.local', override: true })
 
@@ -114,6 +115,22 @@ async function main() {
   )
   console.log(`Issue id: ${result.issueId}`)
   console.log(`Review URL: http://localhost:3003/review/${result.issueId}`)
+
+  // Optional QA pass — auto-evaluate + regenerate failing sections.
+  if (process.argv.includes('--qa')) {
+    console.log()
+    console.log('─'.repeat(80))
+    console.log('Running Editorial QA...')
+    const qa = await runStageEditorialQA({ issueId, maxRetries: 2 })
+    console.log('')
+    console.log('Scores:')
+    for (const [dim, score] of Object.entries(qa.scores)) {
+      const mark = score >= 8 ? '✓' : '✗'
+      console.log(`  ${mark} ${dim.padEnd(12)} ${score}/10`)
+    }
+    console.log(`Pass: ${qa.finalPass ? '✓' : '✗'}   Attempts: ${qa.attempts}   Regenerated: ${qa.regenerated.join(', ') || '(none)'}`)
+    console.log(`Diagnosis: ${qa.overallDiagnosis}`)
+  }
 }
 
 main().catch((e) => {
