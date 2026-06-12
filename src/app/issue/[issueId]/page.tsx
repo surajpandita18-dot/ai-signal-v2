@@ -592,33 +592,33 @@ export default async function IssuePage({
       {/* CLOSURE + SUBSCRIBE CTA (for first-time readers) + FORWARD CTA (for existing) */}
       <section className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-          <p className="font-body text-[20px] italic leading-relaxed text-paper">
+          <p className="font-body text-[20px] italic leading-relaxed text-[#f4efe6]">
             —— That&rsquo;s the shift. You&rsquo;re caught up.
           </p>
 
           {/* PRIMARY CTA: Subscribe — only for visitors who haven't subscribed yet */}
           {subscribed ? null : (
-            <div className="mt-10 rounded-lg border border-paper/15 bg-paper/[0.04] p-6 sm:p-8">
+            <div className="mt-10 rounded-lg border border-[#f4efe6]/15 bg-[#f4efe6]/[0.04] p-6 sm:p-8">
               <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
                 Get next Monday&rsquo;s brief
               </p>
-              <p className="mt-3 font-display text-[22px] font-semibold leading-snug text-paper sm:text-[26px]">
+              <p className="mt-3 font-display text-[22px] font-semibold leading-snug text-[#f4efe6] sm:text-[26px]">
                 One shift. Six layers. Eight minutes. Free.
               </p>
-              <p className="mt-3 max-w-[520px] font-body text-[15px] leading-relaxed text-paper/80 sm:text-[16px]">
+              <p className="mt-3 max-w-[520px] font-body text-[15px] leading-relaxed text-[#f4efe6]/80 sm:text-[16px]">
                 The brief for Indian AI builders, PMs, and founders. INR-grounded math, named
                 noise to skip, one production hack you can ship Monday.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="/subscribe"
-                  className="inline-flex items-center rounded bg-accent px-6 py-3 font-display text-[14px] font-semibold text-paper transition hover:bg-paper hover:text-ink"
+                  className="inline-flex items-center rounded bg-accent px-6 py-3 font-display text-[14px] font-semibold text-[#f4efe6] transition hover:bg-paper hover:text-ink"
                 >
                   Subscribe — free →
                 </a>
                 <a
                   href="/"
-                  className="inline-flex items-center rounded border border-paper/30 px-6 py-3 font-display text-[14px] font-semibold text-paper/90 transition hover:bg-paper/10"
+                  className="inline-flex items-center rounded border border-[#f4efe6]/30 px-6 py-3 font-display text-[14px] font-semibold text-[#f4efe6]/90 transition hover:bg-[#f4efe6]/10"
                 >
                   Read past issues
                 </a>
@@ -627,12 +627,12 @@ export default async function IssuePage({
           )}
 
           {/* SECONDARY: Forward — always shown */}
-          <div className={`${subscribed ? 'mt-10' : 'mt-8 border-t border-paper/15 pt-8'} grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end`}>
+          <div className={`${subscribed ? 'mt-10' : 'mt-8 border-t border-[#f4efe6]/15 pt-8'} grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end`}>
             <div>
-              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-paper/60">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#f4efe6]/60">
                 {subscribed ? 'Forward to one builder' : 'Already subscribed? Forward to one builder.'}
               </p>
-              <p className="mt-3 max-w-[480px] font-body text-[15px] leading-relaxed text-paper/75">
+              <p className="mt-3 max-w-[480px] font-body text-[15px] leading-relaxed text-[#f4efe6]/75">
                 If this lands for someone you work with — co-founder, PM, the engineer thinking about
                 migration — send them the link.
               </p>
@@ -645,14 +645,14 @@ export default async function IssuePage({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share this issue on WhatsApp"
-                className="inline-flex items-center rounded bg-paper px-5 py-3 font-display text-sm font-semibold text-ink transition hover:bg-accent hover:text-paper"
+                className="inline-flex items-center rounded bg-paper px-5 py-3 font-display text-sm font-semibold text-ink transition hover:bg-accent hover:text-[#f4efe6]"
               >
                 WhatsApp
               </a>
               <a
                 href={`/issue/${issueId}`}
                 aria-label="Open this issue’s canonical URL"
-                className="inline-flex items-center rounded border border-paper/40 px-5 py-3 font-display text-sm font-semibold text-paper transition hover:bg-paper/10"
+                className="inline-flex items-center rounded border border-[#f4efe6]/40 px-5 py-3 font-display text-sm font-semibold text-[#f4efe6] transition hover:bg-[#f4efe6]/10"
               >
                 Copy link
               </a>
@@ -705,10 +705,10 @@ function Shell({ children, subscribed }: { children: React.ReactNode; subscribed
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
                 Issues
               </Link>
-              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+              <Link href="/about" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
                 About
               </Link>
               {subscribed ? (
@@ -716,12 +716,12 @@ function Shell({ children, subscribed }: { children: React.ReactNode; subscribed
                   Subscribed ✓
                 </span>
               ) : (
-                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
                   Subscribe
                 </Link>
               )}
             </nav>
-            <ThemeToggle className="text-paper/80 hover:text-paper" />
+            <ThemeToggle className="text-[#f4efe6]/80 hover:text-[#f4efe6]" />
             {subscribed ? null : (
               <Link
                 href="/subscribe"

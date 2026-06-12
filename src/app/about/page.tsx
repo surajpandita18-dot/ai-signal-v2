@@ -29,15 +29,15 @@ export default async function AboutPage() {
     <>
       <header className="bg-[#0e0c08] text-[#f4efe6]">
         <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
-          <Link href="/" className="text-paper">
+          <Link href="/" className="text-[#f4efe6]">
             <Logo />
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             <nav className="hidden gap-6 sm:flex" aria-label="Primary">
-              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+              <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
                 Issues
               </Link>
-              <Link href="/about" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper hover:text-paper">
+              <Link href="/about" aria-current="page" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6] hover:text-[#f4efe6]">
                 About
               </Link>
               {subscribed ? (
@@ -45,12 +45,12 @@ export default async function AboutPage() {
                   Subscribed ✓
                 </span>
               ) : (
-                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-paper/80 hover:text-paper">
+                <Link href="/subscribe" className="font-mono text-[12px] uppercase tracking-[0.16em] text-[#f4efe6]/80 hover:text-[#f4efe6]">
                   Subscribe
                 </Link>
               )}
             </nav>
-            <ThemeToggle className="text-paper/80 hover:text-paper" />
+            <ThemeToggle className="text-[#f4efe6]/80 hover:text-[#f4efe6]" />
             {subscribed ? null : (
               <Link href="/subscribe" className="rounded bg-paper px-3 py-1.5 font-display text-[12px] font-semibold text-ink sm:hidden">
                 Subscribe

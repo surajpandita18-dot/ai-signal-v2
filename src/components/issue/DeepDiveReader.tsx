@@ -135,6 +135,111 @@ function estimateReadMinutes(payload: DeepDivePayload): number {
 }
 
 // 2px indigo horizontal rule between sections.
+// Audience strip rendered in the deep-dive hero. Surfaces the primary
+// archetype with a colored badge + derives 2 adjacent archetypes a
+// reader from a related role will still get value from. Cross-cutting
+// shows all three as co-equal.
+const AUDIENCE_META: Record<
+  DeepDivePayload['primary_audience'],
+  {
+    badge: string
+    color: 'accent' | 'accent-2' | 'muted'
+    description: string
+    adjacent: Array<{ label: string; note: string }>
+  }
+> = {
+  builder: {
+    badge: 'Written for builders',
+    color: 'accent',
+    description:
+      'Engineers shipping the integration, the prompt harness, or the eval suite this quarter.',
+    adjacent: [
+      { label: 'PMs', note: 'cost + roadmap implications' },
+      { label: 'Founders', note: 'moat redraw' },
+    ],
+  },
+  pm: {
+    badge: 'Written for PMs',
+    color: 'accent-2',
+    description:
+      'Product leads at fintechs, banks, GCCs, and SIs scoping the build-vs-buy this quarter.',
+    adjacent: [
+      { label: 'Builders', note: 'code-level integration risks' },
+      { label: 'Founders', note: 'pricing + procurement signal' },
+    ],
+  },
+  founder: {
+    badge: 'Written for founders',
+    color: 'accent',
+    description:
+      'Founders past pilot, redrawing the moat, the pitch, or the next round narrative.',
+    adjacent: [
+      { label: 'PMs', note: 'vendor-eval depth' },
+      { label: 'Builders', note: 'architecture choices it forces' },
+    ],
+  },
+  'cross-cutting': {
+    badge: 'For everyone shipping AI from India',
+    color: 'muted',
+    description:
+      "Three lenses on the same shift: a builder's, a PM's, a founder's.",
+    adjacent: [
+      { label: 'Builders', note: 'code-level lens' },
+      { label: 'PMs', note: 'roadmap lens' },
+      { label: 'Founders', note: 'moat lens' },
+    ],
+  },
+}
+
+function AudienceStrip({
+  audience,
+}: {
+  audience: DeepDivePayload['primary_audience']
+}) {
+  const meta = AUDIENCE_META[audience]
+  const primaryBorder = meta.color === 'accent-2' ? 'border-accent-2' : meta.color === 'muted' ? 'border-muted' : 'border-accent'
+  const primaryFg =
+    meta.color === 'accent-2' ? 'text-accent-2' : meta.color === 'muted' ? 'text-muted' : 'text-accent'
+
+  return (
+    <div
+      className={`mt-8 rounded-md border-l-4 ${primaryBorder} bg-paper-elev px-5 py-5 sm:px-6 sm:py-5`}
+    >
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <span
+          className={`font-mono text-[10px] font-bold uppercase tracking-[0.18em] sm:text-[11px] ${primaryFg}`}
+        >
+          {meta.badge}
+        </span>
+      </div>
+      <p className="mt-2 font-serif text-[15px] leading-[1.55] text-body sm:text-[16px]">
+        {meta.description}
+      </p>
+      {meta.adjacent.length ? (
+        <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Also useful for
+          </span>
+          {meta.adjacent.map((a, i) => (
+            <span
+              key={i}
+              className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/75"
+            >
+              {a.label}{' '}
+              <span className="text-muted normal-case tracking-normal">
+                ({a.note})
+              </span>
+              {i < meta.adjacent.length - 1 ? (
+                <span className="ml-2 text-muted">·</span>
+              ) : null}
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function SectionRule() {
   return <hr className="my-12 h-[2px] w-16 border-0 bg-accent sm:my-14" />
 }
@@ -177,9 +282,6 @@ export default function DeepDiveReader({
             <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:text-[11px]">
               · {readMinutes} min read
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:text-[11px]">
-              · for {payload.primary_audience}
-            </span>
           </div>
           <h1 className="mt-5 font-display text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px] sm:leading-[1.05] lg:text-[52px] lg:leading-[1.04]">
             {payload.title}
@@ -187,6 +289,12 @@ export default function DeepDiveReader({
           <p className="mt-6 max-w-[640px] font-display text-[19px] italic font-normal leading-[1.45] text-ink/75 sm:text-[22px] sm:leading-[1.4] lg:text-[24px]">
             {payload.subtitle}
           </p>
+
+          {/* Audience strip — prominent badge for who this is written for +
+              quiet labels for adjacent archetypes that will still get value.
+              Single source of truth for the audience signal; was buried as
+              ". for pm" muted text. Now reader knows in 2 seconds. */}
+          <AudienceStrip audience={payload.primary_audience} />
         </div>
       </header>
 
