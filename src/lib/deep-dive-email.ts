@@ -54,7 +54,7 @@ export interface DeepDiveEmailInput {
   issueCreatedAt: string | null
 }
 
-function renderTeaserHtml(input: DeepDiveEmailInput): {
+export function renderTeaserHtml(input: DeepDiveEmailInput): {
   html: string
   text: string
   subject: string

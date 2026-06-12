@@ -188,7 +188,7 @@ Score each rubric dimension 1-10 and give actionable feedback for any score belo
   try {
     response = await anthropic.messages.create({
       model: MODEL_QA_DEEP_DIVE,
-      max_tokens: 4096,
+      max_tokens: 10_000,
       system: [
         { type: 'text', text: EVALUATOR_SYSTEM, cache_control: { type: 'ephemeral' } },
       ],
