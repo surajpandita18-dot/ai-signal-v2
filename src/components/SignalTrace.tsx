@@ -43,25 +43,35 @@ export default function SignalTrace({ className = '' }: Props) {
       fill="none"
       aria-hidden
     >
-      {/* faint baseline — visible at rest */}
+      <defs>
+        <filter id="trace-glow" x="-20%" y="-100%" width="140%" height="300%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      {/* Baseline — bright enough to read at rest */}
       <path
         d={WAVE}
-        stroke="var(--lime)"
-        strokeWidth="1.5"
-        strokeOpacity="0.18"
+        stroke="rgb(194 245 61)"
+        strokeWidth="2"
+        strokeOpacity="0.55"
         strokeLinecap="round"
         strokeLinejoin="round"
+        filter="url(#trace-glow)"
       />
-      {/* traveling bright pulse — chases across, drops glow behind */}
+      {/* Traveling chase — short bright segment with glow */}
       <path
         d={WAVE}
         pathLength={1000}
         className="signal-pulse"
-        stroke="var(--lime)"
-        strokeWidth="2.5"
+        stroke="rgb(194 245 61)"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ filter: 'drop-shadow(0 0 6px rgba(194,245,61,0.5))' }}
+        filter="url(#trace-glow)"
       />
     </svg>
   )
