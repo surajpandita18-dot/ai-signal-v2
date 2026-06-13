@@ -83,7 +83,9 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
     .dek { font-size:18px !important; }
     .opener { font-size:15px !important; line-height:1.7 !important; }
   }
-  a { color:${LIME}; }
+  body a.body-link { color:${LIME} !important; }
+  body a.cta-btn { color:${BG} !important; text-decoration:none !important; }
+  body a.footer-link { color:${FG_SUBTLE} !important; }
 </style>
 </head>
 <body style="margin:0;padding:0;background:${BG};color:${FG};font-family:${FONT_BODY};">
@@ -109,8 +111,8 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
 
   <!-- Title block -->
   <tr><td class="pad" style="padding:36px 32px 12px 32px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
-      Long-form · ${payload.primary_audience === 'cross-cutting' ? 'For everyone shipping AI' : 'For ' + esc(payload.primary_audience) + 's'}
+    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
+      LONG-FORM · ${payload.primary_audience === 'cross-cutting' ? 'FOR EVERYONE SHIPPING AI' : 'FOR ' + esc(payload.primary_audience.toUpperCase()) + 'S'}
     </p>
     <h1 class="hed" style="margin:18px 0 0 0;font-family:${FONT_DISPLAY};font-size:34px;font-weight:700;line-height:1.06;letter-spacing:-0.01em;color:${FG};">
       ${esc(payload.title)}
@@ -134,8 +136,8 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
     ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:2px solid ${LIME};">
           <tr><td style="padding:8px 0 8px 20px;">
-            <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
-              The assumption
+            <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
+              THE ASSUMPTION
             </p>
             <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:500;font-size:18px;line-height:1.45;color:${FG};">
               &ldquo;${esc(payload.assumption)}&rdquo;
@@ -148,8 +150,8 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
   <!-- One Monday action -->
   ${mondayFirst
     ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
-        <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${DANGER};">
-          One thing to do Monday
+        <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${DANGER};">
+          ONE THING TO DO MONDAY
         </p>
         <p style="margin:0;font-family:${FONT_BODY};font-size:14.5px;line-height:1.65;color:${CREAM_DIM};">
           ${esc(mondayFirst)}
@@ -157,11 +159,11 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
       </td></tr>`
     : ''}
 
-  <!-- CTA -->
+  <!-- CTA — bulletproof lime button -->
   <tr><td class="pad" style="padding:36px 32px 0 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td align="center" style="padding:0;">
-        <a href="${url}" style="display:block;background:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
+      <tr><td align="center" bgcolor="${LIME}" style="background-color:${LIME};padding:0;">
+        <a class="cta-btn" href="${url}" style="display:block;background-color:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
           READ THE FULL ESSAY →
         </a>
       </td></tr>
@@ -176,12 +178,12 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
     <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;margin-bottom:20px;">&nbsp;</div>
     <p style="margin:0;font-family:${FONT_MONO};font-size:10px;line-height:1.65;letter-spacing:0.08em;color:${FG_SUBTLE};text-align:center;">
       AI SIGNAL · MADE IN BENGALURU<br/>
-      You&rsquo;re getting this because you subscribed at <a href="${siteUrl()}" style="color:${FG_SUBTLE};text-decoration:underline;">ai-signal-v2.vercel.app</a>
+      You&rsquo;re getting this because you subscribed at <a class="footer-link" href="${siteUrl()}" style="color:${FG_SUBTLE};text-decoration:underline;">ai-signal-v2.vercel.app</a>
     </p>
     <p style="margin:14px 0 0 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${FG_SUBTLE};text-align:center;">
-      <a href="${url}" style="color:${FG_SUBTLE};text-decoration:underline;">VIEW IN BROWSER</a>
+      <a class="footer-link" href="${url}" style="color:${FG_SUBTLE};text-decoration:underline;">VIEW IN BROWSER</a>
       &nbsp;&nbsp;·&nbsp;&nbsp;
-      <a href="${siteUrl()}/unsubscribe?issue=${encodeURIComponent(issueId)}" style="color:${FG_SUBTLE};text-decoration:underline;">UNSUBSCRIBE</a>
+      <a class="footer-link" href="${siteUrl()}/unsubscribe?issue=${encodeURIComponent(issueId)}" style="color:${FG_SUBTLE};text-decoration:underline;">UNSUBSCRIBE</a>
     </p>
   </td></tr>
 

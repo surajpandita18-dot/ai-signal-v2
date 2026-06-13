@@ -118,7 +118,11 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     .dek { font-size:16px !important; line-height:1.45 !important; }
     .body-text { font-size:14px !important; }
   }
-  a { color:${LIME}; }
+  /* Inline links color — scoped to body links, NOT the CTA button.
+     The CTA button uses an explicit inline style + cta class to win. */
+  body a.body-link { color:${LIME} !important; }
+  body a.cta-btn { color:${BG} !important; text-decoration:none !important; }
+  body a.footer-link { color:${FG_SUBTLE} !important; }
 </style>
 </head>
 <body style="margin:0;padding:0;background:${BG};color:${FG};font-family:${FONT_BODY};">
@@ -148,8 +152,8 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
 
   <!-- Body -->
   <tr><td class="pad" style="padding:36px 32px 12px 32px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
-      ${dateStr ? esc(dateStr) + ' · ' : ''}6 MIN READ
+    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
+      ${dateStr ? esc(dateStr.toUpperCase()) + ' · ' : ''}6 MIN READ
     </p>
     <h1 class="hed" style="margin:16px 0 0 0;font-family:${FONT_DISPLAY};font-size:32px;font-weight:700;line-height:1.08;letter-spacing:-0.01em;color:${FG};">
       ${esc(title)}
@@ -168,8 +172,8 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
 
   ${shifts.length
     ? `<tr><td class="pad" style="padding:24px 32px 0 32px;">
-        <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${FG_SUBTLE};">
-          If you only read this
+        <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${FG_SUBTLE};">
+          IF YOU ONLY READ THIS
         </p>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">
           ${shifts
@@ -193,8 +197,8 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BG_RAISED};border-left:2px solid ${LIME};">
           <tr><td style="padding:22px 24px;">
-            <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
-              ⚡ This week&rsquo;s steal
+            <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
+              ⚡ THIS WEEK&rsquo;S STEAL
             </p>
             <p style="margin:14px 0 0 0;font-family:${FONT_DISPLAY};font-size:17px;font-weight:600;line-height:1.3;color:${FG};">
               ${esc(hack.title)}
@@ -207,11 +211,11 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
       </td></tr>`
     : ''}
 
-  <!-- CTA -->
+  <!-- CTA — bulletproof lime button (table + bgcolor + inline color) -->
   <tr><td class="pad" style="padding:36px 32px 0 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td align="center" style="padding:0;">
-        <a href="${issueUrl}" style="display:block;background:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
+      <tr><td align="center" bgcolor="${LIME}" style="background-color:${LIME};padding:0;">
+        <a class="cta-btn" href="${issueUrl}" style="display:block;background-color:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
           READ THE FULL BRIEF →
         </a>
       </td></tr>
@@ -226,12 +230,12 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;margin-bottom:20px;">&nbsp;</div>
     <p style="margin:0;font-family:${FONT_MONO};font-size:10px;line-height:1.65;letter-spacing:0.08em;color:${FG_SUBTLE};text-align:center;">
       AI SIGNAL · MADE IN BENGALURU<br/>
-      You&rsquo;re getting this because you subscribed at <a href="${site}" style="color:${FG_SUBTLE};text-decoration:underline;">ai-signal-v2.vercel.app</a>
+      You&rsquo;re getting this because you subscribed at <a class="footer-link" href="${site}" style="color:${FG_SUBTLE};text-decoration:underline;">ai-signal-v2.vercel.app</a>
     </p>
     <p style="margin:14px 0 0 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${FG_SUBTLE};text-align:center;">
-      <a href="${issueUrl}" style="color:${FG_SUBTLE};text-decoration:underline;">VIEW IN BROWSER</a>
+      <a class="footer-link" href="${issueUrl}" style="color:${FG_SUBTLE};text-decoration:underline;">VIEW IN BROWSER</a>
       &nbsp;&nbsp;·&nbsp;&nbsp;
-      <a href="${site}/unsubscribe?issue=${encodeURIComponent(opts.issueId)}" style="color:${FG_SUBTLE};text-decoration:underline;">UNSUBSCRIBE</a>
+      <a class="footer-link" href="${site}/unsubscribe?issue=${encodeURIComponent(opts.issueId)}" style="color:${FG_SUBTLE};text-decoration:underline;">UNSUBSCRIBE</a>
     </p>
   </td></tr>
 

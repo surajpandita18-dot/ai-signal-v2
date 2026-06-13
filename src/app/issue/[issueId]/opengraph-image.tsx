@@ -38,7 +38,11 @@ async function loadFraunces(): Promise<ArrayBuffer | null> {
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text
-  return text.slice(0, max - 1).trimEnd() + '…'
+  // Cut to last word boundary inside the budget (don't slice mid-word).
+  const slice = text.slice(0, max - 1)
+  const lastSpace = slice.lastIndexOf(' ')
+  const cut = lastSpace > max * 0.6 ? slice.slice(0, lastSpace) : slice
+  return cut.trimEnd().replace(/[,.;:—-]$/, '') + '…'
 }
 
 function firstNWords(text: string, n: number): string {
