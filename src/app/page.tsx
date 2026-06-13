@@ -119,7 +119,7 @@ export default async function HomePage() {
         id="subscribe"
         className="relative overflow-hidden border-b border-line"
       >
-        <SignalTrace className="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-50" />
+        <SignalTrace className="pointer-events-none absolute inset-x-0 bottom-0 h-40 w-full opacity-90 sm:h-48" />
         <div className="relative mx-auto grid max-w-shell grid-cols-1 lg:grid-cols-[1.42fr_1fr]">
           <div className="flex flex-col justify-center px-5 py-16 sm:px-8 lg:border-r lg:border-line lg:py-24 lg:pr-14">
             <div className="reveal d-1 mb-7 flex items-center gap-2.5 font-mono text-[11px] tracking-label text-lime-soft">

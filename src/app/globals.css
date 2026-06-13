@@ -170,11 +170,13 @@ button, a, input, select, textarea, label { touch-action: manipulation; }
 }
 .eq-bar { transform-origin: bottom; animation: eq 1.1s ease-in-out infinite; }
 
+/* Traveling lime pulse along the heartbeat path. Long "lit" segment so each
+   QRS spike reads as alive; ~3s loop keeps a steady pulse rate. */
 @keyframes trace { to { stroke-dashoffset: -1000; } }
 .signal-pulse {
-  stroke-dasharray: 70 930;
+  stroke-dasharray: 140 860;
   stroke-dashoffset: 0;
-  animation: trace 4.5s linear infinite;
+  animation: trace 3s linear infinite;
 }
 
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
