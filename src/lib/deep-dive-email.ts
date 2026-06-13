@@ -79,8 +79,8 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
   @media only screen and (max-width:600px) {
     .container { width:100% !important; }
     .pad { padding-left:20px !important; padding-right:20px !important; }
-    .hed { font-size:30px !important; line-height:1.1 !important; }
-    .dek { font-size:18px !important; }
+    .hed { font-size:30px !important; line-height:1.06 !important; }
+    .dek { font-size:17px !important; line-height:1.5 !important; }
     .opener { font-size:15px !important; line-height:1.7 !important; }
   }
   body a.body-link { color:${LIME} !important; }
@@ -109,23 +109,31 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
     </table>
   </td></tr>
 
-  <!-- Title block -->
-  <tr><td class="pad" style="padding:36px 32px 12px 32px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
-      LONG-FORM · ${payload.primary_audience === 'cross-cutting' ? 'FOR EVERYONE SHIPPING AI' : 'FOR ' + esc(payload.primary_audience.toUpperCase()) + 'S'}
+  <!-- Hero — kicker + title + dek -->
+  <tr><td class="pad" style="padding:40px 32px 0 32px;">
+    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+      LONG-FORM &nbsp;·&nbsp; ${payload.primary_audience === 'cross-cutting' ? 'FOR EVERYONE SHIPPING AI' : 'FOR ' + esc(payload.primary_audience.toUpperCase()) + 'S'}
     </p>
-    <h1 class="hed" style="margin:18px 0 0 0;font-family:${FONT_DISPLAY};font-size:34px;font-weight:700;line-height:1.06;letter-spacing:-0.01em;color:${FG};">
+    <h1 class="hed" style="margin:20px 0 0 0;font-family:${FONT_DISPLAY};font-size:38px;font-weight:700;line-height:1.04;letter-spacing:-0.012em;color:${FG};">
       ${esc(payload.title)}
     </h1>
-    <p class="dek" style="margin:22px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:20px;line-height:1.4;color:${CREAM_DIM};">
+    <p class="dek" style="margin:24px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:21px;line-height:1.45;color:${CREAM_DIM};max-width:520px;">
       ${esc(payload.subtitle)}
     </p>
   </td></tr>
 
+  <!-- Divider -->
+  <tr><td class="pad" style="padding:40px 32px 0 32px;">
+    <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;">&nbsp;</div>
+  </td></tr>
+
   <!-- Cold open -->
   ${payload.cold_open
-    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
-        <p class="opener" style="margin:0;font-family:${FONT_DISPLAY};font-size:16px;line-height:1.75;color:${FG_MUTED};">
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+        <p style="margin:0 0 16px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+          OPENING SCENE
+        </p>
+        <p class="opener" style="margin:0;font-family:${FONT_BODY};font-size:16px;line-height:1.7;color:${CREAM_DIM};">
           ${esc(payload.cold_open)}
         </p>
       </td></tr>`
@@ -133,13 +141,13 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
 
   <!-- The assumption pull-quote -->
   ${payload.assumption
-    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:2px solid ${LIME};">
-          <tr><td style="padding:8px 0 8px 20px;">
-            <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
+          <tr><td style="padding:6px 0 6px 22px;">
+            <p style="margin:0 0 10px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
               THE ASSUMPTION
             </p>
-            <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:500;font-size:18px;line-height:1.45;color:${FG};">
+            <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:500;font-size:19px;line-height:1.4;color:${FG};">
               &ldquo;${esc(payload.assumption)}&rdquo;
             </p>
           </td></tr>
@@ -149,18 +157,18 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
 
   <!-- One Monday action -->
   ${mondayFirst
-    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
-        <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${DANGER};">
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+        <p style="margin:0 0 14px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${DANGER};">
           ONE THING TO DO MONDAY
         </p>
-        <p style="margin:0;font-family:${FONT_BODY};font-size:14.5px;line-height:1.65;color:${CREAM_DIM};">
+        <p style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${FG};">
           ${esc(mondayFirst)}
         </p>
       </td></tr>`
     : ''}
 
   <!-- CTA — bulletproof lime button -->
-  <tr><td class="pad" style="padding:36px 32px 0 32px;">
+  <tr><td class="pad" style="padding:40px 32px 0 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr><td align="center" bgcolor="${LIME}" style="background-color:${LIME};padding:0;">
         <a class="cta-btn" href="${url}" style="display:block;background-color:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">

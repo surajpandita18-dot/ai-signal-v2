@@ -90,17 +90,18 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
   const subject = `Issue ${issueNumberPadded} · ${title}`
   const preheader = dek || 'Monday brief · for Indian AI builders'
 
-  // 3 shifts — Ship / Hold / Kill from chosen calls (fallback to top synth candidate)
   const shifts: Array<{ verb: string; label: string }> = []
   for (const kind of ['ship', 'hold', 'kill'] as const) {
     const label =
       opts.chosen?.[kind]?.label ?? opts.payload.shk_candidates?.[kind]?.[0]?.label
     if (label) {
-      shifts.push({ verb: kind[0].toUpperCase() + kind.slice(1), label })
+      shifts.push({ verb: kind.toUpperCase(), label })
     }
   }
 
   const hack = opts.payload.production_hack
+  const personaArchetype = opts.payload.persona?.archetype ?? null
+  const throughlineLead = opts.payload.throughline_lead ?? null
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -114,9 +115,9 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
   @media only screen and (max-width:600px) {
     .container { width:100% !important; }
     .pad { padding-left:20px !important; padding-right:20px !important; }
-    .hed { font-size:28px !important; line-height:1.12 !important; }
-    .dek { font-size:16px !important; line-height:1.45 !important; }
-    .body-text { font-size:14px !important; }
+    .hed { font-size:30px !important; line-height:1.08 !important; }
+    .dek { font-size:17px !important; line-height:1.5 !important; }
+    .body-text { font-size:15px !important; }
   }
   /* Inline links color — scoped to body links, NOT the CTA button.
      The CTA button uses an explicit inline style + cta class to win. */
@@ -150,60 +151,77 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     </table>
   </td></tr>
 
-  <!-- Body -->
-  <tr><td class="pad" style="padding:36px 32px 12px 32px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
-      ${dateStr ? esc(dateStr.toUpperCase()) + ' · ' : ''}6 MIN READ
+  <!-- Hero — meta line + headline + italic dek -->
+  <tr><td class="pad" style="padding:40px 32px 0 32px;">
+    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+      ${dateStr ? esc(dateStr.toUpperCase()) + ' &nbsp;·&nbsp; ' : ''}6 MIN READ
     </p>
-    <h1 class="hed" style="margin:16px 0 0 0;font-family:${FONT_DISPLAY};font-size:32px;font-weight:700;line-height:1.08;letter-spacing:-0.01em;color:${FG};">
+    <h1 class="hed" style="margin:18px 0 0 0;font-family:${FONT_DISPLAY};font-size:38px;font-weight:700;line-height:1.05;letter-spacing:-0.012em;color:${FG};">
       ${esc(title)}
     </h1>
     ${dek
-      ? `<p class="dek" style="margin:20px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:17px;line-height:1.45;color:${CREAM_DIM};">
+      ? `<p class="dek" style="margin:24px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:20px;line-height:1.5;color:${CREAM_DIM};max-width:520px;">
           ${esc(dek)}
         </p>`
       : ''}
   </td></tr>
 
   <!-- Divider -->
-  <tr><td class="pad" style="padding:32px 32px 0 32px;">
+  <tr><td class="pad" style="padding:40px 32px 0 32px;">
     <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;">&nbsp;</div>
   </td></tr>
 
-  ${shifts.length
-    ? `<tr><td class="pad" style="padding:24px 32px 0 32px;">
-        <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${FG_SUBTLE};">
-          IF YOU ONLY READ THIS
+  ${throughlineLead
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+        <p style="margin:0 0 16px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+          THE SHIFT
         </p>
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">
-          ${shifts
-            .map(
-              (s, i) => `
-          <tr>
-            <td valign="top" width="36" style="padding:6px 14px 6px 0;font-family:${FONT_DISPLAY};font-size:22px;font-weight:600;color:${LIME};line-height:1;">
-              ${i + 1}
-            </td>
-            <td valign="top" style="padding:6px 0;font-family:${FONT_BODY};font-size:14px;line-height:1.55;color:${CREAM_DIM};" class="body-text">
-              <strong style="color:${FG};font-weight:600;">${esc(s.verb)}</strong> &mdash; ${esc(s.label)}
-            </td>
-          </tr>`
-            )
-            .join('')}
-        </table>
+        <p style="margin:0;font-family:${FONT_BODY};font-size:16px;line-height:1.7;color:${CREAM_DIM};" class="body-text">
+          ${esc(throughlineLead)}
+        </p>
+      </td></tr>`
+    : ''}
+
+  ${personaArchetype
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+        <p style="margin:0 0 12px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+          WRITTEN FOR
+        </p>
+        <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:18px;line-height:1.4;color:${FG};">
+          ${esc(personaArchetype)}
+        </p>
+      </td></tr>`
+    : ''}
+
+  ${shifts.length
+    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+        <p style="margin:0 0 18px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+          DO MONDAY
+        </p>
+        ${shifts
+          .map(
+            (s, i) => `
+        <p style="margin:${i === 0 ? '0' : '14px'} 0 0 0;font-family:${FONT_BODY};font-size:${i === 0 ? '16' : '15'}px;line-height:1.65;color:${i === 0 ? FG : FG_MUTED};" class="body-text">
+          <span style="font-family:${FONT_MONO};font-size:11px;font-weight:700;letter-spacing:0.12em;color:${LIME};display:inline-block;width:42px;">${esc(s.verb)}</span>
+          ${esc(s.label)}
+        </p>`
+          )
+          .join('')}
       </td></tr>`
     : ''}
 
   ${hack
-    ? `<tr><td class="pad" style="padding:32px 32px 0 32px;">
+    ? `<tr><td class="pad" style="padding:40px 32px 0 32px;">
+        <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;margin-bottom:32px;">&nbsp;</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BG_RAISED};border-left:2px solid ${LIME};">
-          <tr><td style="padding:22px 24px;">
-            <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${LIME_SOFT};">
-              ⚡ THIS WEEK&rsquo;S STEAL
+          <tr><td style="padding:24px 26px;">
+            <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.14em;color:${LIME_SOFT};">
+              ⚡ &nbsp;STEAL THIS WEEK
             </p>
-            <p style="margin:14px 0 0 0;font-family:${FONT_DISPLAY};font-size:17px;font-weight:600;line-height:1.3;color:${FG};">
+            <p style="margin:14px 0 0 0;font-family:${FONT_DISPLAY};font-size:19px;font-weight:600;line-height:1.25;letter-spacing:-0.005em;color:${FG};">
               ${esc(hack.title)}
             </p>
-            <p style="margin:12px 0 0 0;font-family:${FONT_BODY};font-size:14px;line-height:1.65;color:${FG_MUTED};" class="body-text">
+            <p style="margin:16px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${FG_MUTED};" class="body-text">
               ${esc(hack.why_it_matters)}
             </p>
           </td></tr>
@@ -212,7 +230,7 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     : ''}
 
   <!-- CTA — bulletproof lime button (table + bgcolor + inline color) -->
-  <tr><td class="pad" style="padding:36px 32px 0 32px;">
+  <tr><td class="pad" style="padding:44px 32px 0 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr><td align="center" bgcolor="${LIME}" style="background-color:${LIME};padding:0;">
         <a class="cta-btn" href="${issueUrl}" style="display:block;background-color:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
