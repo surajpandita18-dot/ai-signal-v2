@@ -67,14 +67,9 @@ export default function SiteFooter() {
               <a href="/feed.xml" className="transition-colors hover:text-fg">
                 RSS
               </a>
-              <a
-                href="https://twitter.com/intent/follow?screen_name=getaisignal"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-fg"
-              >
-                X / TWITTER
-              </a>
+              <Link href="/unsubscribe" className="transition-colors hover:text-fg">
+                UNSUBSCRIBE
+              </Link>
             </div>
           </div>
         </div>

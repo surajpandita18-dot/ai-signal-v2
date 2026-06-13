@@ -5,6 +5,11 @@
 import { NextResponse } from 'next/server'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { renderEmailHtml } from '@/lib/email-template'
+import { renderTeaserHtml } from '@/lib/deep-dive-email'
+import type {
+  DeepDivePayload,
+  IssueType,
+} from '../../../../../db/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,20 +36,27 @@ export async function GET(
     })
   }
 
-  // Compute issue number (consistent with drafter)
   const { count } = await supabase
     .from('issues')
     .select('id', { count: 'exact', head: true })
     .in('status', ['drafted', 'awaiting_human'])
     .lte('created_at', issue.created_at)
 
-  const rendered = renderEmailHtml({
-    issueId,
-    issueNumber: count ?? 1,
-    issueCreatedAt: issue.created_at,
-    payload: issue.payload,
-    chosen: issue.chosen_calls,
-  })
+  const issueType: IssueType = (issue.issue_type as IssueType) ?? 'weekly_brief'
+  const rendered =
+    issueType === 'deep_dive'
+      ? renderTeaserHtml({
+          issueId,
+          payload: issue.payload as unknown as DeepDivePayload,
+          issueCreatedAt: issue.created_at,
+        })
+      : renderEmailHtml({
+          issueId,
+          issueNumber: count ?? 1,
+          issueCreatedAt: issue.created_at,
+          payload: issue.payload,
+          chosen: issue.chosen_calls,
+        })
 
   if (format === 'text') {
     return new NextResponse(rendered.text, {
