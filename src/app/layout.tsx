@@ -26,11 +26,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // Browser chrome matches paper exactly so masthead extends edge-to-edge
-  // on iOS Safari (JAPM-style). Updated to actual --paper hex from globals.css.
+  // Browser chrome matches the Figr v3 dark bg so masthead extends
+  // edge-to-edge on iOS Safari.
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f4efe6' },
-    { media: '(prefers-color-scheme: dark)', color: '#16140f' },
+    { media: '(prefers-color-scheme: light)', color: '#0b0d0a' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b0d0a' },
   ],
 }
 
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Accessibility — skip link to main */}
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-lime focus:px-4 focus:py-2 focus:text-bg"
         >
           Skip to main content
         </a>

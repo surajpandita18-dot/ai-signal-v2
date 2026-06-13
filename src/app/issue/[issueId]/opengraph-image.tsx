@@ -1,22 +1,28 @@
-// Dynamic OpenGraph card for /issue/[issueId].
-// Renders 1200x630 PNG via next/og ImageResponse using locked design tokens:
-//   paper #F4EFE6, ink #121212, peacock #0F4C3A.
+// Dynamic OpenGraph card for /issue/[issueId] — Figr palette v3.
+// Renders 1200x630 PNG via next/og ImageResponse.
 // Inline styles only — next/og does not support Tailwind. Every div with more
 // than one direct child sets display:'flex' (next/og requires it).
 
 import { ImageResponse } from 'next/og'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
-import type { IssuePayload } from '../../../../db/types/database'
+import type {
+  DeepDivePayload,
+  IssuePayload,
+  IssueType,
+} from '../../../../db/types/database'
 
 export const runtime = 'nodejs'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
-export const alt = 'AI Signal — The India AI Builder’s Brief'
+export const alt = 'AI Signal — One AI shift that matters'
 
-const PAPER = '#F4EFE6'
-const INK = '#121212'
-const PEACOCK = '#0F4C3A'
-const INK_70 = 'rgba(18,18,18,0.7)'
+// Figr palette
+const BG = '#0b0d0a'
+const CREAM = '#ece7dd'
+const CREAM_DIM = '#cfc9bd'
+const LIME = '#c2f53d'
+const LIME_SOFT = '#9fd44a'
+const FG_SUBTLE = '#6b7062'
 
 async function loadFraunces(): Promise<ArrayBuffer | null> {
   try {
@@ -39,29 +45,43 @@ function firstNWords(text: string, n: number): string {
   return text.split(/\s+/).slice(0, n).join(' ')
 }
 
+// Signal-bars glyph — render as 4 small lime rectangles (no animation, OG is static)
+function SignalBarsStatic() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
+      <div style={{ width: 4, height: 16, backgroundColor: LIME, borderRadius: 1 }} />
+      <div style={{ width: 4, height: 26, backgroundColor: LIME, borderRadius: 1 }} />
+      <div style={{ width: 4, height: 20, backgroundColor: LIME, borderRadius: 1 }} />
+      <div style={{ width: 4, height: 12, backgroundColor: LIME, borderRadius: 1 }} />
+    </div>
+  )
+}
+
 async function renderImage({ params }: { params: Promise<{ issueId: string }> }) {
   const { issueId } = await params
 
-  let payload: IssuePayload | null = null
+  let payload: IssuePayload | DeepDivePayload | null = null
+  let issueType: IssueType = 'weekly_brief'
   let createdAt: string | null = null
 
   try {
     const supabase = createAdminSupabaseClient()
     const { data: issue } = await supabase
       .from('issues')
-      .select('id, payload, created_at')
+      .select('id, payload, issue_type, created_at')
       .eq('id', issueId)
       .single()
-    payload = (issue?.payload as IssuePayload | null) ?? null
+    payload = (issue?.payload as IssuePayload | DeepDivePayload | null) ?? null
+    issueType = (issue?.issue_type as IssueType) ?? 'weekly_brief'
     createdAt = issue?.created_at ?? null
   } catch {
-    // env not configured or query failed — fall through to fallback below
+    // fall through to fallback
   }
 
   const frauncesData = await loadFraunces()
   const serifFamily = frauncesData ? 'Fraunces, Georgia, serif' : 'Georgia, serif'
 
-  // Fallback image: issue/payload missing → brand-only card.
+  // Fallback — brand-only card
   if (!payload) {
     return new ImageResponse(
       (
@@ -73,7 +93,7 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: PAPER,
+            backgroundColor: BG,
             padding: '80px',
           }}
         >
@@ -81,23 +101,16 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
             style={{
               display: 'flex',
               alignItems: 'center',
+              gap: 12,
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               fontSize: 36,
               fontWeight: 700,
-              letterSpacing: '0.04em',
-              color: INK,
+              letterSpacing: '0.12em',
+              color: CREAM,
             }}
           >
+            <SignalBarsStatic />
             <span>AI SIGNAL</span>
-            <div
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 9,
-                backgroundColor: PEACOCK,
-                marginLeft: 10,
-              }}
-            />
           </div>
           <div
             style={{
@@ -105,13 +118,13 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
               fontFamily: serifFamily,
               fontSize: 56,
               fontWeight: 700,
-              color: INK,
+              color: CREAM,
               textAlign: 'center',
-              lineHeight: 1.15,
+              lineHeight: 1.1,
               maxWidth: 900,
             }}
           >
-            The India AI Builder’s Brief
+            One AI shift that matters. Every Monday.
           </div>
         </div>
       ),
@@ -125,7 +138,7 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
     )
   }
 
-  // Compute issue number — count drafted/awaiting_human issues created at or before this one.
+  // Compute issue number
   let issueNumberPadded = '001'
   try {
     const supabase = createAdminSupabaseClient()
@@ -136,15 +149,24 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
       .lte('created_at', createdAt ?? new Date().toISOString())
     issueNumberPadded = String(count ?? 1).padStart(3, '0')
   } catch {
-    // keep fallback
+    /* keep fallback */
   }
 
+  // Extract title + dek per content type
   const headline =
-    payload.headline && payload.headline.trim().length > 0
-      ? payload.headline
-      : firstNWords(payload.throughline ?? '', 7)
-  const dek = truncate(payload.throughline ?? '', 140)
-  const issueMeta = `ISSUE #${issueNumberPadded} · THE INDIA AI BUILDER'S BRIEF`
+    issueType === 'deep_dive'
+      ? (payload as DeepDivePayload).title
+      : (payload as IssuePayload).headline ??
+        firstNWords((payload as IssuePayload).throughline ?? '', 7)
+  const dek = truncate(
+    issueType === 'deep_dive'
+      ? (payload as DeepDivePayload).subtitle ?? ''
+      : (payload as IssuePayload).throughline ?? '',
+    140
+  )
+
+  const kindLabel = issueType === 'deep_dive' ? 'DEEP DIVE' : 'MON BRIEF'
+  const issueMeta = `ISSUE ${issueNumberPadded} · ${kindLabel}`
 
   return new ImageResponse(
     (
@@ -155,32 +177,47 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          backgroundColor: PAPER,
-          padding: '80px',
+          backgroundColor: BG,
+          padding: '72px 80px',
         }}
       >
-        {/* Top: wordmark */}
+        {/* Top: wordmark + kind badge */}
         <div
           style={{
             display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontSize: 28,
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            color: INK,
           }}
         >
-          <span>AI SIGNAL</span>
           <div
             style={{
-              width: 14,
-              height: 14,
-              borderRadius: 7,
-              backgroundColor: PEACOCK,
-              marginLeft: 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSize: 24,
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              color: CREAM,
             }}
-          />
+          >
+            <SignalBarsStatic />
+            <span>AI SIGNAL</span>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSize: 14,
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              color: LIME,
+              border: `1px solid rgba(194,245,61,0.4)`,
+              padding: '6px 12px',
+            }}
+          >
+            {kindLabel}
+          </div>
         </div>
 
         {/* Hero: headline + dek */}
@@ -196,9 +233,10 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
               fontFamily: serifFamily,
               fontSize: 72,
               fontWeight: 700,
-              color: INK,
-              lineHeight: 1.1,
-              maxWidth: 1000,
+              color: CREAM,
+              lineHeight: 1.04,
+              letterSpacing: '-0.015em',
+              maxWidth: 1040,
             }}
           >
             {headline}
@@ -206,13 +244,13 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
           {dek.length > 0 ? (
             <div
               style={{
-                marginTop: 24,
+                marginTop: 26,
                 fontFamily: 'Georgia, serif',
                 fontSize: 30,
                 fontStyle: 'italic',
-                color: INK_70,
-                lineHeight: 1.3,
-                maxWidth: 980,
+                color: CREAM_DIM,
+                lineHeight: 1.32,
+                maxWidth: 1000,
               }}
             >
               {dek}
@@ -220,26 +258,44 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
           ) : null}
         </div>
 
-        {/* Bottom strip: peacock rule + meta */}
+        {/* Bottom strip: lime rule + meta */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
           }}
         >
-          <div style={{ width: 200, height: 6, backgroundColor: PEACOCK }} />
+          <div style={{ width: 220, height: 4, backgroundColor: LIME }} />
           <div
             style={{
+              display: 'flex',
+              justifyContent: 'space-between',
               marginTop: 16,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: 18,
-              fontWeight: 600,
-              letterSpacing: '0.16em',
-              color: PEACOCK,
-              textTransform: 'uppercase',
             }}
           >
-            {issueMeta}
+            <div
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 16,
+                fontWeight: 600,
+                letterSpacing: '0.16em',
+                color: LIME_SOFT,
+                textTransform: 'uppercase',
+              }}
+            >
+              {issueMeta}
+            </div>
+            <div
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 14,
+                letterSpacing: '0.14em',
+                color: FG_SUBTLE,
+                textTransform: 'uppercase',
+              }}
+            >
+              ai-signal-v2.vercel.app
+            </div>
           </div>
         </div>
       </div>

@@ -1,12 +1,9 @@
-// Review surface for deep-dive topic candidates. Discovery agent writes
-// 5 candidates fortnightly to deep_dive_candidates. Owner picks ONE here
-// to kick off research + draft + QA. The pick is the human gate per
-// CLAUDE.md rule #1 (preserved for the deep-dive track).
+// Deep-dive review surface — Figr palette v3.
 
 import Link from 'next/link'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
-import { Logo } from '@/components/Logo'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import SiteNav from '@/components/SiteNav'
+import SiteFooter from '@/components/SiteFooter'
 import type { DeepDiveAudience } from '../../../../db/types/database'
 import CandidateCard from './CandidateCard'
 
@@ -18,6 +15,13 @@ const AUDIENCE_ORDER: DeepDiveAudience[] = [
   'founder',
   'cross-cutting',
 ]
+
+const AUDIENCE_LABEL: Record<DeepDiveAudience, string> = {
+  builder: 'BUILDER',
+  pm: 'PM',
+  founder: 'FOUNDER',
+  'cross-cutting': 'CROSS',
+}
 
 export default async function DeepDiveReviewPage() {
   const supabase = createAdminSupabaseClient()
@@ -48,128 +52,113 @@ export default async function DeepDiveReviewPage() {
   }
 
   return (
-    <>
-      <header className="bg-[#0e0c08] text-[#f4efe6]">
-        <div className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-4 sm:px-6">
-          <Link href="/" className="text-[#f4efe6]">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#f4efe6]/70">
-              Deep-dive · admin
-            </span>
-            <ThemeToggle className="text-[#f4efe6]/80 hover:text-[#f4efe6]" />
-          </div>
+    <div className="min-h-screen bg-bg font-sans text-fg">
+      <SiteNav />
+
+      <main className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
+        <div className="font-mono text-[11px] tracking-label text-lime-soft">
+          ADMIN · DISCOVERY QUEUE
         </div>
-      </header>
+        <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[52px]">
+          Pick the next deep-dive
+        </h1>
+        <p className="mt-7 max-w-2xl text-[15px] leading-[1.65] text-fg-muted">
+          The discovery agent surfaces five assumptions builders, PMs, or
+          founders hold that the evidence quietly contradicts. Pick ONE — that
+          kicks off research, draft, and editorial QA. The audience mix below
+          is the discipline that keeps the dive useful across all three
+          archetypes.
+        </p>
 
-      <main id="main" className="bg-paper">
-        <div className="mx-auto max-w-reader px-5 py-12 sm:px-6 sm:py-16">
-          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-            Discovery queue
-          </p>
-          <h1 className="mt-3 font-display text-[32px] font-bold leading-[1.15] tracking-tight text-ink sm:text-[42px]">
-            Pick the next deep-dive
-          </h1>
-          <p className="mt-4 max-w-[640px] font-serif text-[17px] leading-[1.65] text-body sm:text-[18px]">
-            The discovery agent surfaces five assumptions builders, PMs, or
-            founders hold that the evidence quietly contradicts. Pick ONE —
-            that kicks off research, draft, and editorial QA. The audience mix
-            below is the discipline that keeps the dive useful across all three
-            archetypes.
-          </p>
+        {/* Audience-mix counters */}
+        <div className="mt-10 grid grid-cols-2 gap-px border border-line bg-line sm:grid-cols-4">
+          {AUDIENCE_ORDER.map((a) => (
+            <div key={a} className="flex flex-col bg-bg p-5">
+              <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                {AUDIENCE_LABEL[a]}
+              </span>
+              <span className="mt-2 font-serif text-3xl font-semibold text-lime">
+                {audienceCounts[a]}
+              </span>
+            </div>
+          ))}
+        </div>
 
-          {/* Audience mix snapshot */}
-          <div className="mt-8 grid gap-3 sm:grid-cols-4">
-            {AUDIENCE_ORDER.map((a) => (
-              <div
-                key={a}
-                className="rounded border border-line bg-paper-elev px-4 py-3"
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                  {a === 'cross-cutting' ? 'Cross-cutting' : a + ' primary'}
-                </p>
-                <p className="mt-1 font-display text-[22px] font-bold text-ink">
-                  {audienceCounts[a]}
-                </p>
-              </div>
-            ))}
+        {/* Pending */}
+        <section className="mt-14">
+          <div className="mb-6 flex items-baseline justify-between">
+            <h2 className="font-serif text-2xl font-medium tracking-tight text-fg sm:text-3xl">
+              Pending ({pending?.length ?? 0})
+            </h2>
+            <p className="font-mono text-[11px] tracking-label text-fg-subtle">
+              SORTED BY SCORE
+            </p>
           </div>
 
-          {/* Pending candidates */}
-          <section className="mt-12">
-            <div className="mb-6 flex items-baseline justify-between">
-              <h2 className="font-display text-[22px] font-bold tracking-tight text-ink sm:text-[26px]">
-                Pending ({pending?.length ?? 0})
-              </h2>
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                sorted by score desc
+          {pending && pending.length > 0 ? (
+            <div className="flex flex-col gap-5">
+              {pending.map((c) => (
+                <CandidateCard
+                  key={c.id}
+                  id={c.id}
+                  audience={c.primary_audience as DeepDiveAudience}
+                  score={c.score}
+                  assumption={c.assumption_challenged}
+                  hook={c.one_paragraph_hook}
+                  evidenceUrls={
+                    Array.isArray(c.evidence_anchor_urls)
+                      ? (c.evidence_anchor_urls as string[])
+                      : []
+                  }
+                  discoveredAt={c.discovered_at}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="border border-line-strong bg-bg-raised p-8 text-center">
+              <p className="font-mono text-[12px] tracking-label text-fg-subtle">
+                NO CANDIDATES IN QUEUE.
+              </p>
+              <p className="mt-3 font-mono text-[12px] text-fg-muted">
+                npx tsx src/scripts/smoke-deep-dive-discover.ts
               </p>
             </div>
+          )}
+        </section>
 
-            {pending && pending.length > 0 ? (
-              <div className="space-y-5">
-                {pending.map((c) => (
-                  <CandidateCard
-                    key={c.id}
-                    id={c.id}
-                    audience={c.primary_audience as DeepDiveAudience}
-                    score={c.score}
-                    assumption={c.assumption_challenged}
-                    hook={c.one_paragraph_hook}
-                    evidenceUrls={
-                      Array.isArray(c.evidence_anchor_urls)
-                        ? (c.evidence_anchor_urls as string[])
-                        : []
-                    }
-                    discoveredAt={c.discovered_at}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-md border border-line bg-paper-elev px-6 py-8 text-center">
-                <p className="font-serif text-[16px] italic text-muted">
-                  No candidates in the queue. Run the discovery agent:
-                </p>
-                <p className="mt-3 font-mono text-[12px] text-ink">
-                  npx tsx src/scripts/smoke-deep-dive-discover.ts
-                </p>
-              </div>
-            )}
+        {/* Recent chosen */}
+        {chosen && chosen.length > 0 ? (
+          <section className="mt-16">
+            <h2 className="mb-6 font-serif text-2xl font-medium tracking-tight text-fg sm:text-3xl">
+              Recently chosen
+            </h2>
+            <ul className="border-t border-line">
+              {chosen.map((c) => (
+                <li key={c.id} className="border-b border-line py-5">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="font-serif text-[16px] text-fg">
+                      {c.assumption_challenged}
+                    </p>
+                    <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                      {AUDIENCE_LABEL[c.primary_audience as DeepDiveAudience]}
+                    </span>
+                  </div>
+                  {c.chosen_issue_id ? (
+                    <Link
+                      href={`/issue/${c.chosen_issue_id}`}
+                      className="mt-1 inline-block font-mono text-[11px] tracking-label text-lime hover:text-fg"
+                    >
+                      ISSUE {c.chosen_issue_id.slice(0, 8)} →
+                    </Link>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
           </section>
-
-          {/* Recent chosen */}
-          {chosen && chosen.length > 0 ? (
-            <section className="mt-16">
-              <h2 className="mb-6 font-display text-[22px] font-bold tracking-tight text-ink sm:text-[26px]">
-                Recently chosen
-              </h2>
-              <ul className="divide-y divide-line">
-                {chosen.map((c) => (
-                  <li key={c.id} className="py-4">
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <p className="font-serif text-[16px] text-ink">
-                        {c.assumption_challenged}
-                      </p>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                        {c.primary_audience}
-                      </span>
-                    </div>
-                    {c.chosen_issue_id ? (
-                      <Link
-                        href={`/issue/${c.chosen_issue_id}`}
-                        className="mt-1 inline-block font-mono text-[11px] uppercase tracking-[0.14em] text-accent hover:text-ink"
-                      >
-                        Issue {c.chosen_issue_id.slice(0, 8)} →
-                      </Link>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-        </div>
+        ) : null}
       </main>
-    </>
+
+      <SiteFooter />
+    </div>
   )
 }

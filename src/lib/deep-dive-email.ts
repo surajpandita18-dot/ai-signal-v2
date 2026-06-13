@@ -1,15 +1,30 @@
-// Email renderer for deep-dive essays. NOT a full essay-in-email — we
-// send a teaser (title + subtitle + cold open + one Monday action) plus
-// a single big "Read the full essay" CTA. Long-form on phone is a web
-// read; the email's job is to drive the click.
-//
-// Mirrors the structure of email-template.ts but renders DeepDivePayload.
+// Deep-dive email — Figr design v3 (2026-06-13).
+// Teaser: title + subtitle + cold open + the assumption pull-quote + lime CTA.
+// Long-form essay lives on the web.
 
 import { Resend } from 'resend'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import type { DeepDivePayload } from '../../db/types/database'
 
 const BATCH_SIZE = 100
+
+// Figr palette
+const BG = '#0b0d0a'
+const BG_RAISED = '#0e110c'
+const LINE = '#20241c'
+const CREAM = '#ece7dd'
+const CREAM_DIM = '#cfc9bd'
+const LIME = '#c2f53d'
+const LIME_SOFT = '#9fd44a'
+const DANGER = '#e5675a'
+const FG = '#f4f2ec'
+const FG_MUTED = '#8b8f86'
+const FG_SUBTLE = '#6b7062'
+
+const FONT_DISPLAY = 'Georgia, "Iowan Old Style", "Times New Roman", serif'
+const FONT_BODY =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 
 function getResend(): Resend {
   const key = process.env.RESEND_API_KEY
@@ -24,20 +39,6 @@ function getFrom(): string {
 function siteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ai-signal-v2.vercel.app'
 }
-
-const PAPER = '#f4efe6'
-const PAPER_ELEV = '#efe8da'
-const INK = '#121212'
-const BODY = '#2a2926'
-const ACCENT = '#0f4c3a'
-const ACCENT2 = '#d4622a'
-const MUTED = '#8a7968'
-const LINE = '#e3dccc'
-
-const FONT_DISPLAY = 'Georgia, "Iowan Old Style", "Times New Roman", serif'
-const FONT_BODY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
-const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
 
 function esc(s: string | null | undefined): string {
   if (!s) return ''
@@ -64,113 +65,123 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
   const url = `${siteUrl()}/issue/${issueId}`
   const subject = `Deep-dive · ${payload.title}`
   const preheader = payload.subtitle
-  const monday1 = payload.monday_actions?.[0]
-  const monday1Text =
-    monday1 && typeof monday1 === 'object' && 'action' in monday1
-      ? (monday1 as { action: string }).action
-      : ''
+  const mondayFirst = payload.monday_actions?.[0]?.action ?? ''
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
 <title>${esc(payload.title)}</title>
 <style>
-  @media (prefers-color-scheme: dark) {
-    body, .paper { background:#16140f !important; color:#e8e2d4 !important; }
-    .ink-text { color:#f4efe6 !important; }
-    .panel { background:#1f1c16 !important; border-color:#2a2620 !important; }
-  }
   @media only screen and (max-width:600px) {
     .container { width:100% !important; }
     .pad { padding-left:20px !important; padding-right:20px !important; }
-    .hed { font-size:30px !important; line-height:1.15 !important; }
-    .dek { font-size:18px !important; line-height:1.45 !important; }
-    .opener { font-size:16px !important; line-height:1.7 !important; }
+    .hed { font-size:30px !important; line-height:1.1 !important; }
+    .dek { font-size:18px !important; }
+    .opener { font-size:15px !important; line-height:1.7 !important; }
   }
-  a { color:${ACCENT}; }
+  a { color:${LIME}; }
 </style>
 </head>
-<body class="paper" style="margin:0;padding:0;background:${PAPER};">
-<div style="display:none;font-size:1px;color:${PAPER};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${esc(preheader)}</div>
+<body style="margin:0;padding:0;background:${BG};color:${FG};font-family:${FONT_BODY};">
+<div style="display:none;font-size:1px;color:${BG};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${esc(preheader)}</div>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};">
-<tr><td align="center" style="padding:32px 0;">
-<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};max-width:600px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BG};">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="background:${BG};max-width:600px;">
 
-  <!-- Masthead -->
-  <tr><td class="pad" style="padding:8px 24px 24px 24px;">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;color:${MUTED};">
-      <span style="color:${ACCENT};font-weight:700;">AI SIGNAL · DEEP-DIVE</span>
-    </p>
+  <!-- Cream masthead -->
+  <tr><td class="pad" style="background:${CREAM};padding:18px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td style="font-family:${FONT_MONO};font-size:13px;font-weight:600;letter-spacing:0.12em;color:${BG};">
+          ▌▍▎ AI SIGNAL
+        </td>
+        <td align="right" style="font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:rgba(11,13,10,0.6);">
+          DEEP DIVE
+        </td>
+      </tr>
+    </table>
   </td></tr>
 
-  <!-- Title -->
-  <tr><td class="pad" style="padding:0 24px 14px 24px;">
-    <h1 class="hed ink-text" style="margin:0;font-family:${FONT_DISPLAY};font-size:38px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:${INK};">
+  <!-- Title block -->
+  <tr><td class="pad" style="padding:36px 32px 12px 32px;">
+    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
+      Long-form · ${payload.primary_audience === 'cross-cutting' ? 'For everyone shipping AI' : 'For ' + esc(payload.primary_audience) + 's'}
+    </p>
+    <h1 class="hed" style="margin:18px 0 0 0;font-family:${FONT_DISPLAY};font-size:34px;font-weight:700;line-height:1.06;letter-spacing:-0.01em;color:${FG};">
       ${esc(payload.title)}
     </h1>
-  </td></tr>
-
-  <!-- Subtitle -->
-  <tr><td class="pad" style="padding:0 24px 32px 24px;">
-    <p class="dek" style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:22px;line-height:1.4;color:${INK};opacity:0.75;">
+    <p class="dek" style="margin:22px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:400;font-size:20px;line-height:1.4;color:${CREAM_DIM};">
       ${esc(payload.subtitle)}
     </p>
   </td></tr>
 
-  <!-- Cold open teaser -->
-  <tr><td class="pad" style="padding:0 24px 28px 24px;">
-    <p class="opener" style="margin:0;font-family:${FONT_DISPLAY};font-size:17px;line-height:1.75;color:${INK};">
-      ${esc(payload.cold_open ?? '')}
-    </p>
-  </td></tr>
+  <!-- Cold open -->
+  ${payload.cold_open
+    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
+        <p class="opener" style="margin:0;font-family:${FONT_DISPLAY};font-size:16px;line-height:1.75;color:${FG_MUTED};">
+          ${esc(payload.cold_open)}
+        </p>
+      </td></tr>`
+    : ''}
 
-  <!-- The assumption (pull quote style) -->
+  <!-- The assumption pull-quote -->
   ${payload.assumption
-    ? `<tr><td class="pad" style="padding:0 24px 28px 24px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:4px solid ${ACCENT2};">
-          <tr><td style="padding:6px 0 6px 18px;">
-            <p style="margin:0 0 6px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT2};font-weight:700;">The assumption</p>
-            <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-size:18px;line-height:1.5;color:${INK};">
-              ${esc(payload.assumption)}
+    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:2px solid ${LIME};">
+          <tr><td style="padding:8px 0 8px 20px;">
+            <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${LIME_SOFT};">
+              The assumption
+            </p>
+            <p style="margin:0;font-family:${FONT_DISPLAY};font-style:italic;font-weight:500;font-size:18px;line-height:1.45;color:${FG};">
+              &ldquo;${esc(payload.assumption)}&rdquo;
             </p>
           </td></tr>
         </table>
       </td></tr>`
     : ''}
 
-  <!-- One Monday action teaser -->
-  ${monday1Text
-    ? `<tr><td class="pad" style="padding:0 24px 28px 24px;">
-        <p style="margin:0 0 6px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${ACCENT};font-weight:700;">One thing to do Monday</p>
-        <p style="margin:0;font-family:${FONT_BODY};font-size:16px;line-height:1.6;color:${INK};">${esc(monday1Text)}</p>
+  <!-- One Monday action -->
+  ${mondayFirst
+    ? `<tr><td class="pad" style="padding:28px 32px 0 32px;">
+        <p style="margin:0 0 8px 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:${DANGER};">
+          One thing to do Monday
+        </p>
+        <p style="margin:0;font-family:${FONT_BODY};font-size:14.5px;line-height:1.65;color:${CREAM_DIM};">
+          ${esc(mondayFirst)}
+        </p>
       </td></tr>`
     : ''}
 
   <!-- CTA -->
-  <tr><td class="pad" style="padding:8px 24px 36px 24px;">
-    <a href="${url}" style="display:inline-block;padding:14px 26px;background:${INK};color:${PAPER};font-family:${FONT_DISPLAY};font-size:15px;font-weight:700;text-decoration:none;border-radius:4px;">
-      Read the full essay →
-    </a>
-    <p style="margin:14px 0 0 0;font-family:${FONT_MONO};font-size:11px;color:${MUTED};">
-      ~${Math.max(8, Math.ceil((payload.evidence_sections?.reduce((acc, s) => acc + (s.body?.split(/\s+/).length ?? 0), 0) ?? 1200) / 200))} min read · single-column serif
-    </p>
-  </td></tr>
-
-  <!-- Closure -->
-  <tr><td class="pad" style="padding:0 24px 24px 24px;border-top:1px solid ${LINE};">
-    <p style="margin:18px 0 0 0;font-family:${FONT_DISPLAY};font-style:italic;font-size:16px;line-height:1.55;color:${INK};">
-      —— Argue back at me. Reply to this email.
+  <tr><td class="pad" style="padding:36px 32px 0 32px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center" style="padding:0;">
+        <a href="${url}" style="display:block;background:${LIME};color:${BG};font-family:${FONT_MONO};font-size:13px;font-weight:700;letter-spacing:0.04em;text-decoration:none;text-align:center;padding:16px 24px;">
+          READ THE FULL ESSAY →
+        </a>
+      </td></tr>
+    </table>
+    <p style="margin:18px 0 0 0;font-family:${FONT_BODY};font-size:12px;line-height:1.5;color:${FG_SUBTLE};text-align:center;">
+      Argue back at me by replying to this email.
     </p>
   </td></tr>
 
   <!-- Footer -->
-  <tr><td class="pad" style="padding:24px 24px;border-top:1px solid ${LINE};">
-    <p style="margin:0;font-family:${FONT_MONO};font-size:11px;letter-spacing:0.06em;color:${MUTED};">
-      AI SIGNAL &middot; The India AI Builder&rsquo;s Brief
+  <tr><td class="pad" style="padding:40px 32px 36px 32px;">
+    <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;margin-bottom:20px;">&nbsp;</div>
+    <p style="margin:0;font-family:${FONT_MONO};font-size:10px;line-height:1.65;letter-spacing:0.08em;color:${FG_SUBTLE};text-align:center;">
+      AI SIGNAL · MADE IN BENGALURU<br/>
+      You&rsquo;re getting this because you subscribed at <a href="${siteUrl()}" style="color:${FG_SUBTLE};text-decoration:underline;">ai-signal-v2.vercel.app</a>
+    </p>
+    <p style="margin:14px 0 0 0;font-family:${FONT_MONO};font-size:10px;letter-spacing:0.14em;color:${FG_SUBTLE};text-align:center;">
+      <a href="${url}" style="color:${FG_SUBTLE};text-decoration:underline;">VIEW IN BROWSER</a>
+      &nbsp;&nbsp;·&nbsp;&nbsp;
+      <a href="${siteUrl()}/unsubscribe?issue=${encodeURIComponent(issueId)}" style="color:${FG_SUBTLE};text-decoration:underline;">UNSUBSCRIBE</a>
     </p>
   </td></tr>
 
@@ -180,7 +191,7 @@ export function renderTeaserHtml(input: DeepDiveEmailInput): {
 </body>
 </html>`
 
-  const text = `AI SIGNAL · DEEP-DIVE
+  const text = `AI SIGNAL · DEEP DIVE
 
 ${payload.title}
 ${payload.subtitle}
@@ -188,13 +199,13 @@ ${payload.subtitle}
 ${payload.cold_open ?? ''}
 
 THE ASSUMPTION
-${payload.assumption ?? ''}
+"${payload.assumption ?? ''}"
 
-${monday1Text ? `ONE THING TO DO MONDAY\n${monday1Text}\n\n` : ''}Read the full essay: ${url}
+${mondayFirst ? `ONE THING TO DO MONDAY\n${mondayFirst}\n\n` : ''}Read the full essay: ${url}
 
-—— Argue back at me. Reply to this email.
+Argue back at me by replying to this email.
 
-AI SIGNAL — The India AI Builder's Brief`
+—— AI Signal · Made in Bengaluru`
 
   return { html, text, subject, preheader }
 }
