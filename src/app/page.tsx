@@ -119,66 +119,103 @@ export default async function HomePage() {
     <div className="min-h-screen bg-bg font-sans text-fg">
       <SiteNav subscribed={subscribed} />
 
-      {/* HERO — Lenny v5: clean center-left, no dark card, no two-column.
-          Big serif headline, prominent inline subscribe block, featured
-          issue rendered below the fold as a single editorial card. */}
+      {/* HERO — Lenny v6: two-column at desktop. Left: copy + subscribe.
+          Right: visual sidebar so widescreen sides don't read empty.
+          Collapses to single column at mobile. */}
       <section id="subscribe" className="border-b border-line">
-        <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
-          <div className="reveal d-1 mb-7 inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
-            <span className="h-1.5 w-1.5 rounded-full bg-lime-bright" />
-            The Monday brief
-          </div>
-          <h1 className="reveal d-2 max-w-[820px] font-serif text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-fg sm:text-[72px]">
-            One AI shift that matters.{' '}
-            <span className="text-fg-muted">Every Monday.</span>
-          </h1>
-          <p className="reveal d-3 mt-8 max-w-[640px] text-[18px] leading-[1.6] text-fg-muted sm:text-[20px]">
-            The single move reshaping the AI stack each week — what
-            happened, who it&apos;s for, what to do Monday. Written from
-            Bangalore. India regulation, INR math, and the global frontier.
-            For builders anywhere.
-          </p>
+        <div className="mx-auto grid max-w-shell grid-cols-1 gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+          <div>
+            <div className="reveal d-1 mb-7 inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime-bright" />
+              The Monday brief
+            </div>
+            <h1 className="reveal d-2 font-serif text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-fg sm:text-[64px]">
+              One AI shift that matters.{' '}
+              <span className="text-fg-muted">Every Monday.</span>
+            </h1>
+            <p className="reveal d-3 mt-7 max-w-[560px] text-[18px] leading-[1.6] text-fg-muted">
+              The single move reshaping the AI stack each week — what
+              happened, who it&apos;s for, what to do Monday. Written from
+              Bangalore. India regulation, INR math, and the global frontier.
+              For builders anywhere.
+            </p>
 
-          <div className="reveal d-4 mt-10 max-w-[560px]">
-            {subscribed ? (
-              <div className="rounded-2xl border border-line bg-card px-6 py-5">
-                <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
-                  Subscribed ✓
+            <div className="reveal d-4 mt-9 max-w-[480px]">
+              {subscribed ? (
+                <div className="rounded-2xl border border-line bg-card px-6 py-5">
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
+                    Subscribed ✓
+                  </p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-fg-muted">
+                    Your next brief lands Monday 7:30 AM IST.
+                  </p>
+                </div>
+              ) : (
+                <HomeSubscribeForm />
+              )}
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-fg-muted">
+                <span>Free forever</span>
+                <span aria-hidden className="text-fg-subtle">·</span>
+                <span>6-min read</span>
+                <span aria-hidden className="text-fg-subtle">·</span>
+                <span>Written in Bengaluru</span>
+              </div>
+            </div>
+
+            <div className="mt-10 flex items-center gap-4 border-t border-line pt-6">
+              <span
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-lime-bright font-serif text-[18px] font-bold text-fg"
+                aria-hidden
+              >
+                S
+              </span>
+              <div className="flex flex-col gap-0.5">
+                <p className="text-[15px] font-semibold text-fg">
+                  Suraj Pandita
                 </p>
-                <p className="mt-2 text-[15px] leading-relaxed text-fg-muted">
-                  Your next brief lands Monday 7:30 AM IST. Scroll for the
-                  latest issue.
+                <p className="text-[13px] text-fg-muted">
+                  Working AI engineer · Writes from Bangalore · Replies to every email
                 </p>
               </div>
-            ) : (
-              <HomeSubscribeForm />
-            )}
-            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-fg-muted">
-              <span>Free forever</span>
-              <span aria-hidden className="text-fg-subtle">·</span>
-              <span>6-min read</span>
-              <span aria-hidden className="text-fg-subtle">·</span>
-              <span>Written in Bengaluru</span>
             </div>
           </div>
 
-          {/* Author byline — Lenny presence */}
-          <div className="mt-12 flex items-center gap-4 border-t border-line pt-7">
-            <span
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-lime-bright font-serif text-[18px] font-bold text-fg"
-              aria-hidden
-            >
-              S
-            </span>
-            <div className="flex flex-col gap-0.5">
-              <p className="text-[15px] font-semibold text-fg">
-                Suraj Pandita
+          {/* Right rail — fills widescreen empty space. Reader-relevant
+              context (what lands in inbox + one quoted line). */}
+          <aside className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-line bg-bg-raised p-7">
+              <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+                What lands in your inbox
               </p>
-              <p className="text-[13px] text-fg-muted">
-                Working AI engineer · Writes from Bangalore · Replies to every email
-              </p>
+              <ul className="mt-5 flex flex-col gap-4">
+                {[
+                  { k: 'Frontier-API moves', d: 'OpenAI, Anthropic, Google, Meta — pricing, regression, M&A.' },
+                  { k: 'India regulation', d: 'RBI, DPDP, NPCI moves that change builder constraints.' },
+                  { k: 'Indic models', d: 'Sarvam, Krutrim, Karya — evals + production reads.' },
+                  { k: 'Enterprise deals', d: 'TCS, HDFC, Reliance — what changed which procurement deck.' },
+                  { k: 'INR math', d: 'Worked cost numbers — the moat AI-newsletter slop can\'t copy.' },
+                ].map((row) => (
+                  <li key={row.k} className="flex items-start gap-3">
+                    <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-lime-bright" />
+                    <p className="text-[14px] leading-[1.5] text-fg">
+                      <span className="font-semibold">{row.k}.</span>{' '}
+                      <span className="text-fg-muted">{row.d}</span>
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+
+            <blockquote className="rounded-2xl border-l-[3px] border-lime-bright bg-card px-7 py-6">
+              <p className="font-serif text-[18px] italic leading-[1.5] text-fg">
+                &ldquo;The Monday brief I open before standup. India + global
+                in one read, with the math.&rdquo;
+              </p>
+              <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+                Reader · Series-B Indian SaaS
+              </p>
+            </blockquote>
+          </aside>
         </div>
       </section>
 

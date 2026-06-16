@@ -16,11 +16,11 @@
   /* v5 — actual Lenny / Substack / The Browser look (2026-06-17).
    * v4 was too warm/magazine; Lenny is brighter, cleaner, more friendly
    * with a strong author presence and bold body emphasis. */
-  --bg: 252 251 248;           /* #fcfbf8 bright near-white (a hint of warmth, not cream) */
-  --bg-raised: 246 244 239;    /* #f6f4ef subtle panel — used for callouts only */
-  --bg-card: 255 255 255;      /* pure white for cards / inline subscribe blocks */
-  --line: 232 230 225;         /* #e8e6e1 hairline */
-  --line-strong: 200 198 192;  /* #c8c6c0 mid border */
+  --bg: 255 255 255;           /* pure white — Lenny standard, was cream */
+  --bg-raised: 248 248 246;    /* #f8f8f6 barely-tinted panel — almost invisible */
+  --bg-card: 255 255 255;      /* pure white */
+  --line: 234 234 230;         /* #eaeae6 cleaner hairline (less warm) */
+  --line-strong: 210 210 205;  /* #d2d2cd mid border */
   --cream: 26 26 26;           /* #1a1a1a — token name kept; now ink-on-light */
   --cream-dim: 64 64 64;       /* #404040 darker muted ink (was too light) */
   --lime: 110 196 30;          /* #6ec41e darker lime — readable on bright bg as link */
