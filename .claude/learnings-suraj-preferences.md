@@ -90,19 +90,37 @@ needs a collaborator who has taste, not a code-completion engine.
 
 ---
 
-## #006 — Don't widen the audience
+## #006 — Audience is global + Indian (UPDATED 2026-06-16, was India-only)
 
-**Preference:** Audience is locked: Indian AI builders, PMs, founders.
-Don't add features or language that pitches to "everyone in AI" or
-"AI/ML practitioners worldwide". See CLAUDE.md positioning section.
+**Preference:** Audience is now global builders + Indian builders.
+Frontier AI substance is global; the LENS is local (Bangalore-based,
+INR math, RBI/DPDP regulation, Indic models). Stratechery-from-Taiwan
+pattern — write from where we sit, give global readers a vantage
+they can't get from Bay Area newsletters.
 
-**Why:** The defensibility is exactly the India lens (INR math, regulation,
-Indic models). Widening dilutes the moat.
+**Earlier rule (superseded):** "Audience is locked to Indian AI
+builders only — don't widen, the moat dilutes." Suraj explicitly
+overrode this on 2026-06-16: "as ai toh globally sab same hi hai
+sabko benefit lgna chahiyeh."
 
-**How to apply:** When tempted to add a generic-AI section (e.g.,
-"interview prep for Anthropic/OpenAI"), pause — would it match the
-India builder framing? If no, cut it. (This was the bug behind the
-identical INTERVIEW_QUESTIONS appendix — entry #005 in blunders.)
+**Why the override is OK:** The earlier "don't widen" rule was
+defending the moat, which IS the India lens. Widening the COPY
+language to welcome global readers does not erase the India lens —
+the INR math, DPDP/RBI, Indic models stay first-class. We're widening
+the *audience invitation*, not the *content moat*.
+
+**How to apply:**
+- Site copy reads "from Bangalore, for builders anywhere" — not
+  "Indian builders only".
+- Keep all India-specific defensibility (INR math, DPDP/RBI/NPCI,
+  Indic model evals). Don't water down to make it "global".
+- Interview drills still tag named Indian interview surfaces
+  (Sarvam, Anthropic India, Pine Labs, GCC AI lead) — these now
+  appeal to BOTH a candidate prepping for those rooms AND a global
+  reader who wants insight into how the India side asks questions.
+- Push back if "make it more global" means erasing the India angle —
+  that's the moat. Stratechery without Taiwan is just analysis;
+  with Taiwan it's analysis nobody else can do.
 
 ---
 

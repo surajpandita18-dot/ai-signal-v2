@@ -67,14 +67,16 @@ export default async function SubscribePage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
             <div>
               <div className="font-mono text-[11px] tracking-label text-lime-soft">
-                THE MONDAY BRIEF · INDIAN BUILDERS ONLY
+                THE MONDAY BRIEF · WRITTEN FROM BANGALORE · READ WORLDWIDE
               </div>
               <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
                 Mondays. One shift.
               </h1>
               <p className="mt-7 max-w-md text-[17px] leading-[1.65] text-fg-muted">
-                ~1500 words on what changed this week and what to ship —
-                written for Indian AI builders, PMs, founders. Free.
+                ~1500 words on what changed in AI this week and what to
+                ship Monday — written from Bangalore for builders, PMs,
+                founders anywhere. India regulation + INR math + the global
+                frontier every issue. Free.
               </p>
               <div className="mt-10 max-w-lg">
                 <HomeSubscribeForm />

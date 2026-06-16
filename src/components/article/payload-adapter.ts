@@ -216,25 +216,17 @@ export function weeklyToRenderable(
         personaBlocks.push({ type: 'prose', html: `<p>${inline(conclusion)}</p>` })
       }
     }
-    if (payload.also_for?.length) {
-      personaBlocks.push({
-        type: 'sectionhead',
-        text: 'Also reading',
-        sub: 'Adjacent archetypes still get value from this shift.',
-      })
-      for (const b of payload.also_for) {
-        personaBlocks.push({
-          type: 'archetype',
-          quote: b.archetype,
-          paras: [inline(b.take)],
-        })
-      }
-    }
+    // `also_for` is intentionally NOT rendered. Fresh-model audit + CLAUDE.md
+    // rule #2 flagged it as equal-weight failure mode: a watered-down
+    // paragraph per adjacent archetype signals the writer couldn't commit
+    // to one persona. Better: one archetype, deep — reader self-translates.
+    // Synthesizer Round 2 will stop generating it; until then we just
+    // suppress the render here.
     chapters.push({
       id: 'ch-foryou',
       label: 'For you',
       heading: 'Written for this week',
-      sub: 'One archetype, deep. Adjacent ones get a paragraph.',
+      sub: 'One archetype. Deep. No watered-down adjacents.',
       blocks: personaBlocks,
     })
   }

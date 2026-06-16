@@ -125,7 +125,7 @@ export default async function HomePage() {
           <div className="flex flex-col justify-center px-5 py-16 sm:px-8 lg:border-r lg:border-line lg:py-24 lg:pr-14">
             <div className="reveal d-1 mb-7 flex items-center gap-2.5 font-mono text-[11px] tracking-label text-lime-soft">
               <span className="h-1.5 w-1.5 rounded-full bg-lime" />
-              THE MONDAY BRIEF · INDIAN BUILDERS ONLY
+              THE MONDAY BRIEF · WRITTEN FROM BANGALORE · READ WORLDWIDE
             </div>
             <h1 className="reveal d-2 font-serif text-[44px] font-semibold leading-[1.02] tracking-tight text-fg sm:text-6xl">
               One AI shift
@@ -135,8 +135,10 @@ export default async function HomePage() {
               <span className="text-fg-muted">Every Monday.</span>
             </h1>
             <p className="reveal d-3 mt-6 max-w-md text-[16px] leading-[1.65] text-fg-muted sm:text-[17px]">
-              The single move reshaping the stack — what happened, who it&apos;s
-              for, and what to do Monday morning. No roundups. No hype.
+              The single move reshaping the AI stack this week — what
+              happened, who it&apos;s for, what to do Monday. Written from
+              Bangalore. India regulation + INR math + the global frontier
+              every issue. For builders anywhere.
             </p>
 
             <div className="reveal d-4 mt-9 max-w-lg">
@@ -255,8 +257,10 @@ export default async function HomePage() {
                 <p>
                   No affiliate links. No &ldquo;top 10 tools.&rdquo; No
                   breathless threads. A working engineer in Bengaluru writes
-                  every issue and reads every reply — built for the people
-                  shipping AI in India, not the people tweeting about it.
+                  every issue and reads every reply. Frontier AI substance
+                  is global — the lens is local. You get the global frontier
+                  plus the India angle (regulation that&apos;s ahead of US/EU
+                  on agent payments, INR math, Indic models) every week.
                 </p>
               </div>
               <Link

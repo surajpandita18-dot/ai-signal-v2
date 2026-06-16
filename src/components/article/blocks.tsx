@@ -142,6 +142,78 @@ function Layers({ items }: { items: { t: string; d: string }[] }) {
   )
 }
 
+// Parse INR values from a Math row's `b` string ("₹75L/month", "₹12.5L",
+// "₹62L", "~$15K/month ≈ ₹12.5L/month"). Returns the rupee value in lakhs
+// for charting. Skips rows we can't parse — chart is "nice to have", not
+// the source of truth (the table below is the source of truth).
+function parseChartRows(
+  rows: { metric: string; b: string }[]
+): { metric: string; value: number; label: string }[] {
+  const out: { metric: string; value: number; label: string }[] = []
+  for (const r of rows) {
+    // Find the FIRST INR amount in the value string. Format variants:
+    //   ₹75L, ₹12.5L, ₹62L, ₹7.5Cr, ₹500/M, ₹6.3
+    const m = r.b.match(/₹\s*([\d,]+(?:\.\d+)?)\s*(Cr|L|K)?/i)
+    if (!m) continue
+    const n = parseFloat(m[1].replace(/,/g, ''))
+    if (!Number.isFinite(n)) continue
+    const unit = (m[2] ?? '').toUpperCase()
+    // Normalize to lakhs (₹1L = 100K). Cr → ×100, K → ÷100, bare ÷ 100000.
+    const inLakhs =
+      unit === 'CR'
+        ? n * 100
+        : unit === 'L'
+          ? n
+          : unit === 'K'
+            ? n / 100
+            : n / 100000
+    out.push({ metric: r.metric, value: inLakhs, label: r.b.trim() })
+  }
+  return out
+}
+
+function InrBarChart({
+  rows,
+}: {
+  rows: { metric: string; value: number; label: string }[]
+}) {
+  const max = globalThis.Math.max(...rows.map((r) => r.value))
+  if (!Number.isFinite(max) || max <= 0) return null
+  return (
+    <div className="mb-7 border-y border-line py-5">
+      <div className="mb-3 font-mono text-[10px] tracking-[0.14em] text-fg-muted">
+        ₹ LAKHS · WIDTH PROPORTIONAL
+      </div>
+      <div className="flex flex-col gap-3">
+        {rows.map((r, i) => {
+          const pct = (r.value / max) * 100
+          // First and largest row gets lime; the rest cream. The delta /
+          // savings row often comes second; if it's bigger than the
+          // baseline (which it can be when the chart is showing a
+          // savings figure), the lime tracks that.
+          const isPrimary = r.value === max
+          return (
+            <div key={i} className="grid grid-cols-[minmax(120px,1.2fr)_3fr_auto] items-center gap-3">
+              <div className="truncate text-[13px] text-cream-dim" title={r.metric}>
+                {r.metric}
+              </div>
+              <div className="relative h-[14px] w-full bg-bg-raised">
+                <div
+                  className={`absolute left-0 top-0 h-full ${isPrimary ? 'bg-lime' : 'bg-line-strong'}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <div className="font-mono text-[13px] tabular-nums text-fg">
+                {r.label}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function Math({
   caption,
   cols,
@@ -159,11 +231,18 @@ function Math({
   const hasDelta = rows.some((r) => r.delta && r.delta !== '')
   const compact = !hasBaseline && !hasDelta
 
+  // Bar chart prefix — extract numeric values from r.b (₹/$ stripped, K/L/Cr/M
+  // expanded) and render a small lime/cream bar viz above the table. Only
+  // when 2-3 rows have parseable INR values; otherwise the chart adds noise.
+  const chartRows = parseChartRows(rows)
+  const showChart = compact && chartRows.length >= 2 && chartRows.length <= 4
+
   return (
     <div>
       <p className="mb-5 font-serif text-[15px] italic text-fg-muted">
         {caption.toLowerCase().replace(/^./, (c) => c.toUpperCase())}.
       </p>
+      {showChart && <InrBarChart rows={chartRows} />}
       <div className="overflow-x-auto">
         {compact ? (
           <div className="min-w-[320px] border-t border-b border-line-strong">

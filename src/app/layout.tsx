@@ -3,19 +3,54 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AI Signal — The India AI Builder’s Brief',
+    default: 'AI Signal — Weekly AI brief from Bangalore, for builders anywhere',
     template: '%s — AI Signal',
   },
   description:
-    'A weekly Monday-morning synthesis for Indian AI builders, PMs, and founders. One shift, six layers, INR-grounded.',
+    'Monday-morning AI synthesis for builders, PMs, and founders worldwide. Frontier APIs, regulation, talent, enterprise deals — written from Bangalore with INR math + DPDP/RBI context you won\'t get in Bay Area newsletters.',
+  keywords: [
+    'AI newsletter',
+    'India AI',
+    'AI builders',
+    'LLM router',
+    'AI for PMs',
+    'AI engineering interview',
+    'Anthropic',
+    'OpenAI',
+    'Sarvam',
+    'agentic AI',
+    'enterprise AI India',
+    'DPDP AI',
+    'RBI AI regulation',
+    'weekly AI brief',
+  ],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'),
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'AI Signal — The India AI Builder’s Brief',
+    title: 'AI Signal — Weekly AI brief from Bangalore',
     description:
-      'Mondays. ~1500 words. For Indian AI builders, PMs, founders.',
+      'Monday-morning AI synthesis for builders, PMs, founders worldwide. One shift, six layers, INR + global context.',
     siteName: 'AI Signal',
-    locale: 'en_IN',
+    locale: 'en_US',
+    alternateLocale: ['en_IN', 'en_GB'],
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Signal — Weekly AI brief from Bangalore',
+    description:
+      'Monday-morning AI synthesis for builders worldwide. Frontier APIs + Indian regulation + INR math.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
+    },
   },
   icons: {
     icon: '/favicon.svg',

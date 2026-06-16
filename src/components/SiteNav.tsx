@@ -27,6 +27,12 @@ export default function SiteNav({
             ISSUES
           </Link>
           <Link
+            href="/watchlist"
+            className="hidden font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg sm:inline"
+          >
+            WATCHLIST
+          </Link>
+          <Link
             href="/about"
             className="hidden font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg sm:inline"
           >

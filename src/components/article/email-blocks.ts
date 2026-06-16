@@ -119,10 +119,12 @@ export function renderEmailNote(
     </p>`
 }
 
-// 6-layer diff — the editorial substance of the weekly. Scannable list,
-// each row: small lime numeral + serif beat title + one-line delta.
-// Web uses a hairline-divided 2-col layout; email collapses to single
-// column with the same numeral/title/desc rhythm, no card backgrounds.
+// 6-layer diff — the editorial substance of the weekly. Each row gets
+// stronger per-beat shape so they don't read as identical grey blocks
+// (fresh-model audit 2026-06-16): lime numeral pill, serif beat title,
+// double-hairline rule above each beat (clearer break on mobile than the
+// 1px single line). Body uses italic serif lede + sans body for visual
+// variation between the title and the prose.
 //
 // `items[].d` is already inline()-processed HTML — emit verbatim.
 export function renderEmailLayers(
@@ -135,16 +137,31 @@ export function renderEmailLayers(
         c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&amp;'
       )
       const body = withBodyLinkClass(l.d)
-      const topPad = i === 0 ? '0' : '18px'
-      const borderTop =
-        i === 0 ? '' : `border-top:1px solid ${LINE_STRONG};padding-top:18px;`
+      const topPad = i === 0 ? '14px' : '26px'
+      // Double-hairline above each beat (8px gap). Reads as a deliberate
+      // section break on mobile where the eye otherwise skips between
+      // identical-looking paragraphs.
+      const rule =
+        i === 0
+          ? ''
+          : `
+        <div style="border-top:1px solid ${LINE_STRONG};line-height:1px;font-size:1px;">&nbsp;</div>
+        <div style="height:3px;line-height:3px;font-size:1px;">&nbsp;</div>
+        <div style="border-top:1px solid ${LINE_STRONG};line-height:1px;font-size:1px;margin-bottom:14px;">&nbsp;</div>`
       return `
-        <div style="margin-top:${topPad};${borderTop}">
-          <p style="margin:0;font-family:${FONT_DISPLAY};font-size:13px;font-style:italic;color:${LIME};letter-spacing:0.04em;">
-            ${numeral}
-            <span style="color:${FG};font-style:normal;font-weight:600;margin-left:8px;">${titleSafe}</span>
-          </p>
-          <div style="margin:8px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.65;color:${FG_MUTED};" class="body-text">${body}</div>
+        <div style="margin-top:${topPad};">
+          ${rule}
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;">
+            <tr>
+              <td style="vertical-align:middle;padding-right:10px;">
+                <span style="display:inline-block;background:${LIME};color:${BG_RAISED};font-family:${FONT_BODY};font-size:11px;font-weight:700;letter-spacing:0.08em;padding:3px 8px;">${numeral}</span>
+              </td>
+              <td style="vertical-align:middle;font-family:${FONT_DISPLAY};font-size:18px;font-weight:600;color:${FG};line-height:1.2;">
+                ${titleSafe}
+              </td>
+            </tr>
+          </table>
+          <div style="margin:0;font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${FG_MUTED};" class="body-text">${body}</div>
         </div>`
     })
     .join('')

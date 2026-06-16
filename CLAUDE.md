@@ -6,7 +6,31 @@ After 6 evidenced research streams (Indian builder pain points, INR pricing real
 
 **"The India AI Builder's Brief"** — weekly Monday morning synthesis for Indian AI builders, PMs, founders. ~1500 words. 8 min read.
 
-**Audience (locked, do not widen):** Indian AI builders, PMs, founders. Bootstrapped Indian SaaS founders adding AI; AI-native Indian startup founders; PMs at GCCs/SIs/enterprises with AI budget; AI engineers shipping from India.
+**Audience (updated 2026-06-16 — global + Indian, India lens as the edge):**
+
+Primary readers: AI builders, PMs, and founders anywhere in the world
+who want a Monday-morning synthesis written from one of the busiest AI
+frontiers (Bangalore). Frontier AI substance is global — the LENS is
+local. We're the Stratechery-from-Taiwan pattern: write from where you
+sit, give global readers a vantage they can't get from Bay Area
+newsletters.
+
+Specifically welcome:
+- Indian AI builders (originally locked audience) — INR math + DPDP /
+  RBI regulation + Indic models stay first-class signal here.
+- Global AI builders / PMs / founders — they read for the India angle
+  (regulation that's ahead of US/EU on agent payments, the third-
+  largest AI talent market, GCC-driven enterprise adoption) PLUS the
+  global frontier coverage every issue does.
+- AI engineers prepping interviews at Anthropic, OpenAI, Google
+  DeepMind, India-AI startups (Sarvam, Krutrim), and GCC AI leads —
+  the appendix (interview drills + further reading) makes the issue a
+  study tool.
+
+**Do not water down the India moats** (INR math, RBI/DPDP/NPCI, Indic
+models) when widening. Those are the differentiator. Frame as
+"context global builders can use to think differently", not "regional
+content".
 
 **Issue structure (locked, 6 sections):**
 
@@ -72,7 +96,9 @@ After 6 evidenced research streams (Indian builder pain points, INR pricing real
 - Do NOT auto-publish the Ship/Hold/Kill section without Suraj's pass.
 - Do NOT add sources just because they cover "AI." Each new source must map to one of the 6 beats. Bloat kills synthesis.
 - Do NOT skip the INR math. Concrete numbers defend against AI-slop synthesis.
-- Do NOT widen the audience beyond Indian AI builders.
+- Do NOT erase the India moats (INR math, RBI/DPDP regulation, Indic
+  models) — the audience is global+Indian but the LENS is what we
+  defend. Without the India angle we're another Stratechery clone.
 - Do NOT replace the original 7 rules above. They still apply.
 
 ---

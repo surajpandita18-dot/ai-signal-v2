@@ -45,31 +45,38 @@ export default async function AboutPage() {
       <main className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
         <div className="font-mono text-[11px] tracking-label text-lime-soft">ABOUT</div>
         <h1 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
-          For someone shipping AI from India.
+          A weekly AI brief from Bangalore, for builders anywhere.
         </h1>
 
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
           <div className="flex max-w-xl flex-col gap-5 text-[15px] leading-[1.75] text-fg-muted">
             <p>
-              Most AI media writes for builders in San Francisco. The cost
-              stack, the regulatory environment, the talent market, the
-              language register a customer-support bot has to handle —
-              all of it is different here.
+              Frontier AI substance is global — every model release, every
+              API price cut, every agent breakthrough lands the same way
+              for a builder in Bangalore, Berlin, or San Francisco. But the
+              lens you read it through changes the answer. AI Signal is
+              written from one of the busiest AI frontiers (Bangalore) for
+              builders, PMs, and founders anywhere.
             </p>
             <p>
-              AI Signal is a weekly Monday brief written for one specific
-              reader: someone shipping an AI product from India this
-              quarter. A bootstrapped Bangalore SaaS founder adding AI. A PM
-              at a GCC integrating an agent. A founder at an AI-native
-              Indian startup. The PM at a bank evaluating Sarvam vs Sonnet.
+              Specifically welcome: a working AI engineer at Sarvam,
+              Krutrim, Anthropic, or OpenAI. A PM at a US AI-native startup
+              evaluating Indic-language coverage. A founder anywhere
+              shipping agents and wondering what India just did to agent
+              payments. A GCC AI lead. A bank evaluating Sarvam vs Sonnet.
+              An interview-prepping engineer studying for Anthropic India
+              or OpenAI Bangalore.
             </p>
             <p>
-              Each issue covers six layers — frontier-API moves, Indian
+              Each issue covers six layers — frontier-API moves, India
               cloud + GPU economics, DPDP/RBI/SEBI regulation, Indic model
-              releases, AI talent and comp, Indian enterprise deals — and
-              connects them into one shift that matters this week. Plus a
+              releases, AI talent and comp, enterprise deals — and connects
+              them into one shift that matters this week. Plus a
               Ship/Hold/Kill call, INR-grounded math, and the noise we
-              chose to ignore.
+              chose to ignore. Global builders read for the India angle
+              (regulation that&apos;s ahead of US/EU on agent payments,
+              real cost math, Indic model evals you won&apos;t see in
+              Latent Space).
             </p>
             <p className="italic text-cream-dim">
               The whole product is the quality of the throughline. The

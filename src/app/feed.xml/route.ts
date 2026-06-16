@@ -22,7 +22,8 @@ function esc(s: string | null | undefined): string {
 }
 
 function siteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ai-signal-v2.vercel.app'
+  // `||` not `??` — Vercel can store empty strings; see blunder #002.
+  return process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'
 }
 
 export async function GET() {
@@ -61,11 +62,11 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>AI Signal — One AI shift that matters. Every Monday.</title>
+    <title>AI Signal — Weekly AI brief from Bangalore, for builders anywhere</title>
     <link>${site}</link>
     <atom:link href="${site}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>Written for Indian AI builders, PMs, and founders. Weekly synthesis briefs + occasional long-form deep-dives.</description>
-    <language>en-IN</language>
+    <description>Monday-morning AI synthesis for builders, PMs, founders worldwide. Frontier APIs + India regulation + INR math + Indic models — every issue.</description>
+    <language>en</language>
     <generator>AI Signal v3</generator>
     ${items}
   </channel>
