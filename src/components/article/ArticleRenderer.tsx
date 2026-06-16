@@ -49,6 +49,25 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
         </div>
       </header>
 
+      {/* SIGNAL OF THE WEEK — Editorial v2 — the ONE screenshot-worthy line.
+          Renders only when payload includes the field (new synthesizer
+          output). Large serif pullquote with lime mark. */}
+      {issue.signal_of_the_week ? (
+        <section className="border-b border-line bg-bg-raised">
+          <div className="mx-auto max-w-read px-5 py-14 sm:px-8 sm:py-20">
+            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+              SIGNAL · IF YOU REMEMBER NOTHING ELSE
+            </p>
+            <p className="mt-5 font-serif text-[28px] font-medium leading-[1.22] tracking-tight text-fg sm:text-[36px]">
+              <span className="mr-3 text-lime" aria-hidden>
+                ⌁
+              </span>
+              {issue.signal_of_the_week}
+            </p>
+          </div>
+        </section>
+      ) : null}
+
       <main className="mx-auto max-w-read px-5 sm:px-8">
         {issue.chapters.map((ch, idx) => {
           const last = idx === issue.chapters.length - 1
@@ -85,6 +104,51 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
           )
         })}
       </main>
+
+      {/* EXPLAINED SIMPLY — Editorial v2 — one concept in Feynman register.
+          Renders only when payload includes it. */}
+      {issue.explained_simply ? (
+        <section className="border-t border-line">
+          <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
+            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+              EXPLAINED SIMPLY · ONE CONCEPT THIS WEEK
+            </p>
+            <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
+              {issue.explained_simply.concept}.
+            </h2>
+            <p className="mt-7 max-w-[640px] font-serif text-[19px] leading-[1.55] text-cream-dim">
+              {issue.explained_simply.explanation}
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      {/* PRODUCTION QUESTIONS — Editorial v2 — real Monday-morning questions.
+          Renders only when payload includes ≥1 question. */}
+      {issue.production_questions && issue.production_questions.length ? (
+        <section className="border-t border-line bg-bg-raised">
+          <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
+            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+              FROM THE STANDUP · WHAT BUILDERS ARE ASKING THIS WEEK
+            </p>
+            <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
+              Three real questions in the air.
+            </h2>
+            <ol className="mt-10 flex flex-col gap-7">
+              {issue.production_questions.map((q, i) => (
+                <li key={i} className="flex gap-5 border-t border-line pt-7">
+                  <span className="font-mono text-[12px] tracking-label text-lime">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <p className="max-w-[640px] font-serif text-[18px] leading-[1.55] text-fg">
+                    {q}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      ) : null}
 
       {/* APPENDIX — interview drills + further reading (web only, lean email).
           Conditional on payload.appendix; older issues without it render

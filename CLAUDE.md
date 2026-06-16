@@ -32,14 +32,21 @@ models) when widening. Those are the differentiator. Frame as
 "context global builders can use to think differently", not "regional
 content".
 
-**Issue structure (locked, 6 sections):**
+**Issue structure (Editorial v2 — updated 2026-06-17):**
 
 1. **The throughline** — one non-obvious shift, named, with action implication
-2. **The 6-layer diff** — frontier-api · india-infra · regulation · indic-models · talent-comp · enterprise-deals
-3. **What this means for you** — one persona per issue, INR-grounded math
-4. **Ship / Hold / Kill** — 3 opinionated calls (THIS is where human taste lives)
-5. **Keep / Skip** — name the noise this week specifically
-6. **Closure** — "—— That's the shift. You're caught up."
+2. **Signal of the week** — the ONE screenshot-worthy line, large serif callout at top of body (NEW v2 — every issue must extract one signal worth Slack-pasting)
+3. **The 6-layer diff** — frontier-api · india-infra · regulation · indic-models · talent-comp · enterprise-deals. At least TWO beats must explicitly reference each other (connection rule — the dots no other publication connects)
+4. **What this means for you** — one persona per issue, INR-grounded math, shown
+5. **Ship / Hold / Kill** — 3 opinionated calls (THIS is where human taste lives)
+6. **Explained simply** — one technical concept in Feynman/Andrew-Ng register: physical analogy + production stakes. Reader is a smart non-technical operator with 30 seconds (NEW v2)
+7. **Production questions** — 3 real questions builders are asking on standups THIS week, not interview prep (NEW v2)
+8. **Keep / Skip** — name the noise this week specifically
+9. **Closure** — "—— That's the shift. You're caught up."
+
+**Tiered reader serving (NEW v2):** Every issue lands for THREE tiers simultaneously — PM/strategy (throughline + framework), builder/engineer (6-layer + production questions + hack), curious operator (signal + explained simply). Do NOT write three separate sections. Weave it.
+
+**Show the math:** Every load-bearing claim needs a proof clause — number, source, named action. "OpenAI is cutting prices" fails. "OpenAI told reporters Tuesday it's cutting API prices ahead of a 2026 IPO; Information's leak suggests ~70%" passes.
 
 **Source taxonomy (6 beats, replaces old enum):**
 `frontier-api | india-infra | regulation | indic-models | talent-comp | enterprise-deals`

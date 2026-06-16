@@ -32,6 +32,14 @@ export interface RenderableIssue {
   lede: string
   chapters: Chapter[]
   appendix?: AppendixPack | null
+  // Editorial framework v2 — direct passthroughs from IssuePayload. Each is
+  // optional; the renderer only paints the section when present.
+  signal_of_the_week?: string | null
+  explained_simply?: {
+    concept: string
+    explanation: string
+  } | null
+  production_questions?: string[] | null
 }
 
 const BEAT_LABEL: Record<Beat, string> = {
@@ -297,6 +305,9 @@ export function weeklyToRenderable(
     lede: paraToHtml(payload.throughline_lead),
     chapters,
     appendix: payload.appendix ?? null,
+    signal_of_the_week: payload.signal_of_the_week ?? null,
+    explained_simply: payload.explained_simply ?? null,
+    production_questions: payload.production_questions ?? null,
   }
 }
 
