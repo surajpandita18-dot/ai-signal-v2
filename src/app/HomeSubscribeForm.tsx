@@ -77,7 +77,7 @@ export default function HomeSubscribeForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="group mt-px flex items-center justify-center gap-2 bg-lime px-6 py-4 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg transition-colors hover:bg-[#d4ff52] disabled:opacity-60"
+        className="group mt-px flex items-center justify-center gap-2 bg-lime-bright px-6 py-4 font-mono text-[13px] font-semibold tracking-[0.04em] text-fg transition-colors hover:bg-[#d4ff52] disabled:opacity-60"
       >
         {submitting ? 'JOINING…' : "GET MONDAY'S BRIEF"}
         <ArrowRight

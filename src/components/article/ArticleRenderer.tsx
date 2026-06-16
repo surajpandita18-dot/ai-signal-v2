@@ -7,44 +7,60 @@ import type { RenderableIssue } from './payload-adapter'
 export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
   return (
     <>
-      {/* HERO */}
+      {/* HERO — Lenny-style v5: bigger headline, prominent author line with
+          avatar dot, drop mono treatment in favour of clean small-caps Inter. */}
       <header className="border-b border-line">
-        <div className="mx-auto max-w-read px-5 pb-12 pt-14 sm:px-8 sm:pt-20">
+        <div className="mx-auto max-w-read px-5 pb-14 pt-14 sm:px-8 sm:pt-20">
           <Link
             href="/"
-            className="mb-10 inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] tracking-label text-fg-muted transition-colors hover:text-fg"
+            className="mb-12 inline-flex min-h-[44px] items-center gap-2 text-[13px] font-medium text-fg-muted transition-colors hover:text-fg"
           >
-            <ArrowLeft size={13} strokeWidth={2} />
-            ALL ISSUES
+            <ArrowLeft size={14} strokeWidth={2} />
+            All issues
           </Link>
-          <div className="mb-7 font-mono text-[11px] tracking-label text-fg-muted">
-            Issue {issue.no}
+          <div className="mb-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-fg-muted">
+            <span className="font-medium uppercase tracking-[0.1em] text-fg-subtle">
+              Issue {issue.no}
+            </span>
             {issue.kind === 'DEEP DIVE' ? (
               <>
-                <span className="mx-3 text-line-strong">·</span>
-                <span className="text-lime">Deep dive</span>
+                <span aria-hidden className="text-fg-subtle">
+                  ·
+                </span>
+                <span className="font-semibold text-lime-soft">Deep dive</span>
               </>
             ) : null}
-            <span className="mx-3 text-line-strong">·</span>
-            {issue.heroDate}
+            <span aria-hidden className="text-fg-subtle">
+              ·
+            </span>
+            <span>{issue.heroDate}</span>
           </div>
-          <h1 className="font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
+          <h1 className="font-serif text-[40px] font-semibold leading-[1.02] tracking-[-0.015em] text-fg sm:text-[64px]">
             {issue.title}
           </h1>
           {issue.dek ? (
-            <p className="mt-7 font-serif text-[22px] italic leading-[1.35] text-cream-dim sm:text-[26px]">
+            <p className="mt-6 max-w-[680px] font-serif text-[21px] font-normal leading-[1.4] text-fg-muted sm:text-[24px]">
               {issue.dek}
             </p>
           ) : null}
-          <div className="mt-9 border-t border-line pt-5 font-serif text-[15px] italic text-fg-muted">
-            By Suraj Pandita, Bangalore
-            <span className="mx-2 not-italic">·</span>
-            <span className="font-mono text-[11px] not-italic tracking-label">
-              {issue.read} READ
+          <div className="mt-10 flex items-center gap-4 border-t border-line pt-6">
+            <span
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-lime-bright font-serif text-[18px] font-bold text-fg"
+              aria-hidden
+            >
+              S
             </span>
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[15px] font-semibold text-fg">
+                Suraj Pandita
+              </p>
+              <p className="text-[13px] text-fg-muted">
+                Bangalore · {issue.read.toLowerCase()} read
+              </p>
+            </div>
           </div>
           {issue.lede ? (
-            <div className="editorial editorial-lede mt-9" dangerouslySetInnerHTML={{ __html: issue.lede }} />
+            <div className="editorial editorial-lede mt-10" dangerouslySetInnerHTML={{ __html: issue.lede }} />
           ) : null}
         </div>
       </header>
@@ -55,13 +71,11 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
       {issue.signal_of_the_week ? (
         <section className="border-b border-line bg-bg-raised">
           <div className="mx-auto max-w-read px-5 py-14 sm:px-8 sm:py-20">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
-              SIGNAL · IF YOU REMEMBER NOTHING ELSE
+            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+              The signal
             </p>
-            <p className="mt-5 font-serif text-[28px] font-medium leading-[1.22] tracking-tight text-fg sm:text-[36px]">
-              <span className="mr-3 text-lime" aria-hidden>
-                ⌁
-              </span>
+            <p className="mt-6 font-serif text-[26px] font-medium leading-[1.25] tracking-[-0.005em] text-fg sm:text-[36px]">
+              <span className="mr-3 inline-block h-[10px] w-[10px] -translate-y-1 rounded-full bg-lime-bright" aria-hidden />
               {issue.signal_of_the_week}
             </p>
           </div>
@@ -110,13 +124,13 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
       {issue.explained_simply ? (
         <section className="border-t border-line">
           <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
-              EXPLAINED SIMPLY · ONE CONCEPT THIS WEEK
+            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+              Explained simply
             </p>
-            <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
+            <h2 className="mt-4 font-serif text-[32px] font-semibold leading-[1.08] tracking-[-0.015em] text-fg sm:text-[44px]">
               {issue.explained_simply.concept}.
             </h2>
-            <p className="mt-7 max-w-[640px] font-serif text-[19px] leading-[1.55] text-cream-dim">
+            <p className="mt-8 max-w-[640px] text-[18px] leading-[1.65] text-fg-muted sm:text-[19px]">
               {issue.explained_simply.explanation}
             </p>
           </div>
@@ -128,19 +142,19 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
       {issue.production_questions && issue.production_questions.length ? (
         <section className="border-t border-line bg-bg-raised">
           <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
-              FROM THE STANDUP · WHAT BUILDERS ARE ASKING THIS WEEK
+            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+              From the standup
             </p>
-            <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
-              Three real questions in the air.
+            <h2 className="mt-4 font-serif text-[32px] font-semibold leading-[1.08] tracking-[-0.015em] text-fg sm:text-[44px]">
+              Three real questions in the air this week.
             </h2>
             <ol className="mt-10 flex flex-col gap-7">
               {issue.production_questions.map((q, i) => (
-                <li key={i} className="flex gap-5 border-t border-line pt-7">
-                  <span className="font-mono text-[12px] tracking-label text-lime">
-                    {String(i + 1).padStart(2, '0')}
+                <li key={i} className="flex gap-6 border-t border-line pt-7">
+                  <span className="shrink-0 font-serif text-[20px] font-semibold text-lime-soft">
+                    {i + 1}
                   </span>
-                  <p className="max-w-[640px] font-serif text-[18px] leading-[1.55] text-fg">
+                  <p className="max-w-[640px] text-[18px] leading-[1.55] text-fg">
                     {q}
                   </p>
                 </li>

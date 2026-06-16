@@ -18,6 +18,7 @@ const config: Config = {
         'cream-dim': 'rgb(var(--cream-dim) / <alpha-value>)',
         lime: 'rgb(var(--lime) / <alpha-value>)',
         'lime-soft': 'rgb(var(--lime-soft) / <alpha-value>)',
+        'lime-bright': 'rgb(var(--lime-bright) / <alpha-value>)',
         fg: 'rgb(var(--fg) / <alpha-value>)',
         'fg-muted': 'rgb(var(--fg-muted) / <alpha-value>)',
         'fg-subtle': 'rgb(var(--fg-subtle) / <alpha-value>)',

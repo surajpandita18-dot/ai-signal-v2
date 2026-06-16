@@ -124,7 +124,7 @@ export default async function HomePage() {
         <div className="relative mx-auto grid max-w-shell grid-cols-1 lg:grid-cols-[1.42fr_1fr]">
           <div className="flex flex-col justify-center px-5 py-16 sm:px-8 lg:border-r lg:border-line lg:py-24 lg:pr-14">
             <div className="reveal d-1 mb-7 flex items-center gap-2.5 font-mono text-[11px] tracking-label text-lime-soft">
-              <span className="h-1.5 w-1.5 rounded-full bg-lime" />
+              <span className="h-1.5 w-1.5 rounded-full bg-lime-bright" />
               THE MONDAY BRIEF · WRITTEN FROM BANGALORE · READ WORLDWIDE
             </div>
             <h1 className="reveal d-2 font-serif text-[44px] font-semibold leading-[1.02] tracking-tight text-fg sm:text-6xl">

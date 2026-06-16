@@ -199,7 +199,7 @@ function InrBarChart({
               </div>
               <div className="relative h-[14px] w-full bg-bg-raised">
                 <div
-                  className={`absolute left-0 top-0 h-full ${isPrimary ? 'bg-lime' : 'bg-line-strong'}`}
+                  className={`absolute left-0 top-0 h-full ${isPrimary ? 'bg-lime-bright' : 'bg-line-strong'}`}
                   style={{ width: `${pct}%` }}
                 />
               </div>

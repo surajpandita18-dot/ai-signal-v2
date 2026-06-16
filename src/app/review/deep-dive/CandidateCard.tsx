@@ -103,7 +103,7 @@ export default function CandidateCard(props: Props) {
           type="button"
           onClick={onChoose}
           disabled={pending}
-          className="group inline-flex items-center gap-2 bg-lime px-5 py-3 font-mono text-[12px] font-semibold tracking-[0.04em] text-bg transition-colors hover:bg-[#d4ff52] disabled:opacity-50"
+          className="group inline-flex items-center gap-2 bg-lime-bright px-5 py-3 font-mono text-[12px] font-semibold tracking-[0.04em] text-fg transition-colors hover:bg-[#d4ff52] disabled:opacity-50"
         >
           {pending ? 'PICKING…' : 'PICK THIS'}
           <ArrowRight size={14} strokeWidth={2.25} className="transition-transform group-hover:translate-x-0.5" />

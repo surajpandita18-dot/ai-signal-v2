@@ -13,30 +13,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* v4 cream-premium tokens — canonical */
-  --bg: 251 250 246;           /* #fbfaf6 warm off-white (NOT pure white) */
-  --bg-raised: 245 243 235;    /* #f5f3eb soft cream */
-  --bg-card: 255 254 251;      /* #fffefb near-white card */
-  --line: 230 226 216;         /* #e6e2d8 warm hairline */
-  --line-strong: 205 201 191;  /* #cdc9bf mid border */
-  --cream: 38 38 36;           /* #262624 warm ink (token name kept for back-compat) */
-  --cream-dim: 82 82 80;       /* #525250 muted ink */
-  --lime: 194 245 61;          /* #c2f53d signal accent (UNCHANGED, functional only) */
-  --lime-soft: 159 212 74;     /* #9fd44a labels (UNCHANGED) */
-  --fg: 26 26 26;              /* #1a1a1a warm-ink body text */
-  --fg-muted: 107 107 102;     /* #6b6b66 mid gray */
-  --fg-subtle: 168 168 163;    /* #a8a8a3 light gray — rules/dots ONLY */
-  --danger: 229 103 90;        /* #e5675a (UNCHANGED) */
+  /* v5 — actual Lenny / Substack / The Browser look (2026-06-17).
+   * v4 was too warm/magazine; Lenny is brighter, cleaner, more friendly
+   * with a strong author presence and bold body emphasis. */
+  --bg: 252 251 248;           /* #fcfbf8 bright near-white (a hint of warmth, not cream) */
+  --bg-raised: 246 244 239;    /* #f6f4ef subtle panel — used for callouts only */
+  --bg-card: 255 255 255;      /* pure white for cards / inline subscribe blocks */
+  --line: 232 230 225;         /* #e8e6e1 hairline */
+  --line-strong: 200 198 192;  /* #c8c6c0 mid border */
+  --cream: 26 26 26;           /* #1a1a1a — token name kept; now ink-on-light */
+  --cream-dim: 64 64 64;       /* #404040 darker muted ink (was too light) */
+  --lime: 110 196 30;          /* #6ec41e darker lime — readable on bright bg as link */
+  --lime-soft: 138 195 70;     /* #8ac346 secondary accent */
+  --fg: 13 13 13;              /* #0d0d0d near-black for strong body */
+  --fg-muted: 87 87 87;        /* #575757 muted gray */
+  --fg-subtle: 156 156 156;    /* #9c9c9c subtle, for rules + meta only */
+  --danger: 213 88 75;         /* #d5584b darker for contrast on bright */
+  --lime-bright: 194 245 61;   /* #c2f53d the vivid lime — reserved for the moat-mark + buttons */
 
-  /* v2 compat layer — legacy components reference these; map to v4 */
-  --paper: 251 250 246;        /* old bg → v4 bg */
-  --paper-elev: 255 254 251;   /* old card → v4 bg-card */
-  --ink: 26 26 26;             /* old high-text → v4 fg */
-  --body: 82 82 80;            /* old body → v4 cream-dim */
-  --accent: 194 245 61;        /* unchanged */
-  --accent-2: 229 103 90;      /* unchanged */
-  --muted: 107 107 102;        /* v4 fg-muted */
-  --accent-soft: 159 212 74;   /* unchanged */
+  /* v2 compat layer */
+  --paper: 252 251 248;
+  --paper-elev: 255 255 255;
+  --ink: 13 13 13;
+  --body: 64 64 64;
+  --accent: 110 196 30;
+  --accent-2: 213 88 75;
+  --muted: 87 87 87;
+  --accent-soft: 138 195 70;
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, 'New York', serif;

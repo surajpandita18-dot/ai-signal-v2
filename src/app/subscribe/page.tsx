@@ -46,7 +46,7 @@ export default async function SubscribePage() {
             <div className="mt-9 flex flex-wrap gap-4">
               <Link
                 href="/"
-                className="group inline-flex min-h-[44px] items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
+                className="group inline-flex min-h-[44px] items-center gap-2 bg-lime-bright px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-fg"
               >
                 READ LATEST ISSUE
                 <ArrowRight

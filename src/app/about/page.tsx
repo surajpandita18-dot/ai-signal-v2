@@ -168,7 +168,7 @@ export default async function AboutPage() {
           <div className="mt-16">
             <Link
               href="/#subscribe"
-              className="group inline-flex items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
+              className="group inline-flex items-center gap-2 bg-lime-bright px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-fg"
             >
               SUBSCRIBE FREE
               <ArrowRight

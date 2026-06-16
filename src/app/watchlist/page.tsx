@@ -41,7 +41,7 @@ const REG_STATUS_TINT: Record<
   RegulationRow['status'],
   { label: string; bg: string; fg: string }
 > = {
-  'in-force': { label: 'IN FORCE', bg: 'bg-lime', fg: 'text-bg' },
+  'in-force': { label: 'IN FORCE', bg: 'bg-lime-bright', fg: 'text-bg' },
   consultation: {
     label: 'CONSULTATION',
     bg: 'bg-line-strong',
