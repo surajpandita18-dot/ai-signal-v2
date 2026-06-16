@@ -56,6 +56,7 @@ export async function GET(
           issueCreatedAt: issue.created_at,
           payload: issue.payload,
           chosen: issue.chosen_calls,
+          siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
         })
 
   if (format === 'text') {

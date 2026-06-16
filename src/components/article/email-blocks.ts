@@ -34,9 +34,12 @@ const LIME = '#c2f53d'
 const FG = '#f4f2ec'
 const FG_MUTED = '#8b8f86'
 
-const FONT_DISPLAY = 'Georgia, "Iowan Old Style", "Times New Roman", serif'
+// SINGLE quotes around multi-word font names — these interpolate into
+// `style="..."` attributes; embedded `"Segoe UI"` closes the style early
+// and silently nukes the email's entire CSS. See email-template.ts.
+const FONT_DISPLAY = "Georgia, 'Iowan Old Style', 'Times New Roman', serif"
 const FONT_BODY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
 
 // Glance block as 3-row Ship/Hold/Kill list. Ship-pick gets the moat treatment
 // (lime arrow + bright body + 17px, NO body-text class so mobile media query

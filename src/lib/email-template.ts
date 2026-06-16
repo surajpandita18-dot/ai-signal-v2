@@ -101,11 +101,15 @@ const FG = '#f4f2ec'
 const FG_MUTED = '#8b8f86'
 const FG_SUBTLE = '#6b7062'
 
+// Multi-word font names use SINGLE quotes — these constants get interpolated
+// into `style="..."` attributes (double-quoted). Embedding `"Segoe UI"` would
+// close the style attribute early and silently break the entire email's
+// styling (Gmail web shows white bg, fonts fall back, layout collapses).
 const FONT_DISPLAY =
-  'Georgia, "Iowan Old Style", "Times New Roman", serif'
+  "Georgia, 'Iowan Old Style', 'Times New Roman', serif"
 const FONT_BODY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
-const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+const FONT_MONO = "ui-monospace, 'SF Mono', Menlo, Consolas, monospace"
 
 // Must stay in sync with escapeHtml() in src/components/article/payload-adapter.ts
 // — all five XML/HTML special characters covered. The single-quote escape isn't

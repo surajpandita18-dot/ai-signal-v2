@@ -140,3 +140,14 @@ See memory `project_positioning_locked.md` for the full positioning rationale.
 ## Design standard
 
 Before any design decision or shipping any UI, check it against `.claude/design-quality-rubric.md` — all HARD GATES must pass, verified on the real rendered output (screenshots at 1200px + 390px, and email at 360px if applicable).
+
+---
+
+## Past blunders — READ before shipping email / env / deploy changes
+
+`.claude/learnings-claude-blunders.md` — running ledger of silly
+mistakes Suraj has caught. Before declaring an email change "done", scan
+the entries that touch the surface you're editing. The rules at the
+bottom of each entry are non-negotiable next-time checks. Append a new
+entry whenever Suraj flags a "silly mistake / blunder" — symptom, root
+cause, fix, one-sentence rule.

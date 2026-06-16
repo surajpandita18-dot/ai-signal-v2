@@ -62,10 +62,13 @@ const FG = '#f4f2ec'
 const FG_MUTED = '#8b8f86'
 const FG_SUBTLE = '#6b7062'
 
-const FONT_DISPLAY = 'Georgia, "Iowan Old Style", "Times New Roman", serif'
+// SINGLE quotes around multi-word font names — these interpolate into
+// `style="..."` attributes; embedded `"Segoe UI"` closes the style early
+// and silently nukes the email's entire CSS. See email-template.ts.
+const FONT_DISPLAY = "Georgia, 'Iowan Old Style', 'Times New Roman', serif"
 const FONT_BODY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
-const FONT_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+const FONT_MONO = "ui-monospace, 'SF Mono', Menlo, Consolas, monospace"
 
 function getResend(): Resend {
   const key = process.env.RESEND_API_KEY
