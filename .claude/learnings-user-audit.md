@@ -104,6 +104,62 @@ Skipping it from the email is the wrong call.
 **Likely fix:** Add `renderEmailMath` (compact 2-col table — label / INR
 delta). Wire into template between layers and steal.
 
+### Weekly Watchlist tracker — biggest untapped move (2026-06-16, fresh-model audit)
+
+**Observed:** Every issue is a one-shot synthesis. Nothing compounds.
+Reader doesn't experience the newsletter as "institutional memory of
+the Indian AI market" — just a series of disconnected briefs.
+
+**Proposed move:** Three living rows that update every issue and render
+on /issue and /home:
+- **API price log** — Sonnet / GPT-4o / Gemini Flash / Sarvam-M in USD
+  AND INR per 1M tokens, with last-week delta arrows.
+- **Regulation status board** — DPDP rules, RBI agent-payments, NPCI
+  SBMD circular — each row has current state + last update date +
+  expected next milestone.
+- **Enterprise deal log** — 3 most recent Indian enterprise AI signings
+  with vendor + reported value + beat.
+
+**Why it matters:** Nobody else has it. Pragmatic Engineer doesn't.
+Lenny doesn't. Indian newsletters definitely don't. Becomes the reason
+people open even on a slow news week — they want to see the deltas.
+
+**Build:** 2-week scope. New table `watchlist_rows` (kind, label,
+value, value_secondary, delta, source_url, updated_at). New surface
+at /watchlist + embed in /issue footer. CLAUDE.md spec already calls
+out "structured trackers (API price log, regulation status,
+enterprise deal log) become defensible knowledge base" so this is
+on-spec, not scope creep.
+
+### 6-layer diff items read identical (2026-06-16, fresh-model audit)
+
+**Observed:** Six 50-word paragraphs in the email all look the same
+shape. No per-beat variation — no quote, no chart, no inline link, no
+visual distinction beyond the small lime numeral. On mobile it scrolls
+as a wall.
+
+**Proposed fixes (pick 2):**
+- Add source citations inline ("Pragmatic Engineer named it [Fri]")
+  — claims look unsourced without them.
+- Vary length per beat — the strongest beat gets 80 words, weakest
+  gets 30. Forces editorial weighting.
+- Add a per-beat micro-stat in lime ("70% routing share" / "₹62L
+  delta") that reads at a glance.
+- Add hairline rule above each beat title for clearer break on mobile.
+
+### "Also Reading" (`also_for`) is equal-weight failure (2026-06-16, fresh-model audit)
+
+**Observed:** The "Also reading" / `also_for` block has 2 paragraphs of
+watered-down takes for adjacent archetypes ("PM at SI/GCC..." +
+"Enterprise procurement lead..."). Signals the writer couldn't commit
+to one archetype. CLAUDE.md says "if everything reads as equal-weight,
+the issue has failed."
+
+**Proposed fix:** Cut the section. Or rewrite the synthesizer prompt to
+forbid `also_for` entirely — one persona, deep treatment, reader
+self-translates. Currently leaving rendered to avoid behavior change
+without Suraj's nod.
+
 ### Subscribe form is "yourname@email.com" placeholder (2026-06-16, homepage screenshot)
 
 **Observed:** Email input on homepage shows placeholder text. Fine. But
@@ -115,6 +171,19 @@ form is in the dark hero card with cream/lime, looks clean.
 ---
 
 ## Resolved
+
+### Topic-aware interview drills + further reading (added 2026-06-16)
+
+After removing the identical INTERVIEW_QUESTIONS block (fixed below),
+added a real appendix per issue with 3 topic-aware drills (each tagged
+with named Indian interview surfaces — Sarvam, Anthropic India,
+Razorpay, Pine Labs, GCC AI lead) + curated further reading (3
+articles + 1 video + 1 paper + 1 Indian-builder-shipping-in-production
+slot). Skeleton answers behind `<details>`. Web-only, email stays lean.
+
+Schema: `IssuePayload.appendix?: AppendixPack`. Hand-seeded for the 2
+existing issues via `src/scripts/seed-appendix.ts` until synthesizer
+Round 2 generates them automatically.
 
 ### Identical INTERVIEW_QUESTIONS appendix on every issue page (fixed 2026-06-16)
 
