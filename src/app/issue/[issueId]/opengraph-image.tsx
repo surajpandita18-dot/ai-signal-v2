@@ -17,7 +17,7 @@ export const contentType = 'image/png'
 export const alt = 'AI Signal — One AI shift that matters'
 
 // Cream-premium palette (token names kept for back-compat in this file)
-const BG = '#fbfaf6'
+const BG = '#fcfbf8'
 const CREAM = '#1a1a1a'         // body ink — token name retained
 const CREAM_DIM = '#525250'     // muted ink
 const LIME = '#c2f53d'

@@ -64,8 +64,8 @@ export const viewport: Viewport = {
   // Browser chrome matches the cream-premium bg so masthead extends
   // edge-to-edge on iOS Safari. Site is light-first now (Lenny's-style).
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fbfaf6' },
-    { media: '(prefers-color-scheme: dark)', color: '#fbfaf6' },
+    { media: '(prefers-color-scheme: light)', color: '#fcfbf8' },
+    { media: '(prefers-color-scheme: dark)', color: '#fcfbf8' },
   ],
 }
 
