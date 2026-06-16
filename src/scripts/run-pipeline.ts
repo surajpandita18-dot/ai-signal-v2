@@ -1,35 +1,97 @@
-// Run the multi-agent critique pipeline on an EXISTING issue.
-// This is the v1 surface — it does NOT regenerate the payload (Round 2
-// editorial agent is the bigger lift). It runs chief + fact-check +
-// readability + 5 personas in parallel, prints scores, writes everything
-// to `issue_agent_runs`, and saves a brief verdict to disk.
+// Run the multi-agent editorial pipeline on an EXISTING issue.
 //
-// Use cases:
-// - Back-fill quality telemetry on existing issues
-// - Decide if an issue needs Suraj's manual edit before send
-// - Surface specific edits for the next synth pass
+// Modes:
+//   (default)       — critique only. Runs critics, prints verdict, writes
+//                     audit rows to issue_agent_runs. Does NOT touch the payload.
+//   --apply         — full loop. Critique → if not converged, snapshot current
+//                     payload to issue_payload_history, editorial-rewrite,
+//                     re-critique. Up to maxRounds=2. Writes revised payload.
+//   --json          — raw JSON output (skips pretty-print)
 //
 // Usage:
 //   npx tsx src/scripts/run-pipeline.ts <issueId>
-//   npx tsx src/scripts/run-pipeline.ts <issueId> --json   # raw output, no pretty-print
+//   npx tsx src/scripts/run-pipeline.ts <issueId> --apply
+//   npx tsx src/scripts/run-pipeline.ts <issueId> --json
 
 import 'dotenv/config'
 import { config as loadDotenv } from 'dotenv'
 loadDotenv({ path: '.env.local', override: true })
 
 import { createAdminSupabaseClient } from '../lib/supabase-admin'
-import { runCriticsRound, buildFeedbackBlock } from '../lib/agents/correction-loop'
+import { buildFeedbackBlock } from '../lib/agents/correction-loop'
 import { runChief } from '../lib/agents/chief-editorial'
 import { runFactCheck } from '../lib/agents/fact-checker'
 import { runReadability } from '../lib/agents/readability'
 import { runPersonaPanel } from '../lib/agents/personas'
+import { runEditorialRewrite } from '../lib/agents/editorial-rewrite'
 import type { IssuePayload } from '../../db/types/database'
+
+const MAX_ROUNDS = 2
+
+// Helpers — refactored out of main() so the apply-mode loop can call them.
+
+async function runCriticRound(
+  issueId: string,
+  payload: IssuePayload,
+  clusterEvidence: Array<{
+    id: string
+    label: string
+    sample_items: Array<{ title: string; url: string; excerpt: string }>
+  }>,
+  round: number
+) {
+  const t0 = Date.now()
+  const [chief, factcheck, readability, personas] = await Promise.all([
+    runChief({ issueId, payload, round }),
+    runFactCheck({ issueId, payload, clusterEvidence, round }),
+    runReadability({ issueId, payload, round }),
+    runPersonaPanel({ issueId, payload, round }),
+  ])
+  const wallMs = Date.now() - t0
+  const verdict = {
+    round,
+    chief_severity_max: chief.severity_max,
+    contradicted_count: factcheck.contradicted_count,
+    forward_rate: personas.forward_rate,
+    scannability_score: readability.scannability_score,
+    blocking_edits_count: chief.edits.filter((e) => e.severity >= 3).length,
+    pass:
+      chief.severity_max <= 2 &&
+      factcheck.contradicted_count === 0 &&
+      personas.forward_rate >= 0.6,
+  }
+  return { verdict, chief, factcheck, readability, personas, wallMs }
+}
+
+function printRound(
+  label: string,
+  v: ReturnType<typeof Object> & {
+    round: number
+    chief_severity_max: number
+    contradicted_count: number
+    forward_rate: number
+    scannability_score: number
+    pass: boolean
+    blocking_edits_count: number
+  },
+  wallMs: number
+) {
+  console.log(`━━━ ${label} ━━━`)
+  console.log(`  Pass:                  ${v.pass ? '✓ converged' : '✗ needs revision'}`)
+  console.log(`  Chief severity (max):  ${v.chief_severity_max} / 5  (≤2 to pass)`)
+  console.log(`  Fact contradictions:   ${v.contradicted_count}  (0 to pass)`)
+  console.log(`  Persona forward rate:  ${(v.forward_rate * 100).toFixed(0)}%  (≥60% to pass)`)
+  console.log(`  Readability score:     ${v.scannability_score} / 10`)
+  console.log(`  Wall-clock:            ${(wallMs / 1000).toFixed(1)}s`)
+  console.log()
+}
 
 async function main() {
   const issueId = process.argv[2]
   const jsonOnly = process.argv.includes('--json')
+  const apply = process.argv.includes('--apply')
   if (!issueId) {
-    console.error('Usage: npx tsx src/scripts/run-pipeline.ts <issueId> [--json]')
+    console.error('Usage: npx tsx src/scripts/run-pipeline.ts <issueId> [--apply] [--json]')
     process.exit(1)
   }
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -98,54 +160,93 @@ async function main() {
   }))
 
   if (!jsonOnly) {
-    console.log(`▶ Running critic round on issue ${issueId}`)
+    console.log(`▶ Running pipeline on issue ${issueId} ${apply ? '(APPLY mode — will revise payload)' : '(critique only)'}`)
     console.log(`  ${clusterEvidence.length} clusters of evidence loaded`)
     console.log()
   }
 
-  // Run round 0 (initial). We keep the four critics + persona panel calls
-  // independent so we get all four sub-results back (correction-loop's
-  // runCriticsRound only returns the aggregate). Run them directly here for
-  // the verbose CLI output; results are still persisted to issue_agent_runs
-  // by the underlying runAgent helper.
-  const t0 = Date.now()
-  const [chief, factcheck, readability, personas] = await Promise.all([
-    runChief({ issueId, payload, round: 0 }),
-    runFactCheck({ issueId, payload, clusterEvidence, round: 0 }),
-    runReadability({ issueId, payload, round: 0 }),
-    runPersonaPanel({ issueId, payload, round: 0 }),
-  ])
-  const wallMs = Date.now() - t0
+  // Round 0 — always runs.
+  let working: IssuePayload = payload
+  let { verdict, chief, factcheck, readability, personas, wallMs } =
+    await runCriticRound(issueId, working, clusterEvidence, 0)
 
-  // Also call the aggregator for convergence calc (does not re-call API
-  // since runAgent has no internal cache; we'd duplicate API calls).
-  // Build the round result manually instead.
-  const round = {
-    round: 0,
-    chief_severity_max: chief.severity_max,
-    contradicted_count: factcheck.contradicted_count,
-    forward_rate: personas.forward_rate,
-    scannability_score: readability.scannability_score,
-    pass:
-      chief.severity_max <= 2 &&
-      factcheck.contradicted_count === 0 &&
-      personas.forward_rate >= 0.6,
-    blocking_edits_count: chief.edits.filter((e) => e.severity >= 3).length,
-  }
-
-  if (jsonOnly) {
-    console.log(JSON.stringify({ issueId, round, chief, factcheck, readability, personas, wallMs }, null, 2))
+  if (jsonOnly && !apply) {
+    console.log(JSON.stringify({ issueId, round: verdict, chief, factcheck, readability, personas, wallMs }, null, 2))
     process.exit(0)
   }
 
-  console.log('━━━ ROUND 0 VERDICT ━━━')
-  console.log(`  Pass:                  ${round.pass ? '✓ converged' : '✗ needs revision'}`)
-  console.log(`  Chief severity (max):  ${round.chief_severity_max} / 5  (≤2 to pass)`)
-  console.log(`  Fact contradictions:   ${round.contradicted_count}  (0 to pass)`)
-  console.log(`  Persona forward rate:  ${(round.forward_rate * 100).toFixed(0)}%  (≥60% to pass)`)
-  console.log(`  Readability score:     ${round.scannability_score} / 10`)
-  console.log(`  Wall-clock:            ${(wallMs / 1000).toFixed(1)}s`)
-  console.log()
+  if (!jsonOnly) printRound('ROUND 0 VERDICT', verdict, wallMs)
+
+  // Apply mode — if round 0 didn't converge, snapshot the original and
+  // run the rewrite + re-critique loop up to MAX_ROUNDS.
+  let revised = false
+  if (apply && !verdict.pass) {
+    if (!jsonOnly) {
+      console.log('▶ Round 0 did not converge — entering rewrite loop.')
+      console.log()
+    }
+    // Snapshot original payload BEFORE the first rewrite — irreversible
+    // safety net for the diff at /review/<id>?compare=previous.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (s.from('issue_payload_history' as any) as any).insert({
+      issue_id: issueId,
+      snapshot: payload,
+      reason: 'rerun-pipeline',
+    })
+
+    for (let round = 1; round <= MAX_ROUNDS; round++) {
+      const fb = buildFeedbackBlock({ chief, factcheck, readability, personas })
+      if (!jsonOnly) {
+        console.log(`▶ Round ${round}: editorial rewrite…`)
+      }
+      const t0 = Date.now()
+      try {
+        working = await runEditorialRewrite({
+          issueId,
+          currentPayload: working,
+          feedbackBlock: fb,
+          round,
+        })
+      } catch (e) {
+        console.error(`Round ${round} editorial-rewrite failed:`, e instanceof Error ? e.message : String(e))
+        break
+      }
+      const rewriteMs = Date.now() - t0
+      if (!jsonOnly) console.log(`  rewrite done in ${(rewriteMs / 1000).toFixed(1)}s`)
+
+      const next = await runCriticRound(issueId, working, clusterEvidence, round)
+      verdict = next.verdict
+      chief = next.chief
+      factcheck = next.factcheck
+      readability = next.readability
+      personas = next.personas
+      revised = true
+      if (!jsonOnly) printRound(`ROUND ${round} VERDICT`, verdict, next.wallMs)
+      if (verdict.pass) break
+    }
+
+    // Write the revised payload back. status stays whatever it was — we
+    // do NOT auto-publish (rule #3). If convergence failed in 2 rounds,
+    // flip to awaiting_human so Suraj sees it on /review.
+    const newStatus = verdict.pass ? undefined : 'awaiting_human'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const upd = await (s.from('issues' as any) as any)
+      .update(newStatus ? { payload: working, status: newStatus } : { payload: working })
+      .eq('id', issueId)
+    if (upd.error) {
+      console.error('Failed to write revised payload:', upd.error.message)
+      process.exit(1)
+    }
+    if (!jsonOnly) {
+      console.log(`✓ Revised payload written. ${verdict.pass ? 'Converged.' : `Did not converge in ${MAX_ROUNDS} rounds → status='awaiting_human'.`}`)
+      console.log()
+    }
+  }
+
+  if (jsonOnly) {
+    console.log(JSON.stringify({ issueId, round: verdict, chief, factcheck, readability, personas, revised }, null, 2))
+    process.exit(0)
+  }
 
   console.log('━━━ CHIEF EDITORIAL EDITS ━━━')
   if (chief.edits.length === 0) {
@@ -201,7 +302,11 @@ async function main() {
   console.log(fb)
   console.log()
 
-  console.log(`✓ Round 0 complete. ${round.pass ? 'No revision needed.' : 'Revision recommended.'}`)
+  if (apply) {
+    console.log(`✓ Loop complete. Final verdict: ${verdict.pass ? 'converged' : 'awaiting human'}. ${revised ? 'Payload was revised.' : 'Payload unchanged (round 0 passed).'}`)
+  } else {
+    console.log(`✓ Round 0 complete. ${verdict.pass ? 'No revision needed.' : 'Revision recommended — re-run with --apply.'}`)
+  }
   console.log(`  All agent outputs logged to issue_agent_runs for ${issueId}.`)
 }
 
