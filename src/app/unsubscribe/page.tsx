@@ -59,7 +59,7 @@ export default async function UnsubscribePage({
       <SiteNav />
 
       <main className="mx-auto max-w-read px-5 py-20 sm:px-8 sm:py-28">
-        <div className="font-mono text-[11px] tracking-label text-lime-soft">
+        <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">
           ONE-TAP UNSUBSCRIBE
         </div>
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[52px]">
@@ -95,7 +95,7 @@ export default async function UnsubscribePage({
           {outcome === 'removed' || outcome === 'already' ? (
             <Link
               href="/subscribe"
-              className="inline-flex min-h-[44px] items-center self-center font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-fg"
+              className="inline-flex min-h-[44px] items-center self-center  text-[12px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-fg"
             >
               CHANGED YOUR MIND? RESUBSCRIBE →
             </Link>

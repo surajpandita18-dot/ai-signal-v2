@@ -1,5 +1,6 @@
-// Site nav — cream bar on dark page (Figr design). Sticky top.
-// Replaces v2's dark bar with cream nav. Logo uses signal bars motif.
+// Site nav — Lenny v5: bright bar with ink text + hairline below. Sticky top.
+// Drops v3's dark masthead (was using legacy bg-cream which token-flipped to
+// ink under the cream-premium palette, leaving an unintended dark band).
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
@@ -11,46 +12,46 @@ export default function SiteNav({
   subscribed?: boolean
 }) {
   return (
-    <header className="sticky top-0 z-40 bg-cream text-bg">
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur supports-[backdrop-filter]:bg-bg/70">
       <div className="mx-auto flex h-14 max-w-shell items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-baseline gap-2.5">
+        <Link href="/" className="flex items-baseline gap-2.5 text-fg">
           <SignalBars color="currentColor" className="self-center" />
-          <span className="font-serif text-[20px] font-semibold tracking-tight">
+          <span className="font-serif text-[20px] font-semibold tracking-[-0.01em]">
             AI Signal
           </span>
         </Link>
         <nav className="flex items-center gap-5 sm:gap-7">
           <Link
             href="/#archive"
-            className="hidden font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg sm:inline"
+            className="hidden text-[13px] font-medium text-fg-muted transition-colors hover:text-fg sm:inline"
           >
-            ISSUES
+            Issues
           </Link>
           <Link
             href="/watchlist"
-            className="hidden font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg sm:inline"
+            className="hidden text-[13px] font-medium text-fg-muted transition-colors hover:text-fg sm:inline"
           >
-            WATCHLIST
+            Watchlist
           </Link>
           <Link
             href="/about"
-            className="hidden font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg sm:inline"
+            className="hidden text-[13px] font-medium text-fg-muted transition-colors hover:text-fg sm:inline"
           >
-            ABOUT
+            About
           </Link>
           {subscribed ? (
-            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-[0.12em] text-bg/80">
-              SUBSCRIBED ✓
+            <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-lime-soft">
+              Subscribed ✓
             </span>
           ) : (
             <Link
               href="/subscribe"
-              className="group inline-flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-1.5 text-[13px] font-semibold text-bg transition-colors hover:bg-fg-muted"
             >
-              SUBSCRIBE
+              Subscribe
               <ArrowRight
                 size={13}
-                strokeWidth={2}
+                strokeWidth={2.5}
                 className="transition-transform group-hover:translate-x-0.5"
               />
             </Link>

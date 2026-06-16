@@ -56,7 +56,7 @@ export default async function DeepDiveReviewPage() {
       <SiteNav />
 
       <main className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
-        <div className="font-mono text-[11px] tracking-label text-lime-soft">
+        <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">
           ADMIN · DISCOVERY QUEUE
         </div>
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[52px]">
@@ -74,7 +74,7 @@ export default async function DeepDiveReviewPage() {
         <div className="mt-10 grid grid-cols-2 gap-px border border-line bg-line sm:grid-cols-4">
           {AUDIENCE_ORDER.map((a) => (
             <div key={a} className="flex flex-col bg-bg p-5">
-              <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+              <span className=" text-[10px] font-medium tracking-[0.08em] text-fg-subtle">
                 {AUDIENCE_LABEL[a]}
               </span>
               <span className="mt-2 font-serif text-3xl font-semibold text-lime">
@@ -90,7 +90,7 @@ export default async function DeepDiveReviewPage() {
             <h2 className="font-serif text-2xl font-medium tracking-tight text-fg sm:text-3xl">
               Pending ({pending?.length ?? 0})
             </h2>
-            <p className="font-mono text-[11px] tracking-label text-fg-subtle">
+            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-subtle">
               SORTED BY SCORE
             </p>
           </div>
@@ -116,7 +116,7 @@ export default async function DeepDiveReviewPage() {
             </div>
           ) : (
             <div className="border border-line-strong bg-bg-raised p-8 text-center">
-              <p className="font-mono text-[12px] tracking-label text-fg-subtle">
+              <p className=" text-[12px] font-medium tracking-[0.08em] text-fg-subtle">
                 NO CANDIDATES IN QUEUE.
               </p>
               <p className="mt-3 font-mono text-[12px] text-fg-muted">
@@ -139,14 +139,14 @@ export default async function DeepDiveReviewPage() {
                     <p className="font-serif text-[16px] text-fg">
                       {c.assumption_challenged}
                     </p>
-                    <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                    <span className=" text-[10px] font-medium tracking-[0.08em] text-fg-subtle">
                       {AUDIENCE_LABEL[c.primary_audience as DeepDiveAudience]}
                     </span>
                   </div>
                   {c.chosen_issue_id ? (
                     <Link
                       href={`/issue/${c.chosen_issue_id}`}
-                      className="mt-1 inline-block font-mono text-[11px] tracking-label text-lime hover:text-fg"
+                      className="mt-1 inline-block  text-[11px] font-medium tracking-[0.08em] text-lime hover:text-fg"
                     >
                       ISSUE {c.chosen_issue_id.slice(0, 8)} →
                     </Link>

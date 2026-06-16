@@ -94,7 +94,7 @@ export default async function IssuePage({
       <div className="min-h-screen bg-bg font-sans text-fg">
         <SiteNav subscribed={subscribed} />
         <div className="mx-auto max-w-read px-5 py-20 sm:px-8">
-          <p className="font-mono text-[12px] tracking-label text-fg-muted">
+          <p className=" text-[12px] font-medium tracking-[0.08em] text-fg-muted">
             ISSUE DRAFT IN PROGRESS — CHECK BACK IN A FEW MINUTES.
           </p>
         </div>

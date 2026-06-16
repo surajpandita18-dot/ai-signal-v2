@@ -57,7 +57,7 @@ export default function CandidateCard(props: Props) {
   return (
     <article className="border-l-2 border-lime bg-card px-6 py-7 sm:px-8 sm:py-8">
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="font-mono text-[11px] font-semibold tracking-label text-lime-soft">
+        <span className=" text-[11px] font-medium font-semibold tracking-[0.08em] text-lime-soft">
           {AUDIENCE_LABEL[props.audience]}
         </span>
         {typeof props.score === 'number' ? (
@@ -78,7 +78,7 @@ export default function CandidateCard(props: Props) {
 
       {props.evidenceUrls.length ? (
         <details className="mt-5">
-          <summary className="cursor-pointer font-mono text-[11px] tracking-label text-lime hover:text-fg">
+          <summary className="cursor-pointer  text-[11px] font-medium tracking-[0.08em] text-lime hover:text-fg">
             {props.evidenceUrls.length} ANCHOR URL{props.evidenceUrls.length === 1 ? '' : 'S'}
           </summary>
           <ul className="mt-3 space-y-1.5">
@@ -127,7 +127,7 @@ export default function CandidateCard(props: Props) {
             <button
               type="button"
               onClick={() => setShowReject(false)}
-              className="font-mono text-[11px] tracking-label text-fg-subtle hover:text-fg"
+              className=" text-[11px] font-medium tracking-[0.08em] text-fg-subtle hover:text-fg"
             >
               CANCEL
             </button>
@@ -137,7 +137,7 @@ export default function CandidateCard(props: Props) {
             type="button"
             onClick={() => setShowReject(true)}
             disabled={pending}
-            className="font-mono text-[11px] tracking-label text-fg-subtle hover:text-danger disabled:opacity-50"
+            className=" text-[11px] font-medium tracking-[0.08em] text-fg-subtle hover:text-danger disabled:opacity-50"
           >
             REJECT
           </button>

@@ -43,7 +43,7 @@ export default async function AboutPage() {
       <SiteNav subscribed={subscribed} />
 
       <main className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
-        <div className="font-mono text-[11px] tracking-label text-lime-soft">ABOUT</div>
+        <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">ABOUT</div>
         <h1 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
           A weekly AI brief from Bangalore, for builders anywhere.
         </h1>
@@ -85,7 +85,7 @@ export default async function AboutPage() {
 
             {excerptHeadline && latest ? (
               <div className="mt-8 border-t border-line pt-8">
-                <div className="font-mono text-[11px] tracking-label text-lime-soft">
+                <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">
                   FROM THE LAST ISSUE
                 </div>
                 <h2 className="mt-3 font-serif text-2xl font-medium tracking-tight text-fg sm:text-[28px]">
@@ -99,7 +99,7 @@ export default async function AboutPage() {
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   {excerptArchetype ? (
                     <div className="border-l-2 border-lime bg-bg-raised p-5">
-                      <p className="font-mono text-[11px] tracking-label text-fg-muted">
+                      <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                         WRITTEN FOR
                       </p>
                       <p className="mt-2 font-serif text-[16px] italic leading-snug text-fg">
@@ -109,7 +109,7 @@ export default async function AboutPage() {
                   ) : null}
                   {excerptHack ? (
                     <div className="border-l-2 border-line-strong bg-bg-raised p-5">
-                      <p className="font-mono text-[11px] tracking-label text-fg-muted">
+                      <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                         PRODUCTION HACK
                       </p>
                       <p className="mt-2 font-serif text-[16px] font-medium leading-snug text-fg">
@@ -120,7 +120,7 @@ export default async function AboutPage() {
                 </div>
                 <Link
                   href={`/issue/${latest.id}`}
-                  className="mt-6 inline-flex min-h-[44px] items-center gap-2 font-mono text-[12px] tracking-label text-cream-dim transition-colors hover:text-lime"
+                  className="mt-6 inline-flex min-h-[44px] items-center gap-2  text-[12px] font-medium tracking-[0.08em] text-cream-dim transition-colors hover:text-lime"
                 >
                   READ THE FULL ISSUE
                   <ArrowRight size={13} strokeWidth={2.25} />
@@ -142,7 +142,7 @@ export default async function AboutPage() {
                 key={row.k}
                 className={`flex flex-col gap-2 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
               >
-                <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                   {row.k}
                 </span>
                 <span className="text-[15px] leading-[1.55] text-cream-dim">{row.v}</span>
@@ -153,7 +153,7 @@ export default async function AboutPage() {
 
         {subscribed ? (
           <div className="mt-16 flex flex-col gap-2 border border-lime/40 bg-card p-6">
-            <div className="font-mono text-[11px] tracking-label text-lime">
+            <div className=" text-[11px] font-medium tracking-[0.08em] text-lime">
               SUBSCRIBED ✓
             </div>
             <p className="text-[15px] leading-relaxed text-fg-muted">

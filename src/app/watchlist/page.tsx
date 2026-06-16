@@ -74,12 +74,12 @@ export default async function WatchlistPage() {
         <div className="mx-auto max-w-read px-5 pb-12 pt-14 sm:px-8 sm:pt-20">
           <Link
             href="/"
-            className="mb-10 inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] tracking-label text-fg-muted transition-colors hover:text-fg"
+            className="mb-10 inline-flex min-h-[44px] items-center gap-2  text-[11px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-fg"
           >
             <ArrowLeft size={13} strokeWidth={2} />
             HOME
           </Link>
-          <div className="mb-7 font-mono text-[11px] tracking-label text-fg-muted">
+          <div className="mb-7  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
             THE WATCHLIST
             <span className="mx-3 text-line-strong">·</span>
             UPDATED {fmtDate(WATCHLIST_META.updated)}
@@ -104,7 +104,7 @@ export default async function WatchlistPage() {
       <main className="mx-auto max-w-read px-5 sm:px-8">
         {/* SECTION 1 — API price log */}
         <section className="scroll-mt-32 border-b border-line py-16 sm:py-20">
-          <p className="font-mono text-[11px] tracking-label text-fg-muted">
+          <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
             01 · API PRICE LOG
           </p>
           <h2 className="mt-4 font-serif text-[32px] font-medium leading-[1.1] tracking-tight text-fg sm:text-[40px]">
@@ -119,7 +119,7 @@ export default async function WatchlistPage() {
 
           <div className="mt-10 overflow-x-auto">
             <div className="min-w-[680px] border-t border-b border-line-strong">
-              <div className="grid grid-cols-[1.6fr_1fr_0.9fr_0.9fr_0.6fr_2fr] border-b border-line font-mono text-[10px] tracking-label text-fg-muted">
+              <div className="grid grid-cols-[1.6fr_1fr_0.9fr_0.9fr_0.6fr_2fr] border-b border-line  text-[10px] font-medium tracking-[0.08em] text-fg-muted">
                 <div className="py-3">MODEL</div>
                 <div className="py-3 text-right">CONTEXT</div>
                 <div className="py-3 text-right">USD/M</div>
@@ -136,7 +136,7 @@ export default async function WatchlistPage() {
 
         {/* SECTION 2 — Regulation status */}
         <section className="scroll-mt-32 border-b border-line py-16 sm:py-20">
-          <p className="font-mono text-[11px] tracking-label text-fg-muted">
+          <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
             02 · REGULATION STATUS
           </p>
           <h2 className="mt-4 font-serif text-[32px] font-medium leading-[1.1] tracking-tight text-fg sm:text-[40px]">
@@ -159,7 +159,7 @@ export default async function WatchlistPage() {
 
         {/* SECTION 3 — Enterprise deal log */}
         <section className="scroll-mt-32 py-16 sm:py-20">
-          <p className="font-mono text-[11px] tracking-label text-fg-muted">
+          <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
             03 · ENTERPRISE DEAL LOG
           </p>
           <h2 className="mt-4 font-serif text-[32px] font-medium leading-[1.1] tracking-tight text-fg sm:text-[40px]">
@@ -248,7 +248,7 @@ function RegRowView({ r, isFirst }: { r: RegulationRow; isFirst: boolean }) {
     >
       <div className="flex shrink-0 flex-col gap-3 sm:w-56">
         <span
-          className={`inline-block w-fit px-2.5 py-1 font-mono text-[10px] tracking-label ${tint.bg} ${tint.fg}`}
+          className={`inline-block w-fit px-2.5 py-1  text-[10px] font-medium tracking-[0.08em] ${tint.bg} ${tint.fg}`}
         >
           {tint.label}
         </span>
@@ -256,7 +256,7 @@ function RegRowView({ r, isFirst }: { r: RegulationRow; isFirst: boolean }) {
           <h3 className="font-serif text-[20px] font-medium leading-tight tracking-tight text-fg">
             {r.policy}
           </h3>
-          <p className="mt-2 font-mono text-[10px] tracking-label text-fg-muted">
+          <p className="mt-2  text-[10px] font-medium tracking-[0.08em] text-fg-muted">
             {r.body}
             <span className="mx-2 text-line-strong">·</span>
             UPD {fmtDate(r.last_update)}
@@ -284,10 +284,10 @@ function DealRowView({ d, index }: { d: DealRow; index: number }) {
         <span className="font-serif text-[15px] italic text-lime">
           {String(index + 1).padStart(2, '0')}
         </span>
-        <span className="font-mono text-[10px] tracking-label text-fg-muted">
+        <span className=" text-[10px] font-medium tracking-[0.08em] text-fg-muted">
           {BEAT_LABEL[d.beat]}
         </span>
-        <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+        <span className=" text-[10px] font-medium tracking-[0.08em] text-fg-subtle">
           {d.signed.toUpperCase()}
         </span>
       </div>

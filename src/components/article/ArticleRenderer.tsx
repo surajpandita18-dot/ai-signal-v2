@@ -74,8 +74,7 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
             <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
               The signal
             </p>
-            <p className="mt-6 font-serif text-[26px] font-medium leading-[1.25] tracking-[-0.005em] text-fg sm:text-[36px]">
-              <span className="mr-3 inline-block h-[10px] w-[10px] -translate-y-1 rounded-full bg-lime-bright" aria-hidden />
+            <p className="mt-6 font-serif text-[26px] font-medium leading-[1.3] tracking-[-0.005em] text-fg sm:text-[36px]">
               {issue.signal_of_the_week}
             </p>
           </div>
@@ -187,7 +186,7 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
             — Suraj, Bengaluru
           </p>
 
-          <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-7 font-mono text-[12px] tracking-label">
+          <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-7  text-[12px] font-medium tracking-[0.08em]">
             <Link
               href="/#subscribe"
               className="group inline-flex min-h-[44px] items-center text-fg transition-colors hover:text-lime"

@@ -47,8 +47,9 @@ export default function SiteFooter() {
               </span>
             </div>
             <p className="mt-3 max-w-xs text-[15px] leading-[1.55] text-fg-muted">
-              One AI shift that matters. Every Monday. Written for Indian
-              builders, by people shipping alongside you.
+              One AI shift that matters. Every Monday. Written from Bangalore
+              for builders anywhere — India regulation, INR math, and the
+              global frontier in every issue.
             </p>
           </div>
           <div className="flex gap-12 font-mono text-[11px] tracking-label text-fg-muted">

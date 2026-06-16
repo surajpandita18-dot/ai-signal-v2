@@ -43,7 +43,7 @@ export default function HomeSubscribeForm() {
         aria-live="polite"
         className="flex flex-col gap-2 border border-lime/40 bg-card px-5 py-4"
       >
-        <div className="font-mono text-[11px] tracking-label text-lime">
+        <div className=" text-[11px] font-medium tracking-[0.08em] text-lime">
           ON THE LIST ✓
         </div>
         <p className="text-[15px] leading-relaxed text-fg-muted">

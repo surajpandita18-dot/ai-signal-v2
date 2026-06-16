@@ -39,7 +39,7 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
   return (
     <section className="border-t border-line">
       <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-        <p className="font-mono text-[11px] tracking-label text-fg-muted">
+        <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
           INTERVIEW DRILLS · GENERATED FROM THIS WEEK
         </p>
         <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
@@ -58,7 +58,7 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
                 <span className="font-serif text-[15px] italic text-lime">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                   {DRILL_LABEL[d.kind]}
                 </span>
               </div>
@@ -70,7 +70,7 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
                   {d.asked_at.map((surface, j) => (
                     <span
                       key={j}
-                      className="border border-line-strong px-3 py-1 font-mono text-[10px] tracking-label text-fg-muted"
+                      className="border border-line-strong px-3 py-1  text-[10px] font-medium tracking-[0.08em] text-fg-muted"
                     >
                       {surface}
                     </span>
@@ -78,7 +78,7 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
                 </div>
               )}
               <details className="group mt-6">
-                <summary className="cursor-pointer font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-lime list-none [&::-webkit-details-marker]:hidden">
+                <summary className="cursor-pointer  text-[12px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-lime list-none [&::-webkit-details-marker]:hidden">
                   <span className="inline-block group-open:hidden">
                     ▸ SHOW WHAT A STRONG ANSWER TOUCHES
                   </span>
@@ -109,7 +109,7 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
   return (
     <section className="border-t border-line">
       <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-        <p className="font-mono text-[11px] tracking-label text-fg-muted">
+        <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
           IF YOU WANT TO GO DEEPER THIS WEEK
         </p>
         <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
@@ -119,7 +119,7 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Articles — 3 max, one per major beat */}
         {pack.articles.length > 0 && (
           <div className="mt-10">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
               ARTICLES
             </p>
             <ul className="mt-5 flex flex-col gap-6">
@@ -133,7 +133,7 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Video / podcast — single slot */}
         {pack.video && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
               WATCH · LISTEN
             </p>
             <ul className="mt-5">
@@ -145,7 +145,7 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Paper — single slot */}
         {pack.paper && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className="font-mono text-[11px] tracking-label text-fg-muted">
+            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
               PAPER
             </p>
             <ul className="mt-5">
@@ -157,7 +157,7 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Indian builder in production — the differentiator slot */}
         {pack.indian_builder && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className="font-mono text-[11px] tracking-label text-lime">
+            <p className=" text-[11px] font-medium tracking-[0.08em] text-lime">
               SHIPPED FROM INDIA · IN PRODUCTION
             </p>
             <ul className="mt-5">
@@ -182,11 +182,11 @@ function ResourceRow({ r, accent }: { r: ResourceLink; accent?: boolean }) {
         }`}
       >
         {r.title}
-        <span className="ml-2 align-[2px] font-mono text-[11px] tracking-label text-fg-muted">
+        <span className="ml-2 align-[2px]  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
           ↗
         </span>
       </a>
-      <p className="font-mono text-[11px] tracking-label text-fg-muted">
+      <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
         {r.source.toUpperCase()}
       </p>
       <p className="mt-1 max-w-[560px] text-[15px] leading-[1.6] text-cream-dim">

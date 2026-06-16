@@ -32,7 +32,7 @@ export default async function SubscribePage() {
       <main className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
         {subscribed ? (
           <div className="mx-auto max-w-read">
-            <div className="font-mono text-[11px] tracking-label text-lime">
+            <div className=" text-[11px] font-medium tracking-[0.08em] text-lime">
               ON THE LIST ✓
             </div>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
@@ -57,7 +57,7 @@ export default async function SubscribePage() {
               </Link>
               <Link
                 href="/about"
-                className="inline-flex min-h-[44px] items-center self-center font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-fg"
+                className="inline-flex min-h-[44px] items-center self-center  text-[12px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-fg"
               >
                 ABOUT →
               </Link>
@@ -66,7 +66,7 @@ export default async function SubscribePage() {
         ) : (
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
             <div>
-              <div className="font-mono text-[11px] tracking-label text-lime-soft">
+              <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">
                 THE MONDAY BRIEF · WRITTEN FROM BANGALORE · READ WORLDWIDE
               </div>
               <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
@@ -87,13 +87,13 @@ export default async function SubscribePage() {
             </div>
 
             <aside className="border border-line-strong bg-bg-raised p-7 sm:p-8">
-              <div className="font-mono text-[11px] tracking-label text-lime-soft">
+              <div className=" text-[11px] font-medium tracking-[0.08em] text-lime-soft">
                 EVERY MONDAY · 7:30 AM IST
               </div>
               <ul className="mt-7 flex flex-col gap-6">
                 {WHAT_YOU_GET.map(([label, body]) => (
                   <li key={label} className="flex flex-col gap-1.5">
-                    <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                    <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                       {label}
                     </span>
                     <span className="text-[15px] leading-[1.6] text-cream-dim">

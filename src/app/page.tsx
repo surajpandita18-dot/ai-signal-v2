@@ -119,86 +119,105 @@ export default async function HomePage() {
     <div className="min-h-screen bg-bg font-sans text-fg">
       <SiteNav subscribed={subscribed} />
 
-      {/* HERO */}
-      <section id="subscribe" className="relative border-b border-line">
-        <div className="relative mx-auto grid max-w-shell grid-cols-1 lg:grid-cols-[1.42fr_1fr]">
-          <div className="flex flex-col justify-center px-5 py-16 sm:px-8 lg:border-r lg:border-line lg:py-24 lg:pr-14">
-            <div className="reveal d-1 mb-7 flex items-center gap-2.5 font-mono text-[11px] tracking-label text-lime-soft">
-              <span className="h-1.5 w-1.5 rounded-full bg-lime-bright" />
-              THE MONDAY BRIEF · WRITTEN FROM BANGALORE · READ WORLDWIDE
-            </div>
-            <h1 className="reveal d-2 font-serif text-[44px] font-semibold leading-[1.02] tracking-tight text-fg sm:text-6xl">
-              One AI shift
-              <br />
-              that matters.
-              <br />
-              <span className="text-fg-muted">Every Monday.</span>
-            </h1>
-            <p className="reveal d-3 mt-6 max-w-md text-[16px] leading-[1.65] text-fg-muted sm:text-[17px]">
-              The single move reshaping the AI stack this week — what
-              happened, who it&apos;s for, what to do Monday. Written from
-              Bangalore. India regulation + INR math + the global frontier
-              every issue. For builders anywhere.
-            </p>
+      {/* HERO — Lenny v5: clean center-left, no dark card, no two-column.
+          Big serif headline, prominent inline subscribe block, featured
+          issue rendered below the fold as a single editorial card. */}
+      <section id="subscribe" className="border-b border-line">
+        <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
+          <div className="reveal d-1 mb-7 inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
+            <span className="h-1.5 w-1.5 rounded-full bg-lime-bright" />
+            The Monday brief
+          </div>
+          <h1 className="reveal d-2 max-w-[820px] font-serif text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-fg sm:text-[72px]">
+            One AI shift that matters.{' '}
+            <span className="text-fg-muted">Every Monday.</span>
+          </h1>
+          <p className="reveal d-3 mt-8 max-w-[640px] text-[18px] leading-[1.6] text-fg-muted sm:text-[20px]">
+            The single move reshaping the AI stack each week — what
+            happened, who it&apos;s for, what to do Monday. Written from
+            Bangalore. India regulation, INR math, and the global frontier.
+            For builders anywhere.
+          </p>
 
-            <div className="reveal d-4 mt-9 max-w-lg">
-              {subscribed ? (
-                <div className="flex flex-col gap-2 border border-line-strong bg-card px-5 py-4">
-                  <div className="font-mono text-[11px] tracking-label text-lime">
-                    SUBSCRIBED ✓
-                  </div>
-                  <p className="text-[15px] leading-relaxed text-fg-muted">
-                    Your next brief lands Monday 7:30 AM IST. Scroll for the
-                    latest issue.
-                  </p>
-                </div>
-              ) : (
-                <HomeSubscribeForm />
-              )}
-              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.06em] text-fg-muted">
-                <span>FREE FOREVER</span>
-                <span className="text-line-strong">/</span>
-                <span>6-MIN READ</span>
-                <span className="text-line-strong">/</span>
-                <span>WRITTEN IN BENGALURU</span>
+          <div className="reveal d-4 mt-10 max-w-[560px]">
+            {subscribed ? (
+              <div className="rounded-2xl border border-line bg-card px-6 py-5">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
+                  Subscribed ✓
+                </p>
+                <p className="mt-2 text-[15px] leading-relaxed text-fg-muted">
+                  Your next brief lands Monday 7:30 AM IST. Scroll for the
+                  latest issue.
+                </p>
               </div>
+            ) : (
+              <HomeSubscribeForm />
+            )}
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-fg-muted">
+              <span>Free forever</span>
+              <span aria-hidden className="text-fg-subtle">·</span>
+              <span>6-min read</span>
+              <span aria-hidden className="text-fg-subtle">·</span>
+              <span>Written in Bengaluru</span>
             </div>
           </div>
 
-          {featured ? (
-            <div className="flex flex-col justify-center bg-bg-raised px-5 py-12 sm:px-8 lg:py-24 lg:pl-12">
-              <div className="reveal d-3 mb-5 flex items-center gap-2 font-mono text-[11px] tracking-label text-fg-muted">
-                <CornerDownRight size={13} strokeWidth={2} />
-                THIS WEEK · ISSUE {featured.no}
-              </div>
-              <div className="reveal d-4 border-l-2 border-lime pl-5">
-                <h2 className="font-serif text-[26px] font-semibold leading-[1.1] tracking-tight text-fg sm:text-[30px]">
-                  {featured.title}
-                </h2>
-                <p className="mt-4 text-[16px] leading-[1.6] text-cream-dim">
-                  {featured.dek}
-                </p>
-              </div>
-              <div className="reveal d-6 mt-8 flex min-h-[44px] flex-col justify-center">
-                <Link
-                  href={`/issue/${featured.id}`}
-                  className="group inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-cream transition-colors hover:text-lime"
-                >
-                  READ THIS ISSUE FREE
-                  <ArrowRight
-                    size={14}
-                    strokeWidth={2.25}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-                </Link>
-                <p className="mt-2 text-[14px] text-fg-muted">
-                  …then get the next one Monday.
-                </p>
-              </div>
+          {/* Author byline — Lenny presence */}
+          <div className="mt-12 flex items-center gap-4 border-t border-line pt-7">
+            <span
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-lime-bright font-serif text-[18px] font-bold text-fg"
+              aria-hidden
+            >
+              S
+            </span>
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[15px] font-semibold text-fg">
+                Suraj Pandita
+              </p>
+              <p className="text-[13px] text-fg-muted">
+                Working AI engineer · Writes from Bangalore · Replies to every email
+              </p>
             </div>
-          ) : null}
+          </div>
         </div>
       </section>
+
+      {/* FEATURED ISSUE — single Lenny-style hero card under the masthead. */}
+      {featured ? (
+        <section className="border-b border-line bg-bg-raised">
+          <div className="mx-auto max-w-shell px-5 py-12 sm:px-8 sm:py-16">
+            <div className="flex flex-wrap items-baseline gap-x-4 text-[13px] font-medium text-fg-muted">
+              <CornerDownRight size={14} strokeWidth={2} className="self-center" />
+              <span className="font-semibold uppercase tracking-[0.08em] text-fg">
+                This week · Issue {featured.no}
+              </span>
+              <span aria-hidden className="text-fg-subtle">·</span>
+              <span>{featured.archiveDate}</span>
+            </div>
+            <Link
+              href={`/issue/${featured.id}`}
+              className="group mt-6 block max-w-[820px] border-l-[3px] border-lime-bright pl-6 transition-colors hover:border-lime"
+            >
+              <h2 className="font-serif text-[34px] font-semibold leading-[1.05] tracking-[-0.015em] text-fg group-hover:text-lime-soft sm:text-[44px]">
+                {featured.title}
+              </h2>
+              {featured.dek ? (
+                <p className="mt-5 text-[18px] leading-[1.55] text-fg-muted sm:text-[20px]">
+                  {featured.dek}
+                </p>
+              ) : null}
+              <p className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-fg">
+                Read this issue free
+                <ArrowRight
+                  size={16}
+                  strokeWidth={2.25}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </p>
+            </Link>
+          </div>
+        </section>
+      ) : null}
 
       {/* HEARTBEAT BAND — decorative pulse between hero and content. Its own
           band so it never overlaps the email form / proof-line text above. */}
@@ -213,14 +232,14 @@ export default async function HomePage() {
             <h2 className="max-w-xl font-serif text-[28px] font-medium leading-tight tracking-tight text-fg sm:text-4xl">
               Five minutes. One decision you&apos;d have missed.
             </h2>
-            <span className="hidden font-mono text-[11px] tracking-label text-fg-muted sm:block">
+            <span className="hidden  text-[11px] font-medium tracking-[0.08em] text-fg-muted sm:block">
               THE FORMAT
             </span>
           </div>
           <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-3">
             {WHAT_YOU_GET.map((it) => (
               <div key={it.k} className="flex flex-col bg-bg p-8">
-                <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                   {it.label}
                 </span>
                 <h3 className="mt-5 font-serif text-[22px] font-medium leading-[1.2] tracking-tight text-fg">
@@ -240,7 +259,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-24">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
             <div>
-              <div className="mb-6 font-mono text-[11px] tracking-label text-lime-soft">
+              <div className="mb-6  text-[11px] font-medium tracking-[0.08em] text-lime-soft">
                 WHY THIS EXISTS
               </div>
               <h2 className="max-w-2xl font-serif text-3xl font-semibold leading-[1.08] tracking-tight text-fg sm:text-[40px]">
@@ -288,7 +307,7 @@ export default async function HomePage() {
                   key={row.k}
                   className={`flex flex-col gap-2 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
                 >
-                  <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                  <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                     {row.k}
                   </span>
                   <span className="text-[15px] leading-[1.55] text-cream-dim">{row.v}</span>
@@ -304,7 +323,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <div className="mb-2 font-mono text-[11px] tracking-label text-fg-muted">
+              <div className="mb-2  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                 ARCHIVE
               </div>
               <h2 className="font-serif text-[28px] font-medium tracking-tight text-fg sm:text-4xl">
@@ -313,7 +332,7 @@ export default async function HomePage() {
             </div>
           </div>
           {list.length === 0 ? (
-            <p className="font-mono text-[12px] tracking-label text-fg-muted">
+            <p className=" text-[12px] font-medium tracking-[0.08em] text-fg-muted">
               ISSUE #001 IS BEING DRAFTED.
             </p>
           ) : (
@@ -349,7 +368,7 @@ export default async function HomePage() {
                       {iss.dek}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 font-mono text-[11px] tracking-label text-fg-muted">
+                  <div className="flex items-center gap-3  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
                     <span>{iss.read}</span>
                     <ArrowUpRight
                       size={16}

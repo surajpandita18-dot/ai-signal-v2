@@ -11,7 +11,7 @@ export default function NotFound() {
       <SiteNav />
 
       <main className="mx-auto max-w-read px-5 py-20 sm:px-8 sm:py-32">
-        <div className="font-mono text-[11px] tracking-label text-danger">
+        <div className=" text-[11px] font-medium tracking-[0.08em] text-danger">
           404 · NO SIGNAL
         </div>
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[64px]">
@@ -37,7 +37,7 @@ export default function NotFound() {
           </Link>
           <Link
             href="/#archive"
-            className="inline-flex min-h-[44px] items-center self-center font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-fg"
+            className="inline-flex min-h-[44px] items-center self-center  text-[12px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-fg"
           >
             BROWSE PAST ISSUES →
           </Link>

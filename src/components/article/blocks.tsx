@@ -39,7 +39,7 @@ export type Block =
 
 export function Kicker({ n, label }: { n: string; label: string }) {
   return (
-    <div className="flex items-center gap-3 font-mono text-[11px] tracking-label text-fg-muted">
+    <div className="flex items-center gap-3  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
       <span className="text-lime-soft">{n}</span>
       <span className="h-px w-8 bg-line-strong" />
       {label}
@@ -115,7 +115,9 @@ function Layers({ items }: { items: { t: string; d: string }[] }) {
   return (
     <div className="flex flex-col">
       {items.map((l, i) => {
-        const numeral = ROMAN[i] ?? String(i + 1)
+        // Arabic numerals — Lenny / Substack style. Roman numerals read
+        // magazine (Harper's / n+1) which is opposite of friendly-builder.
+        const numeral = String(i + 1).padStart(2, '0')
         return (
           <div
             key={l.t}
@@ -123,9 +125,9 @@ function Layers({ items }: { items: { t: string; d: string }[] }) {
               i === 0 ? 'pt-2' : 'border-t border-line pt-10'
             } pb-10 last:pb-2`}
           >
-            <div className="flex shrink-0 items-baseline gap-3 sm:w-40">
-              <span className="w-5 shrink-0 font-serif text-[18px] italic text-lime">
-                {numeral}.
+            <div className="flex shrink-0 items-baseline gap-4 sm:w-40">
+              <span className="font-serif text-[24px] font-semibold text-fg">
+                {numeral}
               </span>
               <h3 className="font-serif text-[22px] font-medium leading-tight tracking-tight text-fg">
                 {l.t}
@@ -472,7 +474,7 @@ function PullQuote({ text, cite }: { text: string; cite?: string }) {
         <span className="text-lime">&rdquo;</span>
       </blockquote>
       {cite && (
-        <figcaption className="mt-4 font-mono text-[11px] tracking-label text-fg-muted">
+        <figcaption className="mt-4  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
           — {cite}
         </figcaption>
       )}
@@ -500,7 +502,7 @@ function StatBand({ items }: { items: { value: string; label: string }[] }) {
 function NoteBlock({ label, body }: { label: string; body: string }) {
   return (
     <div className="border border-line-strong bg-bg-raised p-6">
-      <div className="mb-3 font-mono text-[11px] tracking-label text-danger">
+      <div className="mb-3  text-[11px] font-medium tracking-[0.08em] text-danger">
         {label}
       </div>
       <p className="text-[15px] leading-[1.65] text-fg-muted">{body}</p>
@@ -519,7 +521,7 @@ function ChartBlock({
 }) {
   return (
     <div className="border border-line bg-bg-raised p-5">
-      <div className="mb-5 font-mono text-[11px] tracking-label text-fg-muted">
+      <div className="mb-5  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
         {caption}
       </div>
       <div className="h-56 w-full">
