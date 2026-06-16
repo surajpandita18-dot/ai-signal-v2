@@ -56,9 +56,9 @@ async function notifyOwner(opts: {
   sendStats?: { attempted: number; sent: number; failed: number } | null
 }) {
   const key = process.env.RESEND_API_KEY
-  const to = process.env.NEWSLETTER_OWNER_EMAIL ?? 'suraj.pandita18@gmail.com'
-  const from = process.env.EMAIL_FROM ?? 'AI Signal <onboarding@resend.dev>'
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://getaisignal.org'
+  const to = process.env.NEWSLETTER_OWNER_EMAIL || 'suraj.pandita18@gmail.com'
+  const from = process.env.EMAIL_FROM || 'AI Signal <onboarding@resend.dev>'
+  const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'
   if (!key) return
   const resend = new Resend(key)
   const reviewUrl = `${site}/review/${opts.issueId}`

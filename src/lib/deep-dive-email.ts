@@ -77,12 +77,14 @@ function getResend(): Resend {
 }
 
 function getFrom(): string {
-  return process.env.EMAIL_FROM ?? 'AI Signal <onboarding@resend.dev>'
+  return process.env.EMAIL_FROM || 'AI Signal <onboarding@resend.dev>'
 }
 
+// Canonical site URL: Vercel deployment (getaisignal.org domain dropped
+// 2026-06-16 — DNS never moved off Namecheap parking). `||` not `??` —
+// empty-string env vars are real values that `??` would let through.
 function siteUrl(): string {
-  // CLAUDE.md spec rule #5: sender domain is getaisignal.org. ALWAYS.
-  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://getaisignal.org'
+  return process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'
 }
 
 function siteHost(): string {

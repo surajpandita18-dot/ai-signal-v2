@@ -60,7 +60,7 @@ async function main() {
     })
     console.log(`✓ Sent test deep-dive to ${owner}`)
     console.log(`  id: ${res.id}`)
-    const site = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://getaisignal.org'
+    const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'
     console.log(`  url: ${site}/issue/${issueId}`)
   } catch (e) {
     console.error('send failed:', e instanceof Error ? e.message : String(e))

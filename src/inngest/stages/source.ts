@@ -39,7 +39,7 @@ const parser: Parser = new Parser({
   headers: {
     // Some publishers (a16z, Cloudflare-fronted feeds) reject the default node UA.
     // Use a browser-like UA + an Accept header that explicitly asks for RSS/Atom.
-    'User-Agent': 'Mozilla/5.0 (compatible; ai-signal-v2/0.1; +https://getaisignal.org)',
+    'User-Agent': 'Mozilla/5.0 (compatible; ai-signal-v2/0.1; +https://ai-signal-v2.vercel.app)',
     Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml',
   },
 })

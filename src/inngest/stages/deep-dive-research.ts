@@ -102,7 +102,7 @@ async function fetchPage(url: string): Promise<FetchedPage> {
       signal: controller.signal,
       headers: {
         'user-agent':
-          'Mozilla/5.0 (compatible; AISignalResearchBot/1.0; +https://getaisignal.org)',
+          'Mozilla/5.0 (compatible; AISignalResearchBot/1.0; +https://ai-signal-v2.vercel.app)',
         accept: 'text/html,application/xhtml+xml,*/*;q=0.8',
       },
     })

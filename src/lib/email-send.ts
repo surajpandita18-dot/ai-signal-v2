@@ -14,11 +14,13 @@ function getResend(): Resend {
 }
 
 function getFrom(): string {
-  return process.env.EMAIL_FROM ?? 'AI Signal <onboarding@resend.dev>'
+  return process.env.EMAIL_FROM || 'AI Signal <onboarding@resend.dev>'
 }
 
+// Use `||` not `??` — Vercel sometimes stores env vars as empty string and
+// `??` would let `""` through (broke every email link on 2026-06-16).
 function siteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://getaisignal.org'
+  return process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'
 }
 
 export interface SendResult {
@@ -72,7 +74,7 @@ function siteHost(): string {
   try {
     return new URL(siteUrl()).host
   } catch {
-    return 'getaisignal.org'
+    return 'ai-signal-v2.vercel.app'
   }
 }
 

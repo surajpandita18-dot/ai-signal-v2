@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   },
   description:
     'A weekly Monday-morning synthesis for Indian AI builders, PMs, and founders. One shift, six layers, INR-grounded.',
-  metadataBase: new URL('https://getaisignal.org'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-signal-v2.vercel.app'),
   openGraph: {
     title: 'AI Signal — The India AI Builder’s Brief',
     description:

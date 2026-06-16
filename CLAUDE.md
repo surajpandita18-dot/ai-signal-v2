@@ -52,7 +52,10 @@ After 6 evidenced research streams (Indian builder pain points, INR pricing real
 4. Inngest step boundaries: every external/long call inside step.run().
    No function logic outside step boundaries (this caused a prod outage before).
 
-5. Sender domain is getaisignal.org. Always.
+5. Canonical site URL is `https://ai-signal-v2.vercel.app` (Vercel-only,
+   no custom brand domain — dropped 2026-06-16, DNS never moved off
+   Namecheap parking). Email sender is Resend's `onboarding@resend.dev`
+   until a sending domain is verified.
 
 6. Keep/skip names the REAL noise specifically (e.g. "the $40M raise everyone
    quote-tweeted"), so the permission feels earned, not generic.

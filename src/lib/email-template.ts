@@ -165,8 +165,10 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
   subject: string
   preheader: string
 } {
-  // CLAUDE.md spec rule #5: sender domain is getaisignal.org. ALWAYS.
-  const site = opts.siteUrl ?? 'https://getaisignal.org'
+  // Canonical site URL: Vercel deployment (getaisignal.org domain dropped
+  // 2026-06-16 — DNS never moved off Namecheap parking). `||` not `??` —
+  // empty-string env vars are real values that `??` would let through.
+  const site = opts.siteUrl || 'https://ai-signal-v2.vercel.app'
   const siteHost = site.replace(/^https?:\/\//, '').replace(/\/$/, '')
   const issueUrl = `${site}/issue/${opts.issueId}`
   const issueNumberPadded = String(opts.issueNumber).padStart(3, '0')

@@ -211,7 +211,7 @@ async function verifyUrl(url: string): Promise<{ url: string; status: number | n
       method: 'HEAD',
       redirect: 'follow',
       signal: controller.signal,
-      headers: { 'User-Agent': 'ai-signal-source-discovery/1.0 (+https://getaisignal.org)' },
+      headers: { 'User-Agent': 'ai-signal-source-discovery/1.0 (+https://ai-signal-v2.vercel.app)' },
     })
     // Some servers refuse HEAD — fall back to GET.
     if (res.status === 405 || res.status === 403) {
@@ -219,7 +219,7 @@ async function verifyUrl(url: string): Promise<{ url: string; status: number | n
         method: 'GET',
         redirect: 'follow',
         signal: controller.signal,
-        headers: { 'User-Agent': 'ai-signal-source-discovery/1.0 (+https://getaisignal.org)' },
+        headers: { 'User-Agent': 'ai-signal-source-discovery/1.0 (+https://ai-signal-v2.vercel.app)' },
       })
     }
     return {
