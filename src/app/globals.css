@@ -2,42 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* DESIGN SYSTEM v3 — Figr palette (June 2026, replaces v2 warm-paper system).
- * Dark-first. Lime accent. Signal-themed motifs. Fraunces + Inter + JetBrains.
+/* DESIGN SYSTEM v4 — Cream-premium palette (June 2026, replaces dark Figr v3).
+ * Light-first Lenny's/Stratechery-style premium newsletter look. Warm cream
+ * background, ink body text, lime kept as the SINGLE editorial accent
+ * (Ship-pick arrow, "Shipped from India" tag, CTAs, beat numerals).
  *
- * The palette was specified in /tmp/figr-export/index.css and is the canonical
- * design source. v3 keeps a v2-token-compat layer so existing components that
- * reference paper/ink/accent/etc. resolve to the closest v3 equivalent.
+ * Email template stays dark — see src/lib/email-template.ts.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* v3 Figr tokens — canonical */
-  --bg: 11 13 10;              /* #0b0d0a near-black with green tint */
-  --bg-raised: 14 17 12;       /* #0e110c */
-  --bg-card: 19 23 18;         /* #131712 */
-  --line: 32 36 28;            /* #20241c */
-  --line-strong: 44 49 39;     /* #2c3127 */
-  --cream: 236 231 221;        /* #ece7dd primary text */
-  --cream-dim: 207 201 189;    /* #cfc9bd subdued */
-  --lime: 194 245 61;          /* #c2f53d signal accent */
-  --lime-soft: 159 212 74;     /* #9fd44a labels */
-  --fg: 244 242 236;           /* #f4f2ec high-emphasis text */
-  --fg-muted: 139 143 134;     /* #8b8f86 secondary */
-  --fg-subtle: 107 112 98;     /* #6b7062 tertiary */
-  --danger: 229 103 90;        /* #e5675a */
+  /* v4 cream-premium tokens — canonical */
+  --bg: 251 250 246;           /* #fbfaf6 warm off-white (NOT pure white) */
+  --bg-raised: 245 243 235;    /* #f5f3eb soft cream */
+  --bg-card: 255 254 251;      /* #fffefb near-white card */
+  --line: 230 226 216;         /* #e6e2d8 warm hairline */
+  --line-strong: 205 201 191;  /* #cdc9bf mid border */
+  --cream: 38 38 36;           /* #262624 warm ink (token name kept for back-compat) */
+  --cream-dim: 82 82 80;       /* #525250 muted ink */
+  --lime: 194 245 61;          /* #c2f53d signal accent (UNCHANGED, functional only) */
+  --lime-soft: 159 212 74;     /* #9fd44a labels (UNCHANGED) */
+  --fg: 26 26 26;              /* #1a1a1a warm-ink body text */
+  --fg-muted: 107 107 102;     /* #6b6b66 mid gray */
+  --fg-subtle: 168 168 163;    /* #a8a8a3 light gray — rules/dots ONLY */
+  --danger: 229 103 90;        /* #e5675a (UNCHANGED) */
 
-  /* v2 compat layer — legacy components reference these; map to v3 */
-  --paper: 11 13 10;           /* old bg → v3 bg */
-  --paper-elev: 19 23 18;      /* old card → v3 bg-card */
-  --ink: 244 242 236;          /* old high-text → v3 fg */
-  --body: 207 201 189;         /* old body → v3 cream-dim */
-  --accent: 194 245 61;        /* old peacock → v3 lime */
-  --accent-2: 229 103 90;      /* old terracotta → v3 danger */
-  --muted: 139 143 134;        /* v3 fg-muted */
-  --line: 32 36 28;            /* shared with v3 */
-  --accent-soft: 159 212 74;   /* v3 lime-soft */
+  /* v2 compat layer — legacy components reference these; map to v4 */
+  --paper: 251 250 246;        /* old bg → v4 bg */
+  --paper-elev: 255 254 251;   /* old card → v4 bg-card */
+  --ink: 26 26 26;             /* old high-text → v4 fg */
+  --body: 82 82 80;            /* old body → v4 cream-dim */
+  --accent: 194 245 61;        /* unchanged */
+  --accent-2: 229 103 90;      /* unchanged */
+  --muted: 107 107 102;        /* v4 fg-muted */
+  --accent-soft: 159 212 74;   /* unchanged */
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, 'New York', serif;
@@ -45,36 +44,36 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-serif-body: 'Fraunces', Georgia, serif;
 
-  /* The site is dark-first; system pref does nothing */
-  color-scheme: dark;
+  /* Site is light-first now (Lenny's-style cream premium) */
+  color-scheme: light;
 }
 
-/* Manual theme override — kept for forward-compat, but dark IS the design now.
- * Light mode inverts most tokens for users who genuinely prefer it. */
-:root[data-theme='light'] {
-  --bg: 244 242 236;
-  --bg-raised: 236 231 221;
-  --bg-card: 252 251 247;
-  --line: 215 211 200;
-  --line-strong: 187 183 170;
-  --cream: 11 13 10;
-  --cream-dim: 60 64 56;
-  --lime: 90 130 25;           /* darker lime so it reads on light */
-  --lime-soft: 75 110 22;
-  --fg: 11 13 10;
-  --fg-muted: 87 92 82;
-  --fg-subtle: 124 128 114;
-  --danger: 197 65 51;
+/* Manual theme override — opt-in dark mode for users who explicitly prefer it.
+ * Default light cream remains the design. */
+:root[data-theme='dark'] {
+  --bg: 11 13 10;
+  --bg-raised: 14 17 12;
+  --bg-card: 19 23 18;
+  --line: 32 36 28;
+  --line-strong: 44 49 39;
+  --cream: 236 231 221;
+  --cream-dim: 207 201 189;
+  --lime: 194 245 61;
+  --lime-soft: 159 212 74;
+  --fg: 244 242 236;
+  --fg-muted: 139 143 134;
+  --fg-subtle: 107 112 98;
+  --danger: 229 103 90;
 
-  --paper: 244 242 236;
-  --paper-elev: 252 251 247;
-  --ink: 11 13 10;
-  --body: 60 64 56;
-  --accent: 90 130 25;
-  --accent-2: 197 65 51;
-  --muted: 87 92 82;
-  --accent-soft: 75 110 22;
-  color-scheme: light;
+  --paper: 11 13 10;
+  --paper-elev: 19 23 18;
+  --ink: 244 242 236;
+  --body: 207 201 189;
+  --accent: 194 245 61;
+  --accent-2: 229 103 90;
+  --muted: 139 143 134;
+  --accent-soft: 159 212 74;
+  color-scheme: dark;
 }
 
 html, body {
@@ -106,15 +105,16 @@ p, li { text-wrap: pretty; }
 
 button, a, input, select, textarea, label { touch-action: manipulation; }
 
-::selection { background: rgb(var(--lime)); color: rgb(var(--bg)); }
+::selection { background: rgb(var(--lime)); color: rgb(var(--fg)); }
 
-/* Eyebrow / mono labels — Figr style */
+/* Eyebrow / mono labels — cream-premium style.
+   Lime is reserved for editorial moat moments only; eyebrows use muted ink. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgb(var(--lime-soft));
+  color: rgb(var(--fg-muted));
   font-weight: 600;
 }
 
@@ -153,9 +153,15 @@ button, a, input, select, textarea, label { touch-action: manipulation; }
 .editorial em { font-style: italic; color: rgb(var(--cream-dim)); }
 .editorial strong { color: rgb(var(--fg)); font-weight: 600; }
 .editorial a {
-  color: rgb(var(--lime));
+  color: rgb(var(--fg));
   text-decoration: underline;
+  text-decoration-color: rgb(var(--fg-subtle));
   text-underline-offset: 2px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.editorial a:hover {
+  color: rgb(var(--lime-soft));
+  text-decoration-color: rgb(var(--lime));
 }
 
 /* Drop cap — first letter of the lede paragraph as a 3-line Fraunces display

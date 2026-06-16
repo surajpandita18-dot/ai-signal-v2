@@ -61,11 +61,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // Browser chrome matches the Figr v3 dark bg so masthead extends
-  // edge-to-edge on iOS Safari.
+  // Browser chrome matches the cream-premium bg so masthead extends
+  // edge-to-edge on iOS Safari. Site is light-first now (Lenny's-style).
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0b0d0a' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b0d0a' },
+    { media: '(prefers-color-scheme: light)', color: '#fbfaf6' },
+    { media: '(prefers-color-scheme: dark)', color: '#fbfaf6' },
   ],
 }
 

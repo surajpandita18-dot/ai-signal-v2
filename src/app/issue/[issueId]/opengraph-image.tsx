@@ -1,4 +1,4 @@
-// Dynamic OpenGraph card for /issue/[issueId] — Figr palette v3.
+// Dynamic OpenGraph card for /issue/[issueId] — cream-premium palette v4.
 // Renders 1200x630 PNG via next/og ImageResponse.
 // Inline styles only — next/og does not support Tailwind. Every div with more
 // than one direct child sets display:'flex' (next/og requires it).
@@ -16,13 +16,13 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 export const alt = 'AI Signal — One AI shift that matters'
 
-// Figr palette
-const BG = '#0b0d0a'
-const CREAM = '#ece7dd'
-const CREAM_DIM = '#cfc9bd'
+// Cream-premium palette (token names kept for back-compat in this file)
+const BG = '#fbfaf6'
+const CREAM = '#1a1a1a'         // body ink — token name retained
+const CREAM_DIM = '#525250'     // muted ink
 const LIME = '#c2f53d'
-const LIME_SOFT = '#9fd44a'
-const FG_SUBTLE = '#6b7062'
+const LIME_SOFT = '#5a7a18'     // darker lime so it reads on cream bg
+const FG_SUBTLE = '#a8a8a3'
 
 async function loadFraunces(): Promise<ArrayBuffer | null> {
   try {
@@ -215,8 +215,8 @@ async function renderImage({ params }: { params: Promise<{ issueId: string }> })
               fontSize: 14,
               fontWeight: 700,
               letterSpacing: '0.12em',
-              color: LIME,
-              border: `1px solid rgba(194,245,61,0.4)`,
+              color: CREAM,
+              backgroundColor: LIME,
               padding: '6px 12px',
             }}
           >

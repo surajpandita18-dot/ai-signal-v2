@@ -223,69 +223,101 @@ function Math({
   cols: [string, string, string]
   rows: { metric: string; a: string; b: string; delta: string }[]
 }) {
-  // Adaptive: when the synthesizer can't supply baseline (a) AND delta values
-  // (the common case today), collapse the 4-col scaffold to a 2-col metric/value
-  // table. A 4-col table where two columns are universally blank looks like a
-  // parse bug, which violates "INR math defends against AI-slop" per CLAUDE.md.
-  const hasBaseline = rows.some((r) => r.a && r.a !== '—' && r.a !== '')
-  const hasDelta = rows.some((r) => r.delta && r.delta !== '')
-  const compact = !hasBaseline && !hasDelta
+  // Hierarchy: caption (mono small) → HEADLINE (huge lime, the savings/delta
+  // number or the biggest value) → before/after comparison cards → annual /
+  // footnote rows. The bar chart is dropped — the headline IS the visual.
+  // Fresh-model audit 2026-06-16: "the big savings number is buried."
+  //
+  // Row classification:
+  // - "headline" row matches /delta|saved|savings/i in metric. Promoted huge.
+  // - "annual"/"yearly" rows + bare ₹Cr values render as small footnote.
+  // - The remaining 2-3 rows become side-by-side comparison cards.
 
-  // Bar chart prefix — extract numeric values from r.b (₹/$ stripped, K/L/Cr/M
-  // expanded) and render a small lime/cream bar viz above the table. Only
-  // when 2-3 rows have parseable INR values; otherwise the chart adds noise.
-  const chartRows = parseChartRows(rows)
-  const showChart = compact && chartRows.length >= 2 && chartRows.length <= 4
+  const headlineIdx = rows.findIndex((r) =>
+    /\b(delta|saved|savings)\b/i.test(r.metric)
+  )
+  const headline = headlineIdx >= 0 ? rows[headlineIdx] : null
+
+  const footnoteIdxs = new Set<number>()
+  rows.forEach((r, i) => {
+    if (i === headlineIdx) return
+    if (/\b(annual|yearly|per year)\b/i.test(r.metric)) footnoteIdxs.add(i)
+    else if (/₹\s*[\d.]+\s*Cr/i.test(r.b)) footnoteIdxs.add(i)
+  })
+
+  const comparisonRows = rows.filter(
+    (_, i) => i !== headlineIdx && !footnoteIdxs.has(i)
+  )
+  const footnoteRows = rows.filter((_, i) => footnoteIdxs.has(i))
+
+  // Fallback: if no explicit delta row, promote the biggest INR value in the
+  // remaining rows as the headline (still informative — the reader sees the
+  // largest number first).
+  const headlineRow =
+    headline ??
+    (() => {
+      const parsed = parseChartRows(comparisonRows)
+      if (parsed.length === 0) return null
+      const biggest = parsed.reduce((a, b) => (b.value > a.value ? b : a))
+      return { metric: biggest.metric, a: '', b: biggest.label, delta: '' }
+    })()
 
   return (
     <div>
-      <p className="mb-5 font-serif text-[15px] italic text-fg-muted">
-        {caption.toLowerCase().replace(/^./, (c) => c.toUpperCase())}.
+      <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
+        {caption}
       </p>
-      {showChart && <InrBarChart rows={chartRows} />}
-      <div className="overflow-x-auto">
-        {compact ? (
-          <div className="min-w-[320px] border-t border-b border-line-strong">
-            <div className="grid grid-cols-[1.6fr_1fr] border-b border-line font-mono text-[10px] tracking-[0.14em] text-fg-muted">
-              <div className="py-3">{cols[0]}</div>
-              <div className="py-3 text-right">{cols[2]}</div>
-            </div>
-            {rows.map((r) => (
-              <div
-                key={r.metric}
-                className="grid grid-cols-[1.6fr_1fr] items-baseline border-b border-line text-[15px] last:border-b-0"
-              >
-                <div className="py-4 text-cream-dim">{r.metric}</div>
-                <div className="py-4 text-right font-mono text-fg">{r.b}</div>
-              </div>
-            ))}
+      {headlineRow && (() => {
+        // Some payloads pack two metric:value pairs on one line ("Monthly
+        // delta: ₹62L. Annual: ~₹7.5Cr."). Extract just the first ₹<n><unit>
+        // so the huge headline reads as one number, not a mashup.
+        const firstNum = headlineRow.b.match(/[₹$]\s*[\d,]+(?:\.\d+)?\s*(?:Cr|L|K|M)?/i)
+        const headlineDisplay = firstNum ? firstNum[0].trim() : headlineRow.b
+        return (
+          <div className="border-y border-line-strong py-9 sm:py-12">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
+              {headlineRow.metric}
+            </p>
+            <p className="mt-2 font-serif text-[56px] font-semibold leading-[0.95] tracking-tight text-lime sm:text-[80px]">
+              {headlineDisplay}
+            </p>
           </div>
-        ) : (
-          <div className="min-w-[440px] border-t border-b border-line-strong">
-            <div className="grid grid-cols-[1.6fr_1fr_1fr_0.9fr] border-b border-line font-mono text-[10px] tracking-[0.14em] text-fg-muted">
-              <div className="py-3">{cols[0]}</div>
-              <div className="py-3 text-right">{cols[1]}</div>
-              <div className="py-3 text-right">{cols[2]}</div>
-              <div className="py-3 text-right font-semibold text-lime-soft">DELTA</div>
-            </div>
-            {rows.map((r) => (
-              <div
-                key={r.metric}
-                className="grid grid-cols-[1.6fr_1fr_1fr_0.9fr] items-baseline border-b border-line text-[15px] last:border-b-0"
-              >
-                <div className="py-4 text-cream-dim">{r.metric}</div>
-                <div className="py-4 text-right font-mono text-fg-muted">
-                  {r.a === '—' || r.a === '' ? null : r.a}
-                </div>
-                <div className="py-4 text-right font-mono text-fg">{r.b}</div>
-                <div className="py-4 text-right font-mono text-[17px] font-semibold text-lime">
-                  {r.delta}
-                </div>
+        )
+      })()}
+      {comparisonRows.length > 0 && (
+        <div className={`mt-8 grid gap-px bg-line ${comparisonRows.length === 2 ? 'sm:grid-cols-2' : ''}`}>
+          {comparisonRows.map((r, i) => {
+            const first = r.b.match(/[₹$]\s*[\d,]+(?:\.\d+)?\s*(?:Cr|L|K|M)?/i)
+            return (
+              <div key={r.metric} className="bg-bg p-6 sm:p-7">
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-fg-muted">
+                  {i === 0 ? 'Today' : i === 1 ? 'Routed' : `Scenario ${i + 1}`}
+                </p>
+                <p className="mt-3 text-[15px] leading-[1.5] text-cream-dim">
+                  {r.metric}
+                </p>
+                <p className="mt-3 font-serif text-[28px] font-semibold leading-tight text-fg">
+                  {first ? first[0].trim() : r.b}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            )
+          })}
+        </div>
+      )}
+      {footnoteRows.length > 0 && (
+        <div className="mt-7 flex flex-wrap gap-x-7 gap-y-2 border-t border-line pt-5">
+          {footnoteRows.map((r) => (
+            <p
+              key={r.metric}
+              className="font-mono text-[12px] uppercase tracking-[0.08em] text-fg-muted"
+            >
+              <span className="text-cream-dim">{r.metric}</span>
+              <span className="mx-2 text-line-strong">·</span>
+              <span className="text-fg">{r.b}</span>
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -513,14 +545,14 @@ function ChartBlock({
               tickFormatter={(v) => `${unit}${v}`}
             />
             <Tooltip
-              cursor={{ stroke: '#2c3127' }}
+              cursor={{ stroke: '#cdc9bf' }}
               contentStyle={{
-                background: '#131712',
-                border: '1px solid #2c3127',
+                background: '#fffefb',
+                border: '1px solid #cdc9bf',
                 borderRadius: 0,
                 fontFamily: 'JetBrains Mono',
                 fontSize: 12,
-                color: '#f4f2ec',
+                color: '#1a1a1a',
               }}
               formatter={(v) => [`${unit}${v}`, 'price']}
             />
