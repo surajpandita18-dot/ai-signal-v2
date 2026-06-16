@@ -183,6 +183,84 @@ vercel env add NAME production --value "https://example.com" --yes
 
 ---
 
+## #005 — Identical "Interview Questions" appendix on every issue page (2026-06-16)
+
+**Symptom (Suraj):** "interview quetsion sab meien same hai" — every
+`/issue/[id]` page had the same 6 hardcoded questions ("If you were on
+Claude's PM team, how would you ship a v0..."). Across all 4 published
+issues, byte-for-byte identical content in a section that pretended to
+be issue-specific ("Questions to pressure-test this with").
+
+**Root cause:** `INTERVIEW_QUESTIONS` const in `ArticleRenderer.tsx`
+hardcoded 6 generic Anthropic/OpenAI prep questions. The section was
+left over from an earlier framing (Bay Area interview-prep audience),
+not updated when CLAUDE.md positioning locked to "India AI Builder's
+Brief". Off-brand AND identical-across-issues.
+
+**Why I missed it:**
+- I never opened two issue pages side-by-side as a reader. If I had,
+  the duplicate section would have been obvious in 5 seconds.
+- I focused QA on per-issue rendering (does this issue's payload show?)
+  not cross-issue diff (does every issue look the same below the
+  chapters?).
+- The section had legitimate-looking copy and matched the design
+  system, so it didn't trigger any "wrong" alarm — only a real reader
+  with read 2+ issues would notice.
+
+**Fix:** Removed the entire INTERVIEW PREP section + the const from
+ArticleRenderer.tsx. The closure beat ("That's the shift. You're
+caught up.") now follows the chapters directly, which matches the
+CLAUDE.md locked structure (closure as the final beat).
+
+**Rule for next time:**
+- **Open 2 issues side-by-side before declaring a per-issue surface
+  done.** Anything that's identical across issues but pretends to be
+  per-issue is either lazy or wrong — cut or generate from payload.
+- **When the spec changes (CLAUDE.md positioning lock 2026-06),
+  re-walk every surface and ask "is this section still on-brand?"**
+  Off-brand sections accumulate when nobody re-audits them.
+- See `.claude/learnings-user-audit.md` checklist — added
+  "no identical-across-issues sections" as a gate.
+
+---
+
+## #006 — Email weekly was 90% Steal callout — too thin (2026-06-16)
+
+**Symptom (Suraj):** "email mein toh mza nhi aaya... email mein kitna
+blit aata hai" — the weekly email body was just Glance (Ship/Hold/Kill
+in 3 lines) + Steal (one long callout) + CTA. The 6-layer diff, INR
+math, keep/skip — all stayed web-only. Reader gets ~20% of the
+substance in inbox, has to click to get the rest.
+
+**Root cause:** `EMAIL_RENDERS_BLOCKS` was `['glance', 'steal']` —
+every other block type was in `EMAIL_SKIPS_BLOCKS`. The original
+framing was "email is a teaser, web is the full read." But "teaser"
+that's mostly one callout reads as low-substance.
+
+**Why I missed it:**
+- I tested the email by rendering it and checking it didn't crash. I
+  didn't read it as a reader and ask "would I keep subscribing if this
+  arrived weekly?"
+- The original design decision (teaser-only) was respected without
+  questioning it — but the spec literally says CLAUDE.md positioning
+  is "1500 words, 8 min read" and a body with 6 short lines isn't
+  that.
+
+**Fix:** Added `renderEmailLayers` (6-layer diff in email) +
+re-classified `'layers'` as a rendered block. The 6 beats now appear
+in the email as a scannable list — that's the editorial substance.
+INR math + keep/skip are noted in user-audit as open (next round).
+
+**Rule for next time:**
+- **Read the email as a reader before declaring done.** "Would I
+  open the next one if this arrived?" If the answer is no, the
+  surface isn't done — even if it compiles and screenshots fine.
+- **When a surface is positioned as "teaser", check the substance
+  ratio.** If >60% of the email is one block (callout / quote / CTA),
+  it's a teaser of nothing — promote more chapters.
+
+---
+
 ## Meta-rule
 
 **Trust nothing you can verify with a one-liner.** When the work involves

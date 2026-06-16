@@ -28,6 +28,7 @@ import {
 } from '../components/article/payload-adapter'
 import {
   renderEmailGlance,
+  renderEmailLayers,
   renderEmailSteal,
 } from '../components/article/email-blocks'
 import { inline, paraInline } from './safe-html'
@@ -58,12 +59,12 @@ export type { IssuePayload }
 // missing classification produces a non-`never` Exclude<> and breaks compile.
 const EMAIL_RENDERS_BLOCKS = [
   'glance', // Ship/Hold/Kill — renderEmailGlance() in email-blocks.ts
+  'layers', // 6-layer diff — renderEmailLayers() in email-blocks.ts
   'steal', // STEAL THIS WEEK card — renderEmailSteal() in email-blocks.ts
 ] as const
 const EMAIL_SKIPS_BLOCKS = [
   'prose',
   'sectionhead',
-  'layers',
   'math',
   // persona archetype info is surfaced directly as "For the <archetype>." line
   // (not via the Archetype block treatment), so the block itself is skipped.
@@ -189,6 +190,7 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
     createdAt: opts.issueCreatedAt,
   })
   const glanceBlock = findBlock(renderable, 'glance')
+  const layersBlock = findBlock(renderable, 'layers')
   const stealBlock = findBlock(renderable, 'steal')
 
   const personaArchetype = opts.payload.persona?.archetype ?? null
@@ -287,6 +289,16 @@ export function renderEmailHtml(opts: EmailTemplateInput): {
           <em style="font-style:italic;">If you only read this</em>
         </p>
         ${renderEmailGlance(glanceBlock.items)}
+      </td></tr>`
+    : ''}
+
+  ${layersBlock && layersBlock.items.length
+    ? `<tr><td class="pad" style="padding:44px 32px 0 32px;">
+        <div style="height:1px;background:${LINE};line-height:1px;font-size:1px;margin-bottom:24px;">&nbsp;</div>
+        <p style="margin:0 0 20px 0;font-family:${FONT_DISPLAY};font-size:15px;color:${CREAM_DIM};">
+          <em style="font-style:italic;">The six layers, this week</em>
+        </p>
+        ${renderEmailLayers(layersBlock.items)}
       </td></tr>`
     : ''}
 

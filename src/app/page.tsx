@@ -68,10 +68,15 @@ const WHAT_YOU_GET = [
 export default async function HomePage() {
   const supabase = createAdminSupabaseClient()
   const subscribed = await isSubscribed()
+  // `payload IS NOT NULL` — drafted rows without a payload are pipeline
+  // failures that didn't get re-statused. Showing them produces a "—" title
+  // row that clicks through to a "draft in progress" placeholder. Filter at
+  // the query so the public list only shows real issues.
   const { data: issues } = await supabase
     .from('issues')
     .select('id, status, issue_type, created_at, payload')
     .in('status', ['drafted', 'awaiting_human'])
+    .not('payload', 'is', null)
     .order('created_at', { ascending: false })
     .limit(20)
 

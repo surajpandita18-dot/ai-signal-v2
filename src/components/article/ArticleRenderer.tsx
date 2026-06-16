@@ -3,24 +3,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { BlockRenderer } from './blocks'
 import type { RenderableIssue } from './payload-adapter'
 
-// Interview prep — generic questions framed around the article's topic.
-// Built for readers prepping for Anthropic / OpenAI interviews.
-// PM column probes product judgment; Builder probes loop / system design.
-// (Boris Cherny on Claude Code: simplest agentic loop wins — model, tool,
-// exit condition. Builder questions test that thinking specifically.)
-const INTERVIEW_QUESTIONS = {
-  pm: [
-    "If you were on Claude's PM team, how would you ship a v0 response to this shift in two weeks?",
-    "Where does this break your current evaluation suite — and what new metric matters most now?",
-    "What's the cheapest experiment that would tell you if this is real signal or one-week noise?",
-  ],
-  builder: [
-    'Sketch the smallest agentic loop that ships this — model, tool, exit condition.',
-    'What instrumentation tells you when the loop should keep iterating vs return?',
-    'Where does latency become a P0 in this pattern, and what do you cut first?',
-  ],
-}
-
 export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
   return (
     <>
@@ -102,45 +84,6 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
           )
         })}
       </main>
-
-      {/* INTERVIEW PREP — editorial appendix.
-          Personal-voice intro + two prose blocks with italic subheads.
-          Not a feature-compare grid. */}
-      <section className="border-t border-line">
-        <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="font-serif text-[30px] font-medium leading-[1.15] tracking-tight text-fg sm:text-[36px]">
-            Questions to pressure-test this with.
-          </h2>
-          <p className="mt-5 max-w-[560px] text-[17px] leading-[1.65] text-cream-dim">
-            If you&apos;re prepping for an Anthropic or OpenAI loop, these are
-            the kinds of questions worth sitting with for an hour before the
-            interview — three for product judgment, three for builder judgment.
-          </p>
-
-          <div className="mt-12 flex flex-col gap-12">
-            <div>
-              <h3 className="font-serif text-[22px] font-medium italic leading-snug text-fg">
-                If you&apos;re going in as a PM.
-              </h3>
-              <ul className="mt-5 flex flex-col gap-5 text-[17px] leading-[1.65] text-cream-dim">
-                {INTERVIEW_QUESTIONS.pm.map((q, i) => (
-                  <li key={i}>{q}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-serif text-[22px] font-medium italic leading-snug text-fg">
-                If you&apos;re going in as a builder.
-              </h3>
-              <ul className="mt-5 flex flex-col gap-5 text-[17px] leading-[1.65] text-cream-dim">
-                {INTERVIEW_QUESTIONS.builder.map((q, i) => (
-                  <li key={i}>{q}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* END CTA — closure beat as drop-the-mic line, then quiet sign-off.
           The lime "——" mark gives the closure a typographic terminal that

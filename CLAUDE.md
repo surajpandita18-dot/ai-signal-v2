@@ -146,11 +146,30 @@ Before any design decision or shipping any UI, check it against `.claude/design-
 
 ---
 
-## Past blunders — READ before shipping email / env / deploy changes
+## Self-learning system — READ at session start
 
-`.claude/learnings-claude-blunders.md` — running ledger of silly
-mistakes Suraj has caught. Before declaring an email change "done", scan
-the entries that touch the surface you're editing. The rules at the
-bottom of each entry are non-negotiable next-time checks. Append a new
-entry whenever Suraj flags a "silly mistake / blunder" — symptom, root
-cause, fix, one-sentence rule.
+`.claude/learnings-README.md` is the index. The system has 4 docs:
+
+- **`.claude/learnings-suraj-preferences.md`** — How Suraj wants me to
+  act (Hinglish back, don't ask permission inside agreed direction,
+  visually verify before "done", care about quality). **Read every
+  turn** — these change my defaults.
+- **`.claude/learnings-claude-blunders.md`** — Mistakes Suraj has caught,
+  with root cause + one-sentence rule. Consult before shipping anything
+  touching a surface listed in an entry (email, deploy, env, design).
+- **`.claude/learnings-user-audit.md`** — Findings from opening the
+  product as a real reader, plus checklists to walk before "done".
+  Re-walk before claiming any surface is done.
+- **`.claude/learnings-research-cache.md`** — How respected operators
+  (newsletter authors, indie SaaS, India SaaS) solve problems Suraj is
+  also hitting. Search before designing from first principles.
+
+**Auto-update rules:**
+- When Suraj flags a "silly mistake / blunder", append to
+  `learnings-claude-blunders.md` *without being asked*.
+- When Suraj corrects a preference or says "do X this way", append to
+  `learnings-suraj-preferences.md` *without being asked*.
+- When I find a user-experience issue while building, append to
+  `learnings-user-audit.md` (under Open) and move to Resolved when fixed.
+- When I solve a problem using a known-good operator pattern, add it to
+  `learnings-research-cache.md`.

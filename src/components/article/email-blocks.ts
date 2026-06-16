@@ -118,3 +118,34 @@ export function renderEmailNote(
       ${inline(block.body)}
     </p>`
 }
+
+// 6-layer diff — the editorial substance of the weekly. Scannable list,
+// each row: small lime numeral + serif beat title + one-line delta.
+// Web uses a hairline-divided 2-col layout; email collapses to single
+// column with the same numeral/title/desc rhythm, no card backgrounds.
+//
+// `items[].d` is already inline()-processed HTML — emit verbatim.
+export function renderEmailLayers(
+  items: Extract<Block, { type: 'layers' }>['items']
+): string {
+  return items
+    .map((l, i) => {
+      const numeral = String(i + 1).padStart(2, '0')
+      const titleSafe = l.t.replace(/[<>&]/g, (c) =>
+        c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&amp;'
+      )
+      const body = withBodyLinkClass(l.d)
+      const topPad = i === 0 ? '0' : '18px'
+      const borderTop =
+        i === 0 ? '' : `border-top:1px solid ${LINE_STRONG};padding-top:18px;`
+      return `
+        <div style="margin-top:${topPad};${borderTop}">
+          <p style="margin:0;font-family:${FONT_DISPLAY};font-size:13px;font-style:italic;color:${LIME};letter-spacing:0.04em;">
+            ${numeral}
+            <span style="color:${FG};font-style:normal;font-weight:600;margin-left:8px;">${titleSafe}</span>
+          </p>
+          <div style="margin:8px 0 0 0;font-family:${FONT_BODY};font-size:15px;line-height:1.65;color:${FG_MUTED};" class="body-text">${body}</div>
+        </div>`
+    })
+    .join('')
+}
