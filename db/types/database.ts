@@ -366,10 +366,21 @@ export interface IssuePayload {
 }
 
 // What the human picks at the review step — three labels (or 'override' text) — one per kind.
+// `source` is the rule #1 provenance flag: 'human' = Suraj explicitly picked at
+// /review; 'ai' = cron auto-promoted shk_candidates[0] under the ≥9 QA tiered
+// auto-send rule. The Ship-tier bright-lime visual treatment is reserved for
+// `source === 'human'` only — AI-picked rows render in demoted style even when
+// they fill the Ship slot, preserving the moat per CLAUDE.md rule #1.
+export interface ChosenCall {
+  label: string
+  rationale: string
+  source: 'human' | 'ai'
+}
+
 export interface ChosenCalls {
-  ship: { label: string; rationale: string } | null
-  hold: { label: string; rationale: string } | null
-  kill: { label: string; rationale: string } | null
+  ship: ChosenCall | null
+  hold: ChosenCall | null
+  kill: ChosenCall | null
 }
 
 // ─────────────────────────────────────────────────────────────────────

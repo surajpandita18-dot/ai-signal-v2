@@ -38,7 +38,7 @@ export default async function SubscribePage() {
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
               See you Monday.
             </h1>
-            <p className="mt-7 max-w-xl text-[15px] leading-[1.75] text-fg-muted">
+            <p className="mt-7 max-w-xl text-[17px] leading-[1.65] text-fg-muted">
               Your brief lands Monday 7:30 AM IST. If you don’t see it,
               check Promotions or Spam — and reply to that email so
               Gmail puts the next one in your Primary.
@@ -46,7 +46,7 @@ export default async function SubscribePage() {
             <div className="mt-9 flex flex-wrap gap-4">
               <Link
                 href="/"
-                className="group inline-flex items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
+                className="group inline-flex min-h-[44px] items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
               >
                 READ LATEST ISSUE
                 <ArrowRight
@@ -57,7 +57,7 @@ export default async function SubscribePage() {
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center self-center font-mono text-[12px] tracking-label text-fg-subtle hover:text-fg"
+                className="inline-flex min-h-[44px] items-center self-center font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-fg"
               >
                 ABOUT →
               </Link>
@@ -72,29 +72,29 @@ export default async function SubscribePage() {
               <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[56px]">
                 Mondays. One shift.
               </h1>
-              <p className="mt-7 max-w-md text-[15px] leading-[1.75] text-fg-muted">
+              <p className="mt-7 max-w-md text-[17px] leading-[1.65] text-fg-muted">
                 ~1500 words on what changed this week and what to ship —
                 written for Indian AI builders, PMs, founders. Free.
               </p>
               <div className="mt-10 max-w-lg">
                 <HomeSubscribeForm />
-                <p className="mt-4 font-mono text-[11px] tracking-[0.04em] text-fg-subtle">
+                <p className="mt-5 font-mono text-[11px] tracking-[0.06em] text-fg-muted">
                   ONE EMAIL A WEEK · NEVER SOLD · UNSUBSCRIBE IN ONE TAP
                 </p>
               </div>
             </div>
 
-            <aside className="border border-line-strong bg-bg-raised p-7">
+            <aside className="border border-line-strong bg-bg-raised p-7 sm:p-8">
               <div className="font-mono text-[11px] tracking-label text-lime-soft">
                 EVERY MONDAY · 7:30 AM IST
               </div>
-              <ul className="mt-6 flex flex-col gap-5">
+              <ul className="mt-7 flex flex-col gap-6">
                 {WHAT_YOU_GET.map(([label, body]) => (
-                  <li key={label} className="flex flex-col gap-1">
-                    <span className="font-mono text-[10px] tracking-label text-lime">
+                  <li key={label} className="flex flex-col gap-1.5">
+                    <span className="font-mono text-[11px] tracking-label text-fg-muted">
                       {label}
                     </span>
-                    <span className="text-[14px] leading-[1.65] text-cream-dim">
+                    <span className="text-[15px] leading-[1.6] text-cream-dim">
                       {body}
                     </span>
                   </li>

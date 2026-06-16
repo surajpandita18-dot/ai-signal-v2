@@ -52,15 +52,18 @@ function deriveInitialState(
 function resolveSelection(
   state: SelectionState[Kind],
   cands: ShkCall[]
-): { label: string; rationale: string } | null {
+): { label: string; rationale: string; source: 'human' } | null {
+  // /review is the human-gated pick UI — every resolved selection is provenance
+  // 'human' by definition (whether Suraj picked a candidate or wrote his own).
   if (state.pickedIndex !== null && cands[state.pickedIndex]) {
     const c = cands[state.pickedIndex]
-    return { label: c.label, rationale: c.rationale }
+    return { label: c.label, rationale: c.rationale, source: 'human' }
   }
   if (state.custom.trim()) {
     return {
       label: state.custom.trim(),
       rationale: state.customRationale.trim(),
+      source: 'human',
     }
   }
   return null

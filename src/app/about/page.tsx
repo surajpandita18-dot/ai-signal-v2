@@ -92,20 +92,20 @@ export default async function AboutPage() {
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   {excerptArchetype ? (
                     <div className="border-l-2 border-lime bg-bg-raised p-5">
-                      <p className="font-mono text-[10px] tracking-label text-lime-soft">
+                      <p className="font-mono text-[11px] tracking-label text-fg-muted">
                         WRITTEN FOR
                       </p>
-                      <p className="mt-2 font-serif text-[15px] italic leading-snug text-fg">
+                      <p className="mt-2 font-serif text-[16px] italic leading-snug text-fg">
                         {excerptArchetype}
                       </p>
                     </div>
                   ) : null}
                   {excerptHack ? (
-                    <div className="border-l-2 border-danger bg-bg-raised p-5">
-                      <p className="font-mono text-[10px] tracking-label text-danger">
+                    <div className="border-l-2 border-line-strong bg-bg-raised p-5">
+                      <p className="font-mono text-[11px] tracking-label text-fg-muted">
                         PRODUCTION HACK
                       </p>
-                      <p className="mt-2 font-serif text-[15px] font-medium leading-snug text-fg">
+                      <p className="mt-2 font-serif text-[16px] font-medium leading-snug text-fg">
                         {excerptHack}
                       </p>
                     </div>
@@ -113,7 +113,7 @@ export default async function AboutPage() {
                 </div>
                 <Link
                   href={`/issue/${latest.id}`}
-                  className="mt-6 inline-flex items-center gap-2 font-mono text-[12px] tracking-label text-lime hover:text-fg"
+                  className="mt-6 inline-flex min-h-[44px] items-center gap-2 font-mono text-[12px] tracking-label text-cream-dim transition-colors hover:text-lime"
                 >
                   READ THE FULL ISSUE
                   <ArrowRight size={13} strokeWidth={2.25} />
@@ -133,12 +133,12 @@ export default async function AboutPage() {
             ].map((row, i) => (
               <div
                 key={row.k}
-                className={`flex flex-col gap-1.5 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
+                className={`flex flex-col gap-2 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
               >
-                <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                <span className="font-mono text-[11px] tracking-label text-fg-muted">
                   {row.k}
                 </span>
-                <span className="text-[14px] text-cream-dim">{row.v}</span>
+                <span className="text-[15px] leading-[1.55] text-cream-dim">{row.v}</span>
               </div>
             ))}
           </aside>
@@ -149,9 +149,9 @@ export default async function AboutPage() {
             <div className="font-mono text-[11px] tracking-label text-lime">
               SUBSCRIBED ✓
             </div>
-            <p className="text-[14px] text-fg-muted">
+            <p className="text-[15px] leading-relaxed text-fg-muted">
               Your next brief lands Monday. Read{' '}
-              <Link href="/" className="text-lime hover:text-fg">
+              <Link href="/" className="text-lime underline underline-offset-2 hover:text-fg">
                 the latest issue here
               </Link>
               .

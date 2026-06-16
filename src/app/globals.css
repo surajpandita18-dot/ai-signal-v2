@@ -138,13 +138,17 @@ button, a, input, select, textarea, label { touch-action: manipulation; }
 /* Body prose */
 .body-prose {
   font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 16px;
+  line-height: 1.7;
   color: rgb(var(--fg-muted));
 }
 
-/* Editorial body (Figr) — for dangerouslySetInnerHTML content */
-.editorial p { font-size: 15px; line-height: 1.75; color: rgb(var(--fg-muted)); }
+/* Editorial body (Figr) — for dangerouslySetInnerHTML content.
+   Long-form size — 17px desktop, 16px mobile floor. */
+.editorial p { font-size: 17px; line-height: 1.7; color: rgb(var(--fg-muted)); }
+@media (max-width: 600px) {
+  .editorial p { font-size: 16px; line-height: 1.65; }
+}
 .editorial p + p { margin-top: 1.1rem; }
 .editorial em { font-style: italic; color: rgb(var(--cream-dim)); }
 .editorial strong { color: rgb(var(--fg)); font-weight: 600; }
@@ -152,6 +156,21 @@ button, a, input, select, textarea, label { touch-action: manipulation; }
   color: rgb(var(--lime));
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* Drop cap — first letter of the lede paragraph as a 3-line Fraunces display
+   initial. Editorial signature; restraint demands it appears once per issue. */
+.editorial-lede p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 4.8em;
+  line-height: 0.85;
+  float: left;
+  /* Optical hang — pull the cap left so the body text's left edge stays true
+     to the section rule above, instead of the cap visually pushing the
+     paragraph inward. */
+  margin: 0.06em 0.12em 0 -0.12em;
+  color: rgb(var(--fg));
 }
 
 /* Figr animations */

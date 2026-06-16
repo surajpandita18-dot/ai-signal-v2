@@ -39,7 +39,7 @@ export default function ChapterNav({ chapters }: { chapters: ChapterNavItem[] })
               className={`shrink-0 border-b-2 pb-1 font-mono text-[11px] tracking-label transition-colors ${
                 on
                   ? 'border-lime text-lime'
-                  : 'border-transparent text-fg-subtle hover:text-fg-muted'
+                  : 'border-transparent text-fg-muted hover:text-fg'
               }`}
             >
               {String(i + 1).padStart(2, '0')} {c.label}

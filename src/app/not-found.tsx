@@ -17,7 +17,7 @@ export default function NotFound() {
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-[64px]">
           Nothing here.
         </h1>
-        <p className="mt-7 max-w-xl text-[15px] leading-[1.75] text-fg-muted">
+        <p className="mt-7 max-w-xl text-[17px] leading-[1.65] text-fg-muted">
           The page you’re looking for moved, was an old preview link, or
           never existed. The next Monday brief still lands at 7:30 AM IST
           either way.
@@ -26,7 +26,7 @@ export default function NotFound() {
         <div className="mt-10 flex flex-wrap gap-4">
           <Link
             href="/"
-            className="group inline-flex items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
+            className="group inline-flex min-h-[44px] items-center gap-2 bg-lime px-6 py-3.5 font-mono text-[13px] font-semibold tracking-[0.04em] text-bg"
           >
             BACK TO HOMEPAGE
             <ArrowRight
@@ -37,7 +37,7 @@ export default function NotFound() {
           </Link>
           <Link
             href="/#archive"
-            className="inline-flex items-center self-center font-mono text-[12px] tracking-label text-fg-subtle hover:text-fg"
+            className="inline-flex min-h-[44px] items-center self-center font-mono text-[12px] tracking-label text-fg-muted transition-colors hover:text-fg"
           >
             BROWSE PAST ISSUES →
           </Link>

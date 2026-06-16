@@ -25,10 +25,14 @@ async function main() {
     process.exit(1)
   }
   const p = issue.payload
+  // This is the manual auto-pick CLI — auto-promoting AI candidates, so the
+  // provenance is 'ai' (matches the cron auto-send pathway, not /review).
+  const aiPick = (v: { label: string; rationale: string } | undefined) =>
+    v ? { ...v, source: 'ai' as const } : null
   const chosen = {
-    ship: p.shk_candidates?.ship?.[0] ?? null,
-    hold: p.shk_candidates?.hold?.[0] ?? null,
-    kill: p.shk_candidates?.kill?.[0] ?? null,
+    ship: aiPick(p.shk_candidates?.ship?.[0]),
+    hold: aiPick(p.shk_candidates?.hold?.[0]),
+    kill: aiPick(p.shk_candidates?.kill?.[0]),
   }
   const { error: updErr } = await supabase
     .from('issues')

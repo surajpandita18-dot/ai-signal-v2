@@ -9,7 +9,12 @@
     "typecheck": "tsc --noEmit",
     "smoke:source": "tsx src/scripts/smoke-source.ts",
     "smoke:cluster": "tsx src/scripts/smoke-cluster.ts",
-    "smoke:synthesize": "tsx src/scripts/smoke-synthesize.ts"
+    "smoke:synthesize": "tsx src/scripts/smoke-synthesize.ts",
+    "audit:design": "tsx src/scripts/audit-gate.ts",
+    "audit:design:prod": "tsx src/scripts/audit-gate.ts --prod",
+    "audit:shots": "tsx src/scripts/audit-shots.ts",
+    "predeploy": "tsx src/scripts/audit-gate.ts --prod",
+    "deploy": "vercel --prod --yes"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.1",

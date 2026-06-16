@@ -23,6 +23,15 @@ export async function POST(req: Request) {
   }
   const { issueId, testOnly } = body
   if (!issueId) return NextResponse.json({ error: 'issueId required' }, { status: 400 })
+  // Safety: a missing or coerced `testOnly` must NOT silently default to a
+  // blast to all subscribers. Require an explicit boolean — a typo on the
+  // caller's side should fail closed, not blast prod.
+  if (typeof testOnly !== 'boolean') {
+    return NextResponse.json(
+      { error: 'testOnly must be an explicit boolean (true to preview, false to blast all subscribers)' },
+      { status: 400 }
+    )
+  }
 
   const supabase = createAdminSupabaseClient()
   const { data: issue, error } = await supabase
@@ -50,7 +59,7 @@ export async function POST(req: Request) {
     chosen: issue.chosen_calls,
   }
 
-  if (testOnly) {
+  if (testOnly === true) {
     const owner = process.env.NEWSLETTER_OWNER_EMAIL ?? 'suraj.pandita18@gmail.com'
     const rendered = renderEmailHtml({
       ...inputBase,

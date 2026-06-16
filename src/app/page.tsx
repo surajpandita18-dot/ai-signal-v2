@@ -129,7 +129,7 @@ export default async function HomePage() {
               <br />
               <span className="text-fg-muted">Every Monday.</span>
             </h1>
-            <p className="reveal d-3 mt-6 max-w-md text-[15px] leading-relaxed text-fg-muted sm:text-base">
+            <p className="reveal d-3 mt-6 max-w-md text-[16px] leading-[1.65] text-fg-muted sm:text-[17px]">
               The single move reshaping the stack — what happened, who it&apos;s
               for, and what to do Monday morning. No roundups. No hype.
             </p>
@@ -140,7 +140,7 @@ export default async function HomePage() {
                   <div className="font-mono text-[11px] tracking-label text-lime">
                     SUBSCRIBED ✓
                   </div>
-                  <p className="text-[14px] text-fg-muted">
+                  <p className="text-[15px] leading-relaxed text-fg-muted">
                     Your next brief lands Monday 7:30 AM IST. Scroll for the
                     latest issue.
                   </p>
@@ -148,7 +148,7 @@ export default async function HomePage() {
               ) : (
                 <HomeSubscribeForm />
               )}
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.04em] text-fg-subtle">
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.06em] text-fg-muted">
                 <span>FREE FOREVER</span>
                 <span className="text-line-strong">/</span>
                 <span>6-MIN READ</span>
@@ -160,42 +160,22 @@ export default async function HomePage() {
 
           {featured ? (
             <div className="flex flex-col justify-center bg-bg-raised px-5 py-12 sm:px-8 lg:py-24 lg:pl-12">
-              <div className="reveal d-3 mb-5 flex items-center gap-2 font-mono text-[11px] tracking-label text-fg-subtle">
+              <div className="reveal d-3 mb-5 flex items-center gap-2 font-mono text-[11px] tracking-label text-fg-muted">
                 <CornerDownRight size={13} strokeWidth={2} />
                 THIS WEEK · ISSUE {featured.no}
               </div>
               <div className="reveal d-4 border-l-2 border-lime pl-5">
-                <h2 className="font-serif text-2xl font-semibold leading-[1.1] tracking-tight text-fg sm:text-[28px]">
+                <h2 className="font-serif text-[26px] font-semibold leading-[1.1] tracking-tight text-fg sm:text-[30px]">
                   {featured.title}
                 </h2>
-                <p className="mt-3.5 text-[13.5px] leading-relaxed text-fg-muted">
+                <p className="mt-4 text-[16px] leading-[1.6] text-cream-dim">
                   {featured.dek}
                 </p>
               </div>
-              <dl className="reveal d-5 mt-7 flex flex-col gap-3">
-                {featured.forLine ? (
-                  <div className="flex items-baseline gap-3">
-                    <dt className="w-16 shrink-0 font-mono text-[10px] font-semibold tracking-label text-lime-soft">
-                      FOR
-                    </dt>
-                    <dd className="text-[13px] text-cream-dim">{featured.forLine}</dd>
-                  </div>
-                ) : null}
-                {featured.stealLine ? (
-                  <div className="flex items-baseline gap-3">
-                    <dt className="w-16 shrink-0 font-mono text-[10px] font-semibold tracking-label text-lime-soft">
-                      STEAL
-                    </dt>
-                    <dd className="text-[13px] text-cream-dim">
-                      {featured.stealLine}
-                    </dd>
-                  </div>
-                ) : null}
-              </dl>
-              <div className="reveal d-6 mt-8">
+              <div className="reveal d-6 mt-8 flex min-h-[44px] flex-col justify-center">
                 <Link
                   href={`/issue/${featured.id}`}
-                  className="group inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-lime"
+                  className="group inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-cream transition-colors hover:text-lime"
                 >
                   READ THIS ISSUE FREE
                   <ArrowRight
@@ -204,7 +184,7 @@ export default async function HomePage() {
                     className="transition-transform group-hover:translate-x-1"
                   />
                 </Link>
-                <p className="mt-2 text-[12px] text-fg-subtle">
+                <p className="mt-2 text-[14px] text-fg-muted">
                   …then get the next one Monday.
                 </p>
               </div>
@@ -226,25 +206,20 @@ export default async function HomePage() {
             <h2 className="max-w-xl font-serif text-[28px] font-medium leading-tight tracking-tight text-fg sm:text-4xl">
               Five minutes. One decision you&apos;d have missed.
             </h2>
-            <span className="hidden font-mono text-[11px] tracking-label text-fg-subtle sm:block">
+            <span className="hidden font-mono text-[11px] tracking-label text-fg-muted sm:block">
               THE FORMAT
             </span>
           </div>
           <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-3">
             {WHAT_YOU_GET.map((it) => (
-              <div key={it.k} className="flex flex-col bg-bg p-7">
-                <div className="flex items-center justify-between">
-                  <span className="font-serif text-4xl font-semibold text-line-strong">
-                    {it.k}
-                  </span>
-                  <span className="font-mono text-[10px] tracking-label text-lime-soft">
-                    {it.label}
-                  </span>
-                </div>
-                <h3 className="mt-6 font-serif text-xl font-medium tracking-tight text-fg">
+              <div key={it.k} className="flex flex-col bg-bg p-8">
+                <span className="font-mono text-[11px] tracking-label text-fg-muted">
+                  {it.label}
+                </span>
+                <h3 className="mt-5 font-serif text-[22px] font-medium leading-[1.2] tracking-tight text-fg">
                   {it.title}
                 </h3>
-                <p className="mt-2.5 text-[13.5px] leading-relaxed text-fg-muted">
+                <p className="mt-3 text-[15px] leading-[1.65] text-fg-muted">
                   {it.body}
                 </p>
               </div>
@@ -281,7 +256,7 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/#subscribe"
-                className="group mt-9 inline-flex items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-lime"
+                className="group mt-9 inline-flex min-h-[44px] items-center gap-2 font-mono text-[13px] font-semibold tracking-[0.04em] text-cream-dim transition-colors hover:text-lime"
               >
                 START WITH MONDAY&apos;S BRIEF
                 <ArrowRight
@@ -302,12 +277,12 @@ export default async function HomePage() {
               ].map((row, i) => (
                 <div
                   key={row.k}
-                  className={`flex flex-col gap-1.5 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
+                  className={`flex flex-col gap-2 p-5 sm:p-6 ${i !== 0 ? 'border-t border-line' : ''}`}
                 >
-                  <span className="font-mono text-[10px] tracking-label text-fg-subtle">
+                  <span className="font-mono text-[11px] tracking-label text-fg-muted">
                     {row.k}
                   </span>
-                  <span className="text-[14px] text-cream-dim">{row.v}</span>
+                  <span className="text-[15px] leading-[1.55] text-cream-dim">{row.v}</span>
                 </div>
               ))}
             </div>
@@ -320,7 +295,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 sm:py-20">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <div className="mb-2 font-mono text-[11px] tracking-label text-fg-subtle">
+              <div className="mb-2 font-mono text-[11px] tracking-label text-fg-muted">
                 ARCHIVE
               </div>
               <h2 className="font-serif text-[28px] font-medium tracking-tight text-fg sm:text-4xl">
@@ -329,7 +304,7 @@ export default async function HomePage() {
             </div>
           </div>
           {list.length === 0 ? (
-            <p className="font-mono text-[12px] tracking-label text-fg-subtle">
+            <p className="font-mono text-[12px] tracking-label text-fg-muted">
               ISSUE #001 IS BEING DRAFTED.
             </p>
           ) : (
@@ -338,39 +313,39 @@ export default async function HomePage() {
                 <Link
                   key={iss.id}
                   href={`/issue/${iss.id}`}
-                  className="group grid grid-cols-1 gap-3 border-b border-line py-6 transition-colors hover:bg-bg-raised sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-7 sm:px-3"
+                  className="group grid min-h-[44px] grid-cols-1 gap-3 border-b border-line py-7 transition-colors hover:bg-bg-raised sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-7 sm:px-3"
                 >
                   <div className="flex items-center gap-4 sm:w-44 sm:flex-col sm:items-start sm:gap-1.5">
-                    <span className="font-mono text-[13px] font-semibold text-lime">
+                    <span className="font-mono text-[13px] font-semibold text-cream-dim transition-colors group-hover:text-lime">
                       {iss.no}
                     </span>
-                    <span className="font-mono text-[10px] tracking-[0.08em] text-fg-subtle">
+                    <span className="font-mono text-[11px] tracking-[0.08em] text-fg-muted">
                       {iss.archiveDate}
                     </span>
                     <span
-                      className={`hidden border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.08em] sm:inline ${
+                      className={`hidden border px-1.5 py-0.5 font-mono text-[10px] tracking-[0.08em] sm:inline ${
                         iss.kind === 'DEEP DIVE'
                           ? 'border-lime/40 text-lime'
-                          : 'border-line-strong text-fg-subtle'
+                          : 'border-line-strong text-fg-muted'
                       }`}
                     >
                       {iss.kind}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-serif text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-lime sm:text-[22px]">
+                    <h3 className="font-serif text-[22px] font-medium leading-[1.2] tracking-tight text-fg transition-colors group-hover:text-lime">
                       {iss.title}
                     </h3>
-                    <p className="mt-1 line-clamp-1 text-[13px] text-fg-muted">
+                    <p className="mt-1.5 line-clamp-1 text-[15px] text-fg-muted">
                       {iss.dek}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 font-mono text-[10px] tracking-label text-fg-subtle">
+                  <div className="flex items-center gap-3 font-mono text-[11px] tracking-label text-fg-muted">
                     <span>{iss.read}</span>
                     <ArrowUpRight
                       size={16}
                       strokeWidth={1.75}
-                      className="text-fg-subtle transition-all group-hover:text-lime"
+                      className="text-fg-muted transition-all group-hover:text-lime"
                     />
                   </div>
                 </Link>

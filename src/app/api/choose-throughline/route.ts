@@ -28,12 +28,15 @@ interface PostBody {
   }
 }
 
-function normalizePick(p: ShkPick | null | undefined): ShkPick | null {
+function normalizePick(
+  p: ShkPick | null | undefined
+): { label: string; rationale: string; source: 'human' } | null {
   if (!p) return null
   const label = (p.label ?? '').trim()
   const rationale = (p.rationale ?? '').trim()
   if (!label) return null
-  return { label, rationale }
+  // This route is the /review human-pick endpoint — provenance is always 'human'.
+  return { label, rationale, source: 'human' }
 }
 
 export async function POST(req: Request) {

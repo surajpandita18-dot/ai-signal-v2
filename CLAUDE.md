@@ -74,21 +74,32 @@ After 6 evidenced research streams (Indian builder pain points, INR pricing real
 
 ---
 
-## Locked design system (post research, June 2026)
+## Locked design system — Figr v3 (June 2026)
 
-See memory `project_design_system_locked.md` for the full rationale and sources.
+The original paper/ink/indigo system above was superseded by the Figr v3 dark-first system in June 2026. Globals.css and every shipped surface use Figr v3. The new lock:
 
-**Palette (4 tokens + muted, locked):**
-- `--paper` `#F5F1E8` — warm off-white, NEVER pure white
-- `--ink` `#1A1A1A` — near-black, AAA contrast on paper
-- `--accent` `#1E3A8A` — indigo (single moment of color)
-- `--clay` `#9A3412` — terracotta (pull-quote left border only)
-- `--muted` `#6B6B6B`
+**Palette (Figr v3, locked):**
+- `--bg` `#0b0d0a` — near-black with green tint (NOT pure black)
+- `--bg-raised` `#0e110c` / `--bg-card` `#131712`
+- `--cream` `#ece7dd` primary text / `--cream-dim` `#cfc9bd` subdued
+- `--lime` `#c2f53d` — the SINGLE accent. Functional only (CTAs, beat anchors like Roman numerals, pull-quote rule, math delta column). Never decorative.
+- `--fg-muted` `#8b8f86` body-muted, `--fg-subtle` `#6b7062` for rules/dots ONLY (fails contrast as copy)
+- `--danger` `#e5675a` — used sparingly for SKIP / KILL signals
 
-**Typography:**
+**Typography (Figr v3, locked):**
 - Email: Georgia body / system-sans heading / system-mono meta
-- Web: Merriweather body / Geist heading / Geist Mono meta
-- Optional Devanagari ornament: Mukta SemiBold (masthead only, sparingly)
+- Web: Fraunces serif (display + italic body subheads) / Inter sans / JetBrains Mono
+- Lede paragraph gets a Fraunces drop cap (`.editorial-lede`)
+
+**Visual anti-patterns (Figr v3 additions):**
+- Eyebrow stack — every section starts with a small uppercase mono label
+- Card-in-card — bordered boxes around lists, cards inside grids
+- Lime as decoration (eyebrows, every numeral, every link) — lime is functional only
+- Sticky widgets — chapter scrubbers, progress bars
+- Performative labels — "THE LOOP CLOSES" / "END OF ISSUE" announcing the obvious
+- Mono labels as decoration — 8+ mono caps in one screen
+- Symmetric 2-col grids when an asymmetric or single-column flow would read more editorial
+- Missing editorial details — no byline, no drop cap, no dateline ("By Suraj Pandita, Bangalore")
 
 **Issue structure (locked, 8 elements):**
 masthead → H1 throughline → 3-bullet Executive Skim → 6-layer diff (identical skeleton per beat) → persona translation + INR math → Ship/Hold/Kill cards → Keep/Skip lists → closure + "Forward to one builder" CTA
@@ -123,3 +134,9 @@ Do NOT build:
 
 See `ai-signal-v2-build-spec.md` for the original spec.
 See memory `project_positioning_locked.md` for the full positioning rationale.
+
+---
+
+## Design standard
+
+Before any design decision or shipping any UI, check it against `.claude/design-quality-rubric.md` — all HARD GATES must pass, verified on the real rendered output (screenshots at 1200px + 390px, and email at 360px if applicable).

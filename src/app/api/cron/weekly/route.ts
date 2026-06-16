@@ -166,11 +166,18 @@ async function runPipeline(): Promise<{
         .eq('id', issueId)
         .single()
       const p = postQA?.payload
+      // Tag every cron-auto-promoted pick with source='ai' so the renderer can
+      // refuse the Ship-tier bright-lime treatment (CLAUDE.md rule #1 reserves
+      // that for human picks — the tiered auto-send path is still authorized
+      // but the visual signal must be honest).
+      const aiPick = (
+        v: { label: string; rationale: string } | undefined
+      ) => (v ? { ...v, source: 'ai' as const } : null)
       const chosenCalls = p?.shk_candidates
         ? {
-            ship: p.shk_candidates.ship?.[0] ?? null,
-            hold: p.shk_candidates.hold?.[0] ?? null,
-            kill: p.shk_candidates.kill?.[0] ?? null,
+            ship: aiPick(p.shk_candidates.ship?.[0]),
+            hold: aiPick(p.shk_candidates.hold?.[0]),
+            kill: aiPick(p.shk_candidates.kill?.[0]),
           }
         : { ship: null, hold: null, kill: null }
       await supabase
@@ -208,14 +215,17 @@ async function runPipeline(): Promise<{
         .single()
       const p = postQA?.payload
       if (p?.shk_candidates) {
+        const aiPick = (
+          v: { label: string; rationale: string } | undefined
+        ) => (v ? { ...v, source: 'ai' as const } : null)
         await supabase
           .from('issues')
           .update({
             status: 'drafted',
             chosen_calls: {
-              ship: p.shk_candidates.ship?.[0] ?? null,
-              hold: p.shk_candidates.hold?.[0] ?? null,
-              kill: p.shk_candidates.kill?.[0] ?? null,
+              ship: aiPick(p.shk_candidates.ship?.[0]),
+              hold: aiPick(p.shk_candidates.hold?.[0]),
+              kill: aiPick(p.shk_candidates.kill?.[0]),
             },
           })
           .eq('id', issueId)

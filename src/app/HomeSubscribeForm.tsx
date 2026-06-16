@@ -46,7 +46,7 @@ export default function HomeSubscribeForm() {
         <div className="font-mono text-[11px] tracking-label text-lime">
           ON THE LIST ✓
         </div>
-        <p className="text-[14px] text-fg-muted">
+        <p className="text-[15px] leading-relaxed text-fg-muted">
           Your first brief lands Monday 7:30 AM IST. If you don&rsquo;t see
           it, check Promotions or Spam.
         </p>
@@ -71,7 +71,7 @@ export default function HomeSubscribeForm() {
           placeholder="you@startup.in"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-transparent px-2.5 py-4 text-[14px] text-fg placeholder:text-fg-subtle focus:outline-none"
+          className="w-full bg-transparent px-2.5 py-4 text-[16px] text-fg placeholder:text-fg-muted focus:outline-none"
         />
       </div>
       <button
@@ -91,7 +91,7 @@ export default function HomeSubscribeForm() {
         <p
           role="alert"
           aria-live="polite"
-          className="mt-2 border border-danger/40 bg-danger/10 px-3 py-2 text-[13px] text-fg sm:col-span-2"
+          className="mt-2 border border-danger/40 bg-danger/10 px-3 py-2 text-[14px] text-fg sm:col-span-2"
         >
           {error}
         </p>

@@ -11,11 +11,11 @@ import type {
   Beat,
 } from '../../../db/types/database'
 import type { Block } from './blocks'
+import { escapeHtml, safeUrl, inline } from '../../lib/safe-html'
 
 export interface Chapter {
   id: string
-  label: string // short — for nav
-  kicker: string // long — "AT A GLANCE"
+  label: string // short — for any future TOC; chapter eyebrow is intentionally not rendered
   heading: string
   sub?: string
   blocks: Block[]
@@ -65,24 +65,36 @@ function fmtDate(iso: string | null): string {
 }
 
 // Convert plaintext (with \n\n paragraphs) into HTML for the editorial class.
+// Uses inline() so any synthesizer-emitted markdown links / bold / italic in
+// the throughline_lead or deep-dive cold_open render as real anchors and
+// emphasis rather than as literal `[text](url)` / `**bold**` source.
 function paraToHtml(s: string | null | undefined): string {
   if (!s) return ''
   return s
     .split(/\n\s*\n/)
-    .map((p) => `<p>${escapeHtml(p.trim())}</p>`)
+    .map((p) => `<p>${inline(p.trim())}</p>`)
     .join('')
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-}
+// escapeHtml / safeUrl / inline live in src/lib/safe-html.ts — single source of
+// truth so web + email surfaces can't drift on escape rules, URL allow-list,
+// or markdown rendering. Imported above.
 
 // Parse the synth's INR math block into Math block rows.
 // Each "Label: value" line becomes a row; the trailing interpretation is dropped
 // (it's surfaced as a sub paragraph instead).
+// Match "metric — value", "metric–value" (no spaces, common in Indic typography),
+// "metric - value", or "metric: value".
+// - Em/en dashes match with optional surrounding spaces — Indic outputs often
+//   write "Tokens—₹50" with no spaces.
+// - ASCII hyphen still requires spaces on both sides to avoid matching
+//   hyphenated metric names like "open-source-cost".
+// - Colon split is gated to require a non-digit AFTER the colon — avoids times
+//   like "7:30 AM" being interpreted as a metric/value pair while still
+//   accepting metric labels that end in a digit (e.g. "A100: ₹200/hr",
+//   "GPT-4: ₹6/Mtok", "H100: $25K").
+const METRIC_VALUE_RE = /^(.{1,90}?)\s*(?:\s*[—–]\s*|\s-\s|:(?!\d)\s?)\s*(.+)$/
+
 function parseInrMath(raw: string): {
   rows: Array<{ metric: string; a: string; b: string; delta: string }>
   conclusion: string
@@ -94,14 +106,11 @@ function parseInrMath(raw: string): {
   const rows: Array<{ metric: string; a: string; b: string; delta: string }> = []
   const tail: string[] = []
   for (const line of lines) {
-    const idx = line.indexOf(':')
-    if (idx > 0 && idx < 90) {
-      const label = line.slice(0, idx).trim()
-      const value = line
-        .slice(idx + 1)
-        .trim()
-        .replace(/\.$/, '')
-      if (/[₹$%]|\b\d+(\.\d+)?\b/.test(value)) {
+    const m = METRIC_VALUE_RE.exec(line)
+    if (m) {
+      const label = m[1].trim()
+      const value = m[2].trim().replace(/\.$/, '')
+      if (label && /[₹$%]|\b\d+(\.\d+)?\b/.test(value)) {
         rows.push({ metric: label, a: '—', b: value, delta: '' })
         continue
       }
@@ -118,20 +127,39 @@ export function weeklyToRenderable(
 ): RenderableIssue {
   const chapters: Chapter[] = []
 
-  // CH01 — At a glance (Ship · Hold · Kill summary)
-  const glanceItems: string[] = []
+  // CH01 — At a glance (Ship · Hold · Kill summary).
+  // CLAUDE.md rule #1: track human-pick provenance per row so the Glance
+  // renderer can refuse the affirmative Ship-tier treatment for any row that
+  // wasn't actually picked by the human editor.
+  const glanceItems: { verb: string; body: string; isHumanPick: boolean }[] = []
   for (const k of ['ship', 'hold', 'kill'] as const) {
-    const label = chosen?.[k]?.label ?? payload.shk_candidates?.[k]?.[0]?.label
-    if (label) {
+    const chosenCall = chosen?.[k]
+    const aiFallback = payload.shk_candidates?.[k]?.[0]
+    const call = chosenCall ?? aiFallback
+    if (call?.label) {
       const verb = k[0].toUpperCase() + k.slice(1)
-      glanceItems.push(`<strong>${verb}</strong> — ${escapeHtml(label)}`)
+      // Strip leading verb echo plus separator chars; escape verb for regex.
+      const escapedVerb = verb.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const stripped = call.label.replace(
+        new RegExp(`^${escapedVerb}[\\s:—–-]+`, 'i'),
+        ''
+      )
+      // CLAUDE.md rule #1: bright-lime Ship-tier treatment requires a human
+      // pick. New writes carry an explicit `source` ('human' from /review,
+      // 'ai' from cron). Legacy rows written before the source field existed
+      // are treated as 'human' since the /review path was the only writer
+      // (the cron auto-promotion path that motivates the AI flag landed in
+      // the same change). New 'ai'-tagged rows render demoted.
+      const isHumanPick = chosenCall
+        ? (chosenCall.source ?? 'human') === 'human'
+        : false
+      glanceItems.push({ verb, body: inline(stripped), isHumanPick })
     }
   }
   if (glanceItems.length) {
     chapters.push({
       id: 'ch-glance',
       label: 'Glance',
-      kicker: 'AT A GLANCE',
       heading: 'If you only read this',
       sub: 'The three moves to walk away with.',
       blocks: [{ type: 'glance', items: glanceItems }],
@@ -146,7 +174,6 @@ export function weeklyToRenderable(
     chapters.push({
       id: 'ch-moved',
       label: 'Moved',
-      kicker: 'WHAT MOVED',
       heading: 'The six layers',
       sub: 'Frontier APIs · India infra · regulation · Indic models · talent · enterprise.',
       blocks: [
@@ -154,7 +181,7 @@ export function weeklyToRenderable(
           type: 'layers',
           items: orderedDiff.map((d) => ({
             t: BEAT_LABEL[d.beat],
-            d: escapeHtml(d.bullet),
+            d: inline(d.bullet),
           })),
         },
       ],
@@ -169,7 +196,7 @@ export function weeklyToRenderable(
         quote: payload.persona.archetype,
         paras: payload.persona.translation
           .split(/\n\s*\n/)
-          .map((p) => escapeHtml(p.trim()))
+          .map((p) => inline(p.trim()))
           .filter(Boolean),
       },
     ]
@@ -184,7 +211,7 @@ export function weeklyToRenderable(
         })
       }
       if (conclusion) {
-        personaBlocks.push({ type: 'prose', html: `<p>${escapeHtml(conclusion)}</p>` })
+        personaBlocks.push({ type: 'prose', html: `<p>${inline(conclusion)}</p>` })
       }
     }
     if (payload.also_for?.length) {
@@ -197,14 +224,13 @@ export function weeklyToRenderable(
         personaBlocks.push({
           type: 'archetype',
           quote: b.archetype,
-          paras: [escapeHtml(b.take)],
+          paras: [inline(b.take)],
         })
       }
     }
     chapters.push({
       id: 'ch-foryou',
       label: 'For you',
-      kicker: 'FOR YOU',
       heading: 'Written for this week',
       sub: 'One archetype, deep. Adjacent ones get a paragraph.',
       blocks: personaBlocks,
@@ -216,34 +242,33 @@ export function weeklyToRenderable(
     chapters.push({
       id: 'ch-steal',
       label: 'Steal',
-      kicker: 'STEAL THIS',
       heading: payload.production_hack.title,
       sub: 'One technique from the literature. Ship Monday.',
       blocks: [
         {
           type: 'steal',
-          kicker: 'FROM THE LITERATURE',
-          body: `<strong>Why it matters.</strong> ${escapeHtml(payload.production_hack.why_it_matters)}<br/><br/><strong>How to apply.</strong> ${escapeHtml(payload.production_hack.how_to_apply)}<br/><br/>Source: <a href="${escapeHtml(payload.production_hack.source_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(payload.production_hack.source_label)}</a>`,
+          body: `<strong>Why it matters.</strong> ${inline(payload.production_hack.why_it_matters)}<br/><br/><strong>How to apply.</strong> ${inline(payload.production_hack.how_to_apply)}<br/><br/>Source: <a href="${escapeHtml(safeUrl(payload.production_hack.source_url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(payload.production_hack.source_label)}</a>`,
           chips: [],
         },
       ],
     })
   }
 
-  // CH05 — The calls (Ship · Hold · Kill in full)
+  // CH05 — The calls (Ship · Hold · Kill in full). The synthesizer freely
+  // emits markdown in rationale text, so we route through inline() (which
+  // escapes first) and the renderer dangerouslySetInnerHTMLs the result.
   if (chosen) {
     const callItems: Array<{ c: 'HIGH' | 'MED' | 'LOW'; t: string }> = []
     if (chosen.ship)
-      callItems.push({ c: 'HIGH', t: `${chosen.ship.label}. ${chosen.ship.rationale}` })
+      callItems.push({ c: 'HIGH', t: inline(`${chosen.ship.label}. ${chosen.ship.rationale}`) })
     if (chosen.hold)
-      callItems.push({ c: 'MED', t: `${chosen.hold.label}. ${chosen.hold.rationale}` })
+      callItems.push({ c: 'MED', t: inline(`${chosen.hold.label}. ${chosen.hold.rationale}`) })
     if (chosen.kill)
-      callItems.push({ c: 'LOW', t: `${chosen.kill.label}. ${chosen.kill.rationale}` })
+      callItems.push({ c: 'LOW', t: inline(`${chosen.kill.label}. ${chosen.kill.rationale}`) })
     if (callItems.length) {
       chapters.push({
         id: 'ch-calls',
         label: 'Calls',
-        kicker: 'THE CALLS',
         heading: 'Three moves this week',
         sub: 'One to ship. One to wait on. One to kill.',
         blocks: [{ type: 'calls', items: callItems }],
@@ -256,14 +281,13 @@ export function weeklyToRenderable(
     chapters.push({
       id: 'ch-reading',
       label: 'Reading',
-      kicker: 'YOUR READING LIST',
       heading: 'What to read · what to skip',
       sub: 'Three pieces worth your half-hour. Five everyone is loud about that you can ignore.',
       blocks: [
         {
           type: 'readskip',
-          read: (payload.keep_skip?.keep ?? []).map(escapeHtml),
-          skip: (payload.keep_skip?.skip ?? []).map(escapeHtml),
+          read: (payload.keep_skip?.keep ?? []).map((s) => inline(s)),
+          skip: (payload.keep_skip?.skip ?? []).map((s) => inline(s)),
         },
       ],
     })
@@ -292,7 +316,6 @@ export function deepDiveToRenderable(
     chapters.push({
       id: 'ch-assumption',
       label: 'Belief',
-      kicker: 'THE ASSUMPTION',
       heading: 'Here’s what everyone thinks',
       blocks: [
         {
@@ -308,7 +331,6 @@ export function deepDiveToRenderable(
     chapters.push({
       id: `ch-ev-${idx + 1}`,
       label: section.heading.split(' ').slice(0, 2).join(' '),
-      kicker: `EVIDENCE 0${idx + 1}`,
       heading: section.heading,
       blocks: [{ type: 'prose', html: mdToHtml(section.body) }],
     })
@@ -319,7 +341,6 @@ export function deepDiveToRenderable(
     chapters.push({
       id: 'ch-twist',
       label: 'India',
-      kicker: 'INDIAN-CONTEXT WEDGE',
       heading: 'What changes when you re-run this for India',
       blocks: [{ type: 'prose', html: mdToHtml(payload.india_twist) }],
     })
@@ -330,7 +351,6 @@ export function deepDiveToRenderable(
     chapters.push({
       id: 'ch-monday',
       label: 'Monday',
-      kicker: 'WHAT TO DO MONDAY',
       heading: 'Three moves to make this sprint',
       blocks: [
         {
@@ -349,11 +369,10 @@ export function deepDiveToRenderable(
     chapters.push({
       id: 'ch-counter',
       label: 'Wrong?',
-      kicker: 'WHAT I MIGHT BE WRONG ABOUT',
       heading: 'The steel-manned counter',
       blocks: payload.counter_positions.map((cp) => ({
         type: 'prose' as const,
-        html: `<p><strong>${escapeHtml(cp.claim)}</strong></p><p>${escapeHtml(cp.steel_man)} <a href="${escapeHtml(cp.best_link)}" target="_blank" rel="noopener noreferrer">[link]</a></p>`,
+        html: `<p><strong>${inline(cp.claim)}</strong></p><p>${inline(cp.steel_man)} <a href="${escapeHtml(safeUrl(cp.best_link))}" target="_blank" rel="noopener noreferrer">[link]</a></p>`,
       })),
     })
   }
@@ -363,12 +382,11 @@ export function deepDiveToRenderable(
     chapters.push({
       id: 'ch-reading',
       label: 'More',
-      kicker: 'FURTHER READING',
       heading: 'Where to go deeper',
       blocks: [
         {
           type: 'prose',
-          html: `<ol>${payload.further_reading.map((r) => `<li><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.annotation)}</a></li>`).join('')}</ol>`,
+          html: `<ol>${payload.further_reading.map((r) => `<li><a href="${escapeHtml(safeUrl(r.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.annotation)}</a></li>`).join('')}</ol>`,
         },
       ],
     })
@@ -401,13 +419,3 @@ function mdToHtml(src: string): string {
     .join('')
 }
 
-function inline(s: string): string {
-  const escaped = escapeHtml(s)
-  return escaped
-    .replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-    )
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/_([^_]+)_/g, '<em>$1</em>')
-}

@@ -13,10 +13,10 @@ export default function SiteNav({
   return (
     <header className="sticky top-0 z-40 bg-cream text-bg">
       <div className="mx-auto flex h-14 max-w-shell items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <SignalBars color="#1f4d12" />
-          <span className="font-mono text-[15px] font-semibold tracking-[0.12em]">
-            AI SIGNAL
+        <Link href="/" className="flex items-baseline gap-2.5">
+          <SignalBars color="currentColor" className="self-center" />
+          <span className="font-serif text-[20px] font-semibold tracking-tight">
+            AI Signal
           </span>
         </Link>
         <nav className="flex items-center gap-5 sm:gap-7">
@@ -33,13 +33,13 @@ export default function SiteNav({
             ABOUT
           </Link>
           {subscribed ? (
-            <span className="inline-flex items-center gap-1.5 bg-bg px-3.5 py-2 font-mono text-[11px] font-semibold tracking-[0.08em] text-lime">
+            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-[0.12em] text-bg/80">
               SUBSCRIBED ✓
             </span>
           ) : (
             <Link
               href="/subscribe"
-              className="group inline-flex items-center gap-1.5 bg-bg px-3.5 py-2 font-mono text-[11px] font-semibold tracking-[0.08em] text-lime"
+              className="group inline-flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-label text-bg/80 transition-colors hover:text-bg"
             >
               SUBSCRIBE
               <ArrowRight
