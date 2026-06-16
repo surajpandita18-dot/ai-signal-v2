@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { BlockRenderer } from './blocks'
+import Appendix from './Appendix'
 import type { RenderableIssue } from './payload-adapter'
 
 export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
@@ -84,6 +85,12 @@ export default function ArticleRenderer({ issue }: { issue: RenderableIssue }) {
           )
         })}
       </main>
+
+      {/* APPENDIX — interview drills + further reading (web only, lean email).
+          Conditional on payload.appendix; older issues without it render
+          nothing here. Drills are topic-aware (per fresh-model audit
+          2026-06-16); resources include the India-builder differentiator. */}
+      {issue.appendix && <Appendix appendix={issue.appendix} />}
 
       {/* END CTA — closure beat as drop-the-mic line, then quiet sign-off.
           The lime "——" mark gives the closure a typographic terminal that

@@ -363,6 +363,46 @@ export interface IssuePayload {
   set_aside_observation: string | null      // optional one-sentence note on what dominated the noise
   no_signal: boolean                        // true when week is genuinely quiet
   no_signal_reason: string | null
+  // Optional reader-tool appendix — rendered on /issue but NOT in the email
+  // (keeps email lean per learnings-suraj-preferences). Hand-curated for
+  // pre-rebuild issues; future synthesizer rounds populate it from payload.
+  appendix?: AppendixPack | null
+}
+
+// Reader-tool appendix — interview prep + curated further reading per issue.
+// Topic-aware (generated from the issue's actual beats), not the old hardcoded
+// generic block. See learnings-claude-blunders #005 for the "identical
+// interview questions on every issue" failure that triggered this rebuild.
+export interface AppendixPack {
+  // 3 interview-drill questions, each tagged with named Indian interview
+  // surfaces (Anthropic India / Sarvam / Razorpay / GCC AI lead / etc.) and
+  // a 2-sentence "skeleton of a strong answer" hidden behind expand.
+  interview_drills: InterviewDrill[]
+  // 3 articles (one per major beat) + 1 video/podcast + 1 paper + 1 Indian
+  // builder doing this in production (tweet/blog/clip). The India-builder
+  // slot is the differentiator vs Stratechery/Lenny/Latent Space.
+  further_reading: FurtherReadingPack
+}
+
+export interface InterviewDrill {
+  kind: 'system-design' | 'product-strategy' | 'regulation-india'
+  question: string                          // the question itself (≤45 words)
+  asked_at: string[]                        // named surfaces (3-5 short labels)
+  answer_skeleton: string                   // 2-3 sentences a strong answer touches
+}
+
+export interface FurtherReadingPack {
+  articles: ResourceLink[]                  // 3 items max
+  video?: ResourceLink                      // 0-1 podcast/talk/clip
+  paper?: ResourceLink                      // 0-1 arxiv / paper / RFC
+  indian_builder?: ResourceLink             // 0-1 India-shipping example (tweet / blog / YouTube)
+}
+
+export interface ResourceLink {
+  title: string                             // canonical title
+  source: string                            // publication / channel / handle
+  url: string                               // canonical URL
+  why: string                               // ≤14 words, what the reader gets
 }
 
 // What the human picks at the review step — three labels (or 'override' text) — one per kind.

@@ -5,6 +5,7 @@
 // rewrite the writer agents. The rendering layer reshapes for the new design.
 
 import type {
+  AppendixPack,
   IssuePayload,
   ChosenCalls,
   DeepDivePayload,
@@ -30,6 +31,7 @@ export interface RenderableIssue {
   dek: string
   lede: string
   chapters: Chapter[]
+  appendix?: AppendixPack | null
 }
 
 const BEAT_LABEL: Record<Beat, string> = {
@@ -302,6 +304,7 @@ export function weeklyToRenderable(
     dek: payload.throughline ?? '',
     lede: paraToHtml(payload.throughline_lead),
     chapters,
+    appendix: payload.appendix ?? null,
   }
 }
 
@@ -408,6 +411,8 @@ export function deepDiveToRenderable(
     dek: payload.subtitle,
     lede: paraToHtml(payload.cold_open),
     chapters,
+    appendix:
+      (payload as DeepDivePayload & { appendix?: AppendixPack | null }).appendix ?? null,
   }
 }
 
