@@ -56,7 +56,7 @@ const config: Config = {
       },
       maxWidth: {
         shell: '1180px',
-        read: '680px',
+        read: '720px', /* widened to Stratechery's reading column 2026-06-18 */
         reader: '720px',
         email: '600px',
       },
