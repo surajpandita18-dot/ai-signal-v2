@@ -66,25 +66,188 @@ function stripFence(s: string): string {
     .trim()
 }
 
+// Credit-fallback protocol — when the API rejects with the credit-balance
+// error, we dump (system + user) prompt to a file under
+// `.claude/agent-fallback/<agent>/<issueId>-<round>.prompt.md` and look for
+// a matching `<...>.response.json` to use as if the API had returned it.
+// This lets Claude Code (the dev in chat) be the fallback executor when
+// credits are out, without changing any callsite logic.
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+
+function fallbackPaths(agent: string, issueId: string, round: number) {
+  const dir = join(process.cwd(), '.claude', 'agent-fallback', agent)
+  const base = join(dir, `${issueId}-r${round}`)
+  return {
+    dir,
+    promptPath: `${base}.prompt.md`,
+    responsePath: `${base}.response.json`,
+  }
+}
+
+function writeFallbackPrompt(
+  agent: string,
+  issueId: string,
+  round: number,
+  system: string,
+  user: string,
+  model: string,
+  maxTokens: number
+) {
+  const { dir, promptPath, responsePath } = fallbackPaths(agent, issueId, round)
+  mkdirSync(dir, { recursive: true })
+  const body = `# Agent: ${agent}
+# Issue: ${issueId}   Round: ${round}
+# Model that was attempted: ${model}   max_tokens: ${maxTokens}
+
+The Anthropic API rejected this call with a credit-balance error. To
+use Claude Code (you) as the fallback executor:
+
+1. Read the SYSTEM PROMPT and USER MESSAGE below.
+2. Produce the JSON the agent expects (the parser in the agent file
+   defines the shape — for ${agent}, see src/lib/agents/${agent}.ts).
+3. Save ONLY the JSON object to:
+   ${responsePath}
+4. Re-run the same script. runAgent() will detect the response file and
+   use it as if the API had returned it. Forensics still get persisted
+   to issue_agent_runs (model recorded as "fallback:claude-code").
+
+---
+
+## SYSTEM PROMPT
+
+${system}
+
+---
+
+## USER MESSAGE
+
+${user}
+`
+  writeFileSync(promptPath, body, 'utf8')
+  return { promptPath, responsePath }
+}
+
+function tryReadFallbackResponse(
+  agent: string,
+  issueId: string,
+  round: number
+): string | null {
+  const { responsePath } = fallbackPaths(agent, issueId, round)
+  if (!existsSync(responsePath)) return null
+  try {
+    return readFileSync(responsePath, 'utf8').trim()
+  } catch {
+    return null
+  }
+}
+
+// Recognise both the structured Anthropic error AND the raw 400 message
+// that bubbles through the SDK as a BadRequestError.
+function isCreditError(err: unknown): boolean {
+  if (!err) return false
+  const msg =
+    err instanceof Error
+      ? err.message
+      : typeof err === 'string'
+        ? err
+        : ''
+  return /credit balance is too low/i.test(msg)
+}
+
 export async function runAgent<T>(
   opts: RunAgentOpts<T>
 ): Promise<RunAgentResult<T>> {
   const t0 = Date.now()
+  const maxTokens = opts.maxTokens ?? 4096
 
-  const res = await getClient().messages.create({
-    model: opts.model,
-    max_tokens: opts.maxTokens ?? 4096,
-    system: [
-      {
-        type: 'text',
-        text: opts.system,
-        cache_control: { type: 'ephemeral' },
+  // Fallback fast path — if a hand-curated response file already exists for
+  // this (agent, issueId, round), use it without touching the API. Lets
+  // Claude Code-produced content slot in seamlessly without a re-run.
+  const cached = tryReadFallbackResponse(opts.agent, opts.issueId, opts.round)
+  if (cached) {
+    const stripped = stripFence(cached)
+    let parsed: T
+    try {
+      parsed = opts.parse(stripped)
+    } catch (e) {
+      throw new Error(
+        `[${opts.agent}] fallback parse failed: ${e instanceof Error ? e.message : String(e)}\nFile: ${fallbackPaths(opts.agent, opts.issueId, opts.round).responsePath}`
+      )
+    }
+    // Persist forensics so the run still leaves an audit trail.
+    try {
+      const s = createAdminSupabaseClient()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (s.from('issue_agent_runs' as any) as any).insert({
+        issue_id: opts.issueId,
+        agent: opts.agent,
+        round: opts.round,
+        output: parsed,
+        model: `fallback:claude-code`,
+        input_tokens: 0,
+        output_tokens: 0,
+        cache_creation_tokens: 0,
+        cache_read_tokens: null,
+        latency_ms: 0,
+      })
+    } catch {
+      /* non-fatal */
+    }
+    return {
+      output: parsed,
+      rawText: stripped,
+      usage: {
+        input_tokens: 0,
+        output_tokens: 0,
+        cache_creation_input_tokens: 0,
+        cache_read_input_tokens: 0,
       },
-    ],
-    thinking: { type: 'adaptive' },
-    output_config: { effort: opts.effort ?? 'medium' },
-    messages: [{ role: 'user', content: opts.user }],
-  })
+      latencyMs: 0,
+    }
+  }
+
+  let res
+  try {
+    res = await getClient().messages.create({
+      model: opts.model,
+      max_tokens: maxTokens,
+      system: [
+        {
+          type: 'text',
+          text: opts.system,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
+      thinking: { type: 'adaptive' },
+      output_config: { effort: opts.effort ?? 'medium' },
+      messages: [{ role: 'user', content: opts.user }],
+    })
+  } catch (err) {
+    if (isCreditError(err)) {
+      const { promptPath, responsePath } = writeFallbackPrompt(
+        opts.agent,
+        opts.issueId,
+        opts.round,
+        opts.system,
+        opts.user,
+        opts.model,
+        maxTokens
+      )
+      const lines = [
+        `[${opts.agent}] Anthropic API credit-balance is too low.`,
+        ``,
+        `→ Prompt saved to: ${promptPath}`,
+        `→ Hand-curated response goes to: ${responsePath}`,
+        ``,
+        `Open the prompt in Claude Code, produce the JSON the parser expects,`,
+        `save it to the response path, then re-run this script — runAgent will`,
+        `transparently use the fallback. Model marked "fallback:claude-code".`,
+      ].join('\n')
+      throw new Error(lines)
+    }
+    throw err
+  }
 
   const latencyMs = Date.now() - t0
   const textBlock = res.content.find((c) => c.type === 'text')
