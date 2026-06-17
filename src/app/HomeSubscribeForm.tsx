@@ -41,10 +41,10 @@ export default function HomeSubscribeForm() {
       <div
         role="status"
         aria-live="polite"
-        className="flex flex-col gap-2 border border-lime/40 bg-card px-5 py-4"
+        className="flex flex-col gap-1 rounded-xl border border-lime/40 bg-card px-5 py-4"
       >
-        <div className=" text-[11px] font-medium tracking-[0.08em] text-lime">
-          ON THE LIST ✓
+        <div className="text-[13px] font-semibold uppercase tracking-[0.08em] text-lime-soft">
+          On the list
         </div>
         <p className="text-[15px] leading-relaxed text-fg-muted">
           Your first brief lands Monday 7:30 AM IST. If you don&rsquo;t see
@@ -55,12 +55,14 @@ export default function HomeSubscribeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-0"
+    >
       <label htmlFor={emailId} className="sr-only">
         Email address
       </label>
-      <div className="flex flex-1 items-center border border-line-strong bg-card focus-within:border-lime">
-        <span className="caret pl-4 font-mono text-lime">_</span>
+      <div className="flex flex-1 items-center rounded-xl border border-line-strong bg-card focus-within:border-lime sm:rounded-r-none sm:border-r-0">
         <input
           id={emailId}
           type="email"
@@ -71,17 +73,17 @@ export default function HomeSubscribeForm() {
           placeholder="you@startup.in"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-transparent px-2.5 py-4 text-[16px] text-fg placeholder:text-fg-muted focus:outline-none"
+          className="w-full bg-transparent px-5 py-4 text-[16px] text-fg placeholder:text-fg-subtle focus:outline-none"
         />
       </div>
       <button
         type="submit"
         disabled={submitting}
-        className="group mt-px flex items-center justify-center gap-2 bg-lime-bright px-6 py-4 font-mono text-[13px] font-semibold tracking-[0.04em] text-fg transition-colors hover:bg-[#d4ff52] disabled:opacity-60"
+        className="group inline-flex items-center justify-center gap-2 rounded-xl bg-lime-bright px-6 py-4 text-[15px] font-semibold text-fg transition-colors hover:bg-[#d4ff52] disabled:opacity-60 sm:rounded-l-none"
       >
-        {submitting ? 'JOINING…' : "GET MONDAY'S BRIEF"}
+        {submitting ? 'Joining…' : 'Get the brief'}
         <ArrowRight
-          size={15}
+          size={16}
           strokeWidth={2.25}
           className="transition-transform group-hover:translate-x-0.5"
         />
@@ -91,7 +93,7 @@ export default function HomeSubscribeForm() {
         <p
           role="alert"
           aria-live="polite"
-          className="mt-2 border border-danger/40 bg-danger/10 px-3 py-2 text-[14px] text-fg sm:col-span-2"
+          className="mt-2 rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-[14px] text-fg sm:col-span-2"
         >
           {error}
         </p>

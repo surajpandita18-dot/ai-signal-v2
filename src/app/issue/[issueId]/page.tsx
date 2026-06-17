@@ -152,7 +152,7 @@ export default async function IssuePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
       <SiteNav subscribed={subscribed} />
-      <ArticleRenderer issue={renderable} />
+      <ArticleRenderer issue={renderable} issueId={issueId} />
       <SiteFooter />
     </div>
   )

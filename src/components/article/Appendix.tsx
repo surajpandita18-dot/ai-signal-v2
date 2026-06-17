@@ -25,11 +25,21 @@ const DRILL_LABEL: Record<InterviewDrill['kind'], string> = {
   'regulation-india': 'Regulation · India',
 }
 
-export default function Appendix({ appendix }: { appendix: AppendixPack }) {
+export default function Appendix({
+  appendix,
+  issueId,
+}: {
+  appendix: AppendixPack
+  // When present, FurtherReading renders a small decorative banner above
+  // the section using the deterministic /issue/[id]/hero-image-explained
+  // route. Older preview surfaces without an issue id render the section
+  // without the banner.
+  issueId?: string
+}) {
   return (
     <>
       <InterviewDrills drills={appendix.interview_drills} />
-      <FurtherReading pack={appendix.further_reading} />
+      <FurtherReading pack={appendix.further_reading} issueId={issueId} />
     </>
   )
 }
@@ -39,13 +49,13 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
   return (
     <section className="border-t border-line">
       <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-        <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-          INTERVIEW DRILLS · GENERATED FROM THIS WEEK
+        <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+          Interview drills
         </p>
-        <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
+        <h2 className="mt-4 font-serif text-[30px] font-semibold leading-[1.12] tracking-[-0.015em] text-fg sm:text-[36px]">
           Three questions this issue prepares you for.
         </h2>
-        <p className="mt-5 max-w-[560px] text-[16px] leading-[1.65] text-cream-dim">
+        <p className="mt-5 max-w-[560px] text-[16px] leading-[1.65] text-fg-muted">
           Topic-aware — they fall out of this week&apos;s shift, not a
           template. Each one is tagged with rooms it gets asked in. Try
           your answer first, then expand the skeleton.
@@ -54,11 +64,11 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
         <div className="mt-12 flex flex-col gap-10">
           {drills.map((d, i) => (
             <article key={i} className="border-t border-line pt-8">
-              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                <span className="font-serif text-[15px] italic text-lime">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span className="font-serif text-[15px] font-semibold text-fg">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
+                <span className="text-[13px] font-medium text-fg-muted">
                   {DRILL_LABEL[d.kind]}
                 </span>
               </div>
@@ -66,11 +76,11 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
                 {d.question}
               </p>
               {d.asked_at.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-x-3 gap-y-2">
+                <div className="mt-5 flex flex-wrap gap-x-2 gap-y-2">
                   {d.asked_at.map((surface, j) => (
                     <span
                       key={j}
-                      className="border border-line-strong px-3 py-1  text-[10px] font-medium tracking-[0.08em] text-fg-muted"
+                      className="rounded-full border border-line px-3 py-1 text-[12px] font-medium text-fg-muted"
                     >
                       {surface}
                     </span>
@@ -78,15 +88,15 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
                 </div>
               )}
               <details className="group mt-6">
-                <summary className="cursor-pointer  text-[12px] font-medium tracking-[0.08em] text-fg-muted transition-colors hover:text-lime list-none [&::-webkit-details-marker]:hidden">
+                <summary className="cursor-pointer text-[13px] font-medium text-fg-muted transition-colors hover:text-lime-soft list-none [&::-webkit-details-marker]:hidden">
                   <span className="inline-block group-open:hidden">
-                    ▸ SHOW WHAT A STRONG ANSWER TOUCHES
+                    Show what a strong answer touches →
                   </span>
                   <span className="hidden group-open:inline-block">
-                    ▾ HIDE
+                    Hide
                   </span>
                 </summary>
-                <p className="mt-4 max-w-[640px] text-[16px] leading-[1.7] text-cream-dim">
+                <p className="mt-4 max-w-[640px] text-[16px] leading-[1.7] text-fg-muted">
                   {d.answer_skeleton}
                 </p>
               </details>
@@ -98,7 +108,13 @@ function InterviewDrills({ drills }: { drills: InterviewDrill[] }) {
   )
 }
 
-function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
+function FurtherReading({
+  pack,
+  issueId,
+}: {
+  pack: AppendixPack['further_reading']
+  issueId?: string
+}) {
   const hasAny =
     pack.articles.length > 0 ||
     pack.video ||
@@ -108,19 +124,31 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
 
   return (
     <section className="border-t border-line">
+      {issueId ? (
+        <div className="mx-auto max-w-read px-5 pt-12 sm:px-8 sm:pt-14">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/issue/${issueId}/hero-image-explained`}
+            alt="Further reading — curated this week"
+            width={1600}
+            height={400}
+            className="block h-auto w-full opacity-90"
+          />
+        </div>
+      ) : null}
       <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-        <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-          IF YOU WANT TO GO DEEPER THIS WEEK
+        <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
+          Go deeper this week
         </p>
-        <h2 className="mt-4 font-serif text-[30px] font-medium leading-[1.12] tracking-tight text-fg sm:text-[36px]">
+        <h2 className="mt-4 font-serif text-[30px] font-semibold leading-[1.12] tracking-[-0.015em] text-fg sm:text-[36px]">
           Further reading.
         </h2>
 
         {/* Articles — 3 max, one per major beat */}
         {pack.articles.length > 0 && (
           <div className="mt-10">
-            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-              ARTICLES
+            <p className="text-[13px] font-semibold text-fg-muted">
+              Articles
             </p>
             <ul className="mt-5 flex flex-col gap-6">
               {pack.articles.map((r, i) => (
@@ -133,8 +161,8 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Video / podcast — single slot */}
         {pack.video && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-              WATCH · LISTEN
+            <p className="text-[13px] font-semibold text-fg-muted">
+              Watch / listen
             </p>
             <ul className="mt-5">
               <ResourceRow r={pack.video} />
@@ -145,8 +173,8 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Paper — single slot */}
         {pack.paper && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-              PAPER
+            <p className="text-[13px] font-semibold text-fg-muted">
+              Paper
             </p>
             <ul className="mt-5">
               <ResourceRow r={pack.paper} />
@@ -157,8 +185,8 @@ function FurtherReading({ pack }: { pack: AppendixPack['further_reading'] }) {
         {/* Indian builder in production — the differentiator slot */}
         {pack.indian_builder && (
           <div className="mt-10 border-t border-line pt-8">
-            <p className=" text-[11px] font-medium tracking-[0.08em] text-lime">
-              SHIPPED FROM INDIA · IN PRODUCTION
+            <p className="text-[13px] font-semibold text-lime-soft">
+              Shipped from India · in production
             </p>
             <ul className="mt-5">
               <ResourceRow r={pack.indian_builder} accent />
@@ -177,19 +205,19 @@ function ResourceRow({ r, accent }: { r: ResourceLink; accent?: boolean }) {
         href={r.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`font-serif text-[19px] leading-[1.3] transition-colors ${
-          accent ? 'text-fg hover:text-lime' : 'text-fg hover:text-lime'
+        className={`font-serif text-[19px] font-medium leading-[1.3] transition-colors ${
+          accent ? 'text-fg hover:text-lime-soft' : 'text-fg hover:text-lime-soft'
         }`}
       >
         {r.title}
-        <span className="ml-2 align-[2px]  text-[11px] font-medium tracking-[0.08em] text-fg-muted">
+        <span className="ml-1.5 align-[2px] text-[13px] text-fg-muted">
           ↗
         </span>
       </a>
-      <p className=" text-[11px] font-medium tracking-[0.08em] text-fg-muted">
-        {r.source.toUpperCase()}
+      <p className="text-[13px] font-medium text-fg-muted">
+        {r.source}
       </p>
-      <p className="mt-1 max-w-[560px] text-[15px] leading-[1.6] text-cream-dim">
+      <p className="mt-1 max-w-[560px] text-[15px] leading-[1.6] text-fg-muted">
         {r.why}
       </p>
     </li>
