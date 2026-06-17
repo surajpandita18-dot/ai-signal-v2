@@ -41,48 +41,48 @@ const SEEDS: Record<string, V2Seed> = {
   // 22da6516 — "Anthropic's curbs just minted Sarvam's moat"
   '22da6516-f0cc-422b-a5ef-7a32dc6c138e': {
     signal_of_the_week:
-      "US export curbs on Anthropic just turned 'Sarvam is a backup' into 'Sarvam is your auditor-defensible primary' — every Indian BFSI procurement deck written before Q3 is stale.",
+      "US export curbs on Anthropic turned 'Sarvam is a backup' into 'Sarvam is your auditor-defensible primary.' Every Indian BFSI procurement deck written before Q3 is stale.",
     explained_simply: {
       concept: 'Sovereign AI inference',
       explanation:
-        "Picture your bank's cash sitting in a vault in another country. One Monday you wake up to find that country might lock the vault on national-security grounds. The fix is obvious — bring the vault home. Sovereign inference is the same move: the model weights, the GPUs running them, the audit logs of every prompt, all inside your borders. When US export controls hit Anthropic this week, the vault metaphor stopped being theoretical — Sarvam on Yotta is now a model your RBI auditor can physically walk over and point at.",
+        "Picture your bank's cash sitting in a vault in another country. One Tuesday morning you read that the country might lock the vault on national-security grounds. The fix is obvious — bring the vault home. Sovereign inference is the same move for AI. The model weights, the GPUs running them, the audit logs of every prompt all sit inside your borders. Until this week the vault metaphor felt theoretical. With US export controls hitting Anthropic, the vault now matters in a concrete way. Sarvam on Yotta isn't just cheaper. It's a model your RBI auditor can physically walk over and look at.",
     },
     production_questions: [
-      "Claude for reasoning, Sarvam-M for Indic — how are you splitting the audit logs?",
-      "Sarvam-M vs Claude on BFSI tasks — anyone got an eval set that runs cheap weekly?",
-      "Customer prompts landed in Anthropic training pool after the July 8 change. DPDP exposure?",
+      "Claude for reasoning, Sarvam-M for Indic — anyone solved the audit log split cleanly?",
+      "Need a weekly Sarvam-M vs Claude eval on BFSI tasks. Anyone got a cheap rig?",
+      "Customer prompts in Anthropic's training pool after July 8. What's our DPDP exposure?",
     ],
   },
 
   // 9c642302 — "Washington just killed your Claude stack"
   '9c642302-21f2-4563-ae9b-7116478aadda': {
     signal_of_the_week:
-      "Treasury just made 'we standardized on Claude' a foreign-model exposure line item on your 2027 risk register — the playbook is to add a second sovereign provider before the next audit.",
+      "Treasury just turned 'we standardized on Claude' into a foreign-model exposure line item on your 2027 risk register. The fix is the same one banks have run for decades: add a second source.",
     explained_simply: {
       concept: 'Concentration risk for AI vendors',
       explanation:
-        "Banks have always tracked concentration risk — too much money lent to one borrower, one country, one currency. The lens is simple: when one input source can swing your whole P&L, you carry that risk on the books. RBI just pointed the same lens at AI. If 90% of your inference runs on Claude and Washington tightens export controls on a Friday, your loan-decision system breaks by Monday. The fix is the same one bankers have run for decades: add a second source, document the switch protocol, prove the eval that says the two are substitutable.",
+        "For decades, banks have watched a number called concentration risk. It works like this: if one company owes you thirty percent of all your outstanding loans, you don't have a loan book, you have a bet on one company. The lens is borrowed from agriculture before that — you don't grow only one crop, because one bad season ends your farm. RBI just pointed the same lens at AI. If ninety percent of your inference runs through Claude and on a Friday Washington tightens export controls, your loan-decision system breaks by Monday. The lens is borrowed. The fix is borrowed too. Add a second sovereign provider. Document the failover. Run an eval that proves the two are substitutable. The bank version has worked for a century. The AI version needs to ship by the next audit.",
     },
     production_questions: [
       "If Treasury flags Claude mid-quarter, what's our failover SLA? Anyone wrote the runbook?",
-      "Switchability test for the eval rig — what does a regulator-friendly version look like?",
-      "MSA renewal next month. Export-control exit clause — copy-paste language from someone?",
+      "Switchability test for the eval rig — what's a fair regulator-friendly version?",
+      "MSA renewal next month. Need export-control exit clause language — anyone got it?",
     ],
   },
 
   // d6037c54 — "Meta leased your distribution stack"
   'd6037c54-b7f2-4f10-aafa-a1bbb0beda73': {
     signal_of_the_week:
-      "Meta-Reliance plus Visa-on-ChatGPT plus OpenAI's price-cut leak landed the same week — your token-cost moat just died on the same week your placement moat opened up.",
+      "Meta-Reliance, Visa-OpenAI, and OpenAI's price-cut leak landed the same week. Your token-cost moat just died on the same week your placement moat opened up.",
     explained_simply: {
       concept: 'The placement race',
       explanation:
-        "Think of two adjacent shops on a busy street. Shop A has cheaper goods; shop B is the only one with a door opening onto the foot-traffic side. Over time, A's cost edge gets matched while B's door doesn't move. That's what happened in AI this week. The model cost edge — your shop A — just commoditised: OpenAI's leaked price cut, Meta-Reliance leasing 1 GW of India DC, Visa wiring ChatGPT into checkout. Meanwhile the doors onto the foot-traffic side — WhatsApp, ChatGPT, Pine Labs — are being built by other people. Builders now ship through someone else's door, not their own.",
+        "Picture two shops side by side on a busy market street. Shop A has cheaper goods. Shop B is the only one with a door opening onto the foot-traffic side of the street. Over the next year, shop A's cost edge gets matched as wholesalers race each other to the bottom. But shop B's door doesn't move. The door is the moat. That's what happened in AI this week. The model cost edge — your shop A — just commoditised: OpenAI's leaked price cut, Meta leasing one gigawatt of India DC with Reliance, Visa wiring ChatGPT directly into checkout. Meanwhile the doors onto the busy street — WhatsApp, ChatGPT, Pine Labs — are being built by other people. Builders will increasingly ship through someone else's door, not their own.",
     },
     production_questions: [
-      "OpenAI cuts 70% in Q1 — what part of our unit economics breaks first?",
-      "Visa on ChatGPT turns checkout into an agent surface. Lightest integration to test?",
-      "If the next 100M users meet AI inside WhatsApp before our product, do we even need our app?",
+      "OpenAI cuts 70% in Q1. Which part of our unit economics breaks first?",
+      "Visa-on-ChatGPT turns checkout into an agent surface. Lightest integration to test?",
+      "If 100M users meet AI inside WhatsApp first, do we still need our app?",
     ],
   },
 }
