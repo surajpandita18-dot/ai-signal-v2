@@ -25,16 +25,16 @@ const SEEDS: Record<string, V2Seed> = {
   // 38201c30 — "The router just ate vendor lock-in"
   '38201c30-8db1-422e-a29e-34c70b07b988': {
     signal_of_the_week:
-      "Smart model routing just became the default — your single-vendor Claude stack is now a 2024 architecture decision the market has repriced.",
+      "Smart model routing became the default this week. If your stack says 'we run on Claude,' that line just turned into a liability slide.",
     explained_simply: {
       concept: 'LLM gateway routing',
       explanation:
-        "Picture a restaurant kitchen with five chefs of different skill levels. The cheapest cook handles 'fry an egg'; the most expensive one handles 'plate the wagyu'. The head chef sees each ticket and decides who works it — that's the router. For LLMs, that head chef is software (Portkey, LiteLLM): it reads each prompt and sends simple ones to Gemini Flash at ₹6 per million tokens, hard reasoning to Claude at ₹250, multilingual to Sarvam. Same kitchen, same diners — your bill drops 80% because you stopped paying steak prices for scrambled eggs.",
+        "Think of a restaurant kitchen with five cooks. One is a junior who can fry eggs; one is a Michelin chef who plates wagyu. The head chef reads each ticket and decides who cooks it — fast cook to the egg, slow expert to the wagyu. The router is software that does the same job for AI requests. It looks at a prompt and sends 'summarise this email' to Gemini Flash at ₹6 a million tokens, sends 'reason about this contract' to Claude at ₹250, sends Hindi support to Sarvam. The cook didn't change. The cost did — by about eighty percent, because you stopped paying steak prices for scrambled eggs.",
     },
     production_questions: [
-      "Router keeps routing every code block to Claude. Why?",
-      "Cheapest eval gate before a router swap — what are you using?",
-      "Sarvam-M is 40% cheaper but our prompts have Claude XML scaffolding. Port without rewriting?",
+      "Our router keeps picking Claude every time the prompt has a code block. Why?",
+      "What's the cheapest eval you run before a router swap to catch regressions?",
+      "Sarvam-M is 40% cheaper for Hindi tickets but our prompts have Claude XML. How fast can you port?",
     ],
   },
 

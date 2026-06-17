@@ -64,33 +64,12 @@
   color-scheme: light;
 }
 
-/* Manual theme override — opt-in dark mode for users who explicitly prefer it.
- * Default light cream remains the design. */
-:root[data-theme='dark'] {
-  --bg: 11 13 10;
-  --bg-raised: 14 17 12;
-  --bg-card: 19 23 18;
-  --line: 32 36 28;
-  --line-strong: 44 49 39;
-  --cream: 236 231 221;
-  --cream-dim: 207 201 189;
-  --lime: 194 245 61;
-  --lime-soft: 159 212 74;
-  --fg: 244 242 236;
-  --fg-muted: 139 143 134;
-  --fg-subtle: 107 112 98;
-  --danger: 229 103 90;
-
-  --paper: 11 13 10;
-  --paper-elev: 19 23 18;
-  --ink: 244 242 236;
-  --body: 207 201 189;
-  --accent: 194 245 61;
-  --accent-2: 229 103 90;
-  --muted: 139 143 134;
-  --accent-soft: 159 212 74;
-  color-scheme: dark;
-}
+/* Dark theme deliberately removed (2026-06-18 — Suraj: "dark mode dikh raha
+ * hai yaar"). The opt-in [data-theme='dark'] block was being triggered for
+ * users whose browsers had cached the localStorage flag, leaking the old
+ * dark Figr palette under the cream Lenny redesign. Light is the only theme.
+ * To re-introduce dark: stage the token block + the layout themeInitScript
+ * + a toggle — don't ship a half-built theme system. */
 
 html, body {
   background: rgb(var(--bg));

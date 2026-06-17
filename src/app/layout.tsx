@@ -69,16 +69,18 @@ export const viewport: Viewport = {
   ],
 }
 
-// Inline pre-paint script — applies stored theme to <html> BEFORE React
-// hydrates so we never flash the wrong palette. Reads localStorage; absent
-// or 'system' lets the @media query in globals.css pick the theme.
-const themeInitScript = `(function(){try{var t=localStorage.getItem('aisignal_theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`
+// Pre-paint script: actively WIPE any stale theme attribute or
+// localStorage flag from prior dark-Figr deploys. Users who once had
+// data-theme="dark" cached were seeing the dark palette leak under the
+// new cream Lenny redesign — this script removes it on every load until
+// the dark-Figr cohort cycles out (run for at least 90 days).
+const themeInitScript = `(function(){try{document.documentElement.removeAttribute('data-theme');localStorage.removeItem('aisignal_theme');}catch(e){}})();`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* Apply theme BEFORE first paint to avoid flash-of-wrong-theme */}
+        {/* Wipe stale dark-theme caches BEFORE first paint */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {/* Performance — preconnect to Google Fonts before CSS parses @import */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
