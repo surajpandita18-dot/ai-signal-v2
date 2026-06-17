@@ -29,12 +29,12 @@ const SEEDS: Record<string, V2Seed> = {
     explained_simply: {
       concept: 'LLM gateway routing',
       explanation:
-        "Imagine a restaurant kitchen with five chefs of different skill levels. The cheapest cook handles 'fry an egg'; the expensive one handles 'plate the wagyu'. A router is the head chef who sees each ticket coming in and decides who works it. For LLMs, the router (Portkey, LiteLLM) reads each prompt and routes simple ones to Gemini Flash at ₹6 per million tokens, hard reasoning to Claude at ₹250, multilingual to Sarvam. Your bill drops 80% because you stopped paying steak prices for scrambled eggs.",
+        "Picture a restaurant kitchen with five chefs of different skill levels. The cheapest cook handles 'fry an egg'; the most expensive one handles 'plate the wagyu'. The head chef sees each ticket and decides who works it — that's the router. For LLMs, that head chef is software (Portkey, LiteLLM): it reads each prompt and sends simple ones to Gemini Flash at ₹6 per million tokens, hard reasoning to Claude at ₹250, multilingual to Sarvam. Same kitchen, same diners — your bill drops 80% because you stopped paying steak prices for scrambled eggs.",
     },
     production_questions: [
-      "Our routing config keeps hitting the Claude default when the prompt has a code block — how do we detect intent reliably without adding a classifier round-trip?",
-      "What's the cheapest eval gate we can run before a router swap that catches quality regressions without slowing tail latency past 200ms?",
-      "Sarvam-M is 40% cheaper for Hindi support tickets but our prompts have Claude-tuned XML scaffolding — what's the fastest port without a full prompt rewrite?",
+      "Router keeps routing every code block to Claude. Why?",
+      "Cheapest eval gate before a router swap — what are you using?",
+      "Sarvam-M is 40% cheaper but our prompts have Claude XML scaffolding. Port without rewriting?",
     ],
   },
 
@@ -45,12 +45,12 @@ const SEEDS: Record<string, V2Seed> = {
     explained_simply: {
       concept: 'Sovereign AI inference',
       explanation:
-        "Imagine your bank kept all its cash in a vault in another country, then woke up to find that country might lock the vault on national-security grounds. Sovereign inference is keeping the vault inside your own borders — the model, the GPUs, the audit logs. For Indian BFSI, this stopped being 'nice to have' the day US export controls hit Anthropic. Sarvam running on Yotta isn't just cheaper; it's a model your RBI auditor can physically point at.",
+        "Picture your bank's cash sitting in a vault in another country. One Monday you wake up to find that country might lock the vault on national-security grounds. The fix is obvious — bring the vault home. Sovereign inference is the same move: the model weights, the GPUs running them, the audit logs of every prompt, all inside your borders. When US export controls hit Anthropic this week, the vault metaphor stopped being theoretical — Sarvam on Yotta is now a model your RBI auditor can physically walk over and point at.",
     },
     production_questions: [
-      "Our agent loop calls Claude for reasoning and Sarvam-M for Indic — how do we cleanly separate audit logs by jurisdiction without rebuilding our observability stack?",
-      "What's a realistic eval set to compare Sarvam-M vs Claude on BFSI tasks (loan-doc parsing, KYC summarisation) that we can run weekly without breaking the bank?",
-      "Anthropic's data-collection change on July 8 — are we now technically exposed under DPDP Section 8 if a customer prompt lands in their training pool, and what's the contract redline?",
+      "Claude for reasoning, Sarvam-M for Indic — how are you splitting the audit logs?",
+      "Sarvam-M vs Claude on BFSI tasks — anyone got an eval set that runs cheap weekly?",
+      "Customer prompts landed in Anthropic training pool after the July 8 change. DPDP exposure?",
     ],
   },
 
@@ -61,12 +61,12 @@ const SEEDS: Record<string, V2Seed> = {
     explained_simply: {
       concept: 'Concentration risk for AI vendors',
       explanation:
-        "Banks have always had concentration risk — too much exposure to one borrower, one country, one currency. RBI just extended the same lens to AI vendors. If 90% of your inference runs on Claude and Washington tightens export controls, your loan-decision system can break overnight. The fix is the same as the bank fix: a second sovereign provider, a documented switch protocol, and an eval rig that proves they're substitutable. Boring. Necessary. Auditable.",
+        "Banks have always tracked concentration risk — too much money lent to one borrower, one country, one currency. The lens is simple: when one input source can swing your whole P&L, you carry that risk on the books. RBI just pointed the same lens at AI. If 90% of your inference runs on Claude and Washington tightens export controls on a Friday, your loan-decision system breaks by Monday. The fix is the same one bankers have run for decades: add a second source, document the switch protocol, prove the eval that says the two are substitutable.",
     },
     production_questions: [
-      "If Treasury flags a vendor mid-quarter, how fast can our agent layer fall over to a second provider without an outage — and where's the runbook auditors will ask to see?",
-      "Our eval rig benchmarks accuracy but not 'switchability' — what's a fair concentration-risk test that proves to a regulator we can swap providers in 72 hours?",
-      "How do we structure MSAs now so a future export-control flag doesn't lock us into 12 months of contractual exposure to a vendor our compliance team just disowned?",
+      "If Treasury flags Claude mid-quarter, what's our failover SLA? Anyone wrote the runbook?",
+      "Switchability test for the eval rig — what does a regulator-friendly version look like?",
+      "MSA renewal next month. Export-control exit clause — copy-paste language from someone?",
     ],
   },
 
@@ -77,12 +77,12 @@ const SEEDS: Record<string, V2Seed> = {
     explained_simply: {
       concept: 'The placement race',
       explanation:
-        "Cost moats die when the underlying tech commoditises. Placement moats — being where the user already is — only widen. Meta leasing a 1 GW India DC from Reliance, and Visa wiring ChatGPT into agent-led checkout, is the same move: control the surface where the user decides. For builders, this means the question stops being 'whose model do I run?' and starts being 'on whose surface does my agent already live?' One is becoming free; the other is the new fight.",
+        "Think of two adjacent shops on a busy street. Shop A has cheaper goods; shop B is the only one with a door opening onto the foot-traffic side. Over time, A's cost edge gets matched while B's door doesn't move. That's what happened in AI this week. The model cost edge — your shop A — just commoditised: OpenAI's leaked price cut, Meta-Reliance leasing 1 GW of India DC, Visa wiring ChatGPT into checkout. Meanwhile the doors onto the foot-traffic side — WhatsApp, ChatGPT, Pine Labs — are being built by other people. Builders now ship through someone else's door, not their own.",
     },
     production_questions: [
-      "If OpenAI cuts API prices 70% in Q1, what part of our unit economics breaks first — the inference margin we already amortise, or the customer-acquisition math we built around premium API tiers?",
-      "Visa on ChatGPT turns checkout into an agent surface — what's the lightest-weight integration we can ship to test whether our merchants want their inventory routable from agents?",
-      "Meta-Reliance is a placement deal more than an infra deal — how does our distribution strategy change if the next 100M Indian users meet AI inside WhatsApp before they meet our product?",
+      "OpenAI cuts 70% in Q1 — what part of our unit economics breaks first?",
+      "Visa on ChatGPT turns checkout into an agent surface. Lightest integration to test?",
+      "If the next 100M users meet AI inside WhatsApp before our product, do we even need our app?",
     ],
   },
 }
