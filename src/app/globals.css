@@ -16,11 +16,24 @@
   /* v5 — actual Lenny / Substack / The Browser look (2026-06-17).
    * v4 was too warm/magazine; Lenny is brighter, cleaner, more friendly
    * with a strong author presence and bold body emphasis. */
-  --bg: 255 255 255;           /* pure white — Lenny standard, was cream */
-  --bg-raised: 248 248 246;    /* #f8f8f6 barely-tinted panel — almost invisible */
+  --bg: 255 255 255;           /* pure white — Lenny standard */
+  --bg-raised: 248 248 246;    /* #f8f8f6 barely-tinted panel */
   --bg-card: 255 255 255;      /* pure white */
-  --line: 234 234 230;         /* #eaeae6 cleaner hairline (less warm) */
+  --line: 234 234 230;         /* #eaeae6 hairline */
   --line-strong: 210 210 205;  /* #d2d2cd mid border */
+
+  /* SECTION ACCENT PALETTE (v7 — Airbnb/Bloomberg-grade) — each editorial
+   * section gets its own muted accent so the page reads as a varied magazine,
+   * not a wall of white. Used for left-rules, dot-marks, eyebrow tags. Never
+   * for body text (contrast too low). */
+  --accent-signal: 17 105 60;    /* #11693c deep green — signal-of-week */
+  --accent-signal-soft: 219 240 226;  /* #dbf0e2 wash background */
+  --accent-explainer: 28 78 156; /* #1c4e9c deep cobalt — explained simply */
+  --accent-explainer-soft: 226 235 250; /* #e2ebfa wash */
+  --accent-standup: 184 100 22; /* #b86416 burnt orange — production standup */
+  --accent-standup-soft: 248 233 218; /* #f8e9da wash */
+  --accent-archive: 90 65 145;  /* #5a4191 muted purple — appendix / further reading */
+  --accent-archive-soft: 235 230 245; /* #ebe6f5 wash */
   --cream: 26 26 26;           /* #1a1a1a — token name kept; now ink-on-light */
   --cream-dim: 64 64 64;       /* #404040 darker muted ink (was too light) */
   --lime: 110 196 30;          /* #6ec41e darker lime — readable on bright bg as link */
@@ -148,13 +161,54 @@ button, a, input, select, textarea, label { touch-action: manipulation; }
 
 /* Editorial body (Figr) — for dangerouslySetInnerHTML content.
    Long-form size — 17px desktop, 16px mobile floor. */
-.editorial p { font-size: 17px; line-height: 1.7; color: rgb(var(--fg-muted)); }
+.editorial p { font-size: 18px; line-height: 1.7; color: rgb(var(--fg)); }
 @media (max-width: 600px) {
-  .editorial p { font-size: 16px; line-height: 1.65; }
+  .editorial p { font-size: 17px; line-height: 1.65; }
 }
 .editorial p + p { margin-top: 1.1rem; }
 .editorial em { font-style: italic; color: rgb(var(--cream-dim)); }
-.editorial strong { color: rgb(var(--fg)); font-weight: 600; }
+/* Bold body emphasis — Lenny / Stratechery move. Inline <strong> reads as
+   a true emphasis, not just slightly heavier weight. */
+.editorial strong {
+  color: rgb(var(--fg));
+  font-weight: 700;
+  background-image: linear-gradient(transparent 62%, rgb(var(--lime-bright) / 0.4) 62%);
+  background-repeat: no-repeat;
+}
+.editorial h3 {
+  margin-top: 2.4rem;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: rgb(var(--fg));
+}
+/* Pull-quote treatment — large Fraunces italic with a giant decorative
+   quote mark. Reserved for actual <blockquote> tags inside .editorial. */
+.editorial blockquote {
+  position: relative;
+  margin: 2.2rem 0 2.2rem 0;
+  padding: 0.6rem 0 0.6rem 2.8rem;
+  border-left: 3px solid rgb(var(--accent-explainer));
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.4;
+  color: rgb(var(--fg));
+}
+.editorial blockquote::before {
+  content: '\201C';
+  position: absolute;
+  left: -0.15rem;
+  top: -0.6rem;
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(var(--accent-explainer) / 0.18);
+  pointer-events: none;
+}
 .editorial a {
   color: rgb(var(--fg));
   text-decoration: underline;

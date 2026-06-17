@@ -24,6 +24,16 @@ const config: Config = {
         'fg-subtle': 'rgb(var(--fg-subtle) / <alpha-value>)',
         danger: 'rgb(var(--danger) / <alpha-value>)',
 
+        // v7 section-accent palette
+        'accent-signal': 'rgb(var(--accent-signal) / <alpha-value>)',
+        'accent-signal-soft': 'rgb(var(--accent-signal-soft) / <alpha-value>)',
+        'accent-explainer': 'rgb(var(--accent-explainer) / <alpha-value>)',
+        'accent-explainer-soft': 'rgb(var(--accent-explainer-soft) / <alpha-value>)',
+        'accent-standup': 'rgb(var(--accent-standup) / <alpha-value>)',
+        'accent-standup-soft': 'rgb(var(--accent-standup-soft) / <alpha-value>)',
+        'accent-archive': 'rgb(var(--accent-archive) / <alpha-value>)',
+        'accent-archive-soft': 'rgb(var(--accent-archive-soft) / <alpha-value>)',
+
         // v2 compat — legacy components map through globals.css var mappings
         paper: 'rgb(var(--paper) / <alpha-value>)',
         'paper-elev': 'rgb(var(--paper-elev) / <alpha-value>)',

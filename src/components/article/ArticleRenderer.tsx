@@ -98,18 +98,30 @@ export default function ArticleRenderer({
         </div>
       </header>
 
-      {/* SIGNAL OF THE WEEK — Editorial v2 — the ONE screenshot-worthy line.
-          Renders only when payload includes the field (new synthesizer
-          output). Large serif pullquote with lime mark. */}
+      {/* SIGNAL — the editorial moat moment, product thinking v7 (2026-06-18):
+          the signal IS the product. Make it the hero. Full-bleed, lime-soft
+          wash background, oversized serif, share affordance underneath.
+          This is what a reader screenshots. Treat it as the headline of
+          the headline. */}
       {issue.signal_of_the_week ? (
-        <section className="border-b border-line">
-          <div className="mx-auto max-w-read px-5 py-14 sm:px-8 sm:py-20">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
-              The signal
-            </p>
-            <p className="mt-6 font-serif text-[26px] font-medium leading-[1.3] tracking-[-0.005em] text-fg sm:text-[36px]">
+        <section
+          className="relative border-b border-line"
+          style={{ background: 'rgb(var(--accent-signal-soft))' }}
+        >
+          <div className="absolute inset-y-0 left-0 w-1.5 bg-accent-signal" aria-hidden />
+          <div className="mx-auto max-w-read px-5 py-20 sm:px-8 sm:py-28">
+            <div className="flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.12em] text-accent-signal">
+              <span className="font-serif text-[22px] font-bold leading-none">01</span>
+              <span aria-hidden className="h-[1px] w-8 bg-accent-signal/60" />
+              <span>The signal — if you remember nothing else</span>
+            </div>
+            <p className="mt-8 font-serif text-[32px] font-semibold leading-[1.18] tracking-[-0.015em] text-fg sm:text-[44px]">
               {issue.signal_of_the_week}
             </p>
+            <div className="mt-10 flex items-center gap-3">
+              <ArticleShare title={issue.signal_of_the_week} />
+              <span aria-hidden className="text-[13px] text-fg-muted">Forward this line to one builder.</span>
+            </div>
           </div>
         </section>
       ) : null}
@@ -151,10 +163,11 @@ export default function ArticleRenderer({
         })}
       </main>
 
-      {/* EXPLAINED SIMPLY — Editorial v2 — one concept in Feynman register.
-          Renders only when payload includes it. */}
+      {/* EXPLAINED SIMPLY — cobalt identity, oversized numeral, illustration
+          banner. Per Steve-Jobs product thinking: every section gets a
+          distinct identity so they don't collapse into a wall of headings. */}
       {issue.explained_simply ? (
-        <section className="border-t border-line">
+        <section className="relative border-t border-line">
           {issueId ? (
             <div className="mx-auto max-w-read px-5 pt-12 sm:px-8 sm:pt-14">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -163,40 +176,49 @@ export default function ArticleRenderer({
                 alt={`Explained simply — ${issue.explained_simply.concept}`}
                 width={1600}
                 height={400}
-                className="block h-auto w-full"
+                className="block h-auto w-full rounded-md"
               />
             </div>
           ) : null}
           <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
-              Explained simply
-            </p>
-            <h2 className="mt-4 font-serif text-[32px] font-semibold leading-[1.08] tracking-[-0.015em] text-fg sm:text-[44px]">
+            <div className="flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.12em] text-accent-explainer">
+              <span className="font-serif text-[22px] font-bold leading-none">02</span>
+              <span aria-hidden className="h-[1px] w-8 bg-accent-explainer/60" />
+              <span>Explained simply — one concept this week</span>
+            </div>
+            <h2 className="mt-6 font-serif text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] text-fg sm:text-[52px]">
               {issue.explained_simply.concept}.
             </h2>
-            <p className="mt-8 max-w-[640px] text-[18px] leading-[1.65] text-fg-muted sm:text-[19px]">
+            <p className="mt-8 max-w-[680px] text-[19px] leading-[1.65] text-fg sm:text-[20px]">
               {issue.explained_simply.explanation}
             </p>
           </div>
         </section>
       ) : null}
 
-      {/* PRODUCTION QUESTIONS — Editorial v2 — real Monday-morning questions.
-          Renders only when payload includes ≥1 question. */}
+      {/* PRODUCTION QUESTIONS — burnt-orange identity. Sliding cards, big
+          orange numerals, looks like an architectural diagram of standup
+          chatter. Per product thinking: this serves the builder reader who
+          will scan THIS section and skip rest. Make it scannable. */}
       {issue.production_questions && issue.production_questions.length ? (
-        <section className="border-t border-line">
+        <section
+          className="border-t border-line"
+          style={{ background: 'rgb(var(--accent-standup-soft))' }}
+        >
           <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
-              From the standup
-            </p>
-            <h2 className="mt-4 font-serif text-[32px] font-semibold leading-[1.08] tracking-[-0.015em] text-fg sm:text-[44px]">
+            <div className="flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.12em] text-accent-standup">
+              <span className="font-serif text-[22px] font-bold leading-none">03</span>
+              <span aria-hidden className="h-[1px] w-8 bg-accent-standup/60" />
+              <span>From the standup — what builders are asking</span>
+            </div>
+            <h2 className="mt-6 font-serif text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] text-fg sm:text-[48px]">
               Three real questions in the air this week.
             </h2>
-            <ol className="mt-10 flex flex-col gap-7">
+            <ol className="mt-10 flex flex-col gap-5">
               {issue.production_questions.map((q, i) => (
-                <li key={i} className="flex gap-6 border-t border-line pt-7">
-                  <span className="shrink-0 font-serif text-[20px] font-semibold text-lime-soft">
-                    {i + 1}
+                <li key={i} className="flex gap-6 rounded-lg border border-line bg-card p-7 transition-shadow hover:shadow-sm">
+                  <span className="shrink-0 font-serif text-[36px] font-bold leading-none text-accent-standup">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
                   <p className="max-w-[640px] text-[18px] leading-[1.55] text-fg">
                     {q}
