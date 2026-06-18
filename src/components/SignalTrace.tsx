@@ -55,7 +55,7 @@ export default function SignalTrace({ className = '' }: Props) {
       {/* Baseline — bright enough to read at rest */}
       <path
         d={WAVE}
-        stroke="rgb(194 245 61)"
+        stroke="rgb(var(--lime-bright))"
         strokeWidth="2"
         strokeOpacity="0.55"
         strokeLinecap="round"
@@ -67,7 +67,7 @@ export default function SignalTrace({ className = '' }: Props) {
         d={WAVE}
         pathLength={1000}
         className="signal-pulse"
-        stroke="rgb(194 245 61)"
+        stroke="rgb(var(--lime-bright))"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
