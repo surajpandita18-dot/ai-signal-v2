@@ -40,20 +40,10 @@ export default function ArticleRenderer({
 }) {
   return (
     <article className="bg-bg">
-      {/* HERO IMAGE — only AI Signal-specific add vs Stratechery. Quiet
-          banner; serves as cover identifier in archive lists. */}
-      {issueId ? (
-        <div className="mx-auto max-w-read px-5 pt-8 sm:px-8 sm:pt-12">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`/issue/${issueId}/hero-image`}
-            alt={`AI Signal — ${issue.title}`}
-            width={1600}
-            height={500}
-            className="block h-auto w-full"
-          />
-        </div>
-      ) : null}
+      {/* Hero banner image removed 2026-06-18 — Stratechery doesn't use
+          hero images and the generated next/og PNG was reading "kharab"
+          per Suraj. The /issue/[id]/hero-image route still exists for OG
+          + Twitter card metadata; it just doesn't render inline anymore. */}
 
       {/* HEADER — Stratechery discipline. Back link, dateline, title, dek,
           minimal author byline. No avatar circle in header (moved to a

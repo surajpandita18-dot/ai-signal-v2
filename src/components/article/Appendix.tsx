@@ -124,18 +124,8 @@ function FurtherReading({
 
   return (
     <section className="border-t border-line">
-      {issueId ? (
-        <div className="mx-auto max-w-read px-5 pt-12 sm:px-8 sm:pt-14">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`/issue/${issueId}/hero-image-explained`}
-            alt="Further reading — curated this week"
-            width={1600}
-            height={400}
-            className="block h-auto w-full opacity-90"
-          />
-        </div>
-      ) : null}
+      {/* hero-image-explained inline banner removed 2026-06-18 — Stratechery
+          discipline + Suraj's "kharab image" feedback. Route handler stays. */}
       <div className="mx-auto max-w-read px-5 py-16 sm:px-8 sm:py-20">
         <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
           Go deeper this week
